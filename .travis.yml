@@ -12,7 +12,7 @@ notifications:
     on_failure: always # default: always
 
 script: 
-  - mvn clean verify
+  - mvn clean install
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

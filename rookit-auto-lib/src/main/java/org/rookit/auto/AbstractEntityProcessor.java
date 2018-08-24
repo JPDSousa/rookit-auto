@@ -43,7 +43,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-import java.io.IOException;
 import java.util.Set;
 
 public abstract class AbstractEntityProcessor extends AbstractProcessor {
@@ -77,9 +76,9 @@ public abstract class AbstractEntityProcessor extends AbstractProcessor {
                 messager.printMessage(Diagnostic.Kind.NOTE, "Processing: " + annotation.getQualifiedName());
                 builder.process(ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation)));
             }
-            builder.close();
+            builder.postProcess();
             return false;
-        } catch (final RuntimeException | IOException e) {
+        } catch (final RuntimeException e) {
             final String stackTrace = ExceptionUtils.getStackTrace(e);
             messager.printMessage(Diagnostic.Kind.ERROR, stackTrace);
             throw new RuntimeException(e);

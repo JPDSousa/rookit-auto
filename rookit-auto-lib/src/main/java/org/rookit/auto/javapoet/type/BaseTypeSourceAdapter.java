@@ -19,36 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javapoet.type;
 
-import org.rookit.auto.naming.PackageReference;
+import com.squareup.javapoet.TypeSpec;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.source.TypeSource;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+public final class BaseTypeSourceAdapter implements TypeSourceAdapter {
 
-public interface ElementUtils {
+    public static TypeSourceAdapter create() {
+        return new BaseTypeSourceAdapter();
+    }
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private BaseTypeSourceAdapter() {}
 
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public TypeSource fromTypeSpec(final Identifier identifier, final TypeSpec source) {
+        return new BaseTypeSource(identifier, source);
+    }
 }

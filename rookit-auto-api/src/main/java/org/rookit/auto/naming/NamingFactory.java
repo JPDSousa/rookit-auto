@@ -21,16 +21,16 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
-import com.squareup.javapoet.ClassName;
 import org.apache.commons.lang3.StringUtils;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 import javax.lang.model.element.TypeElement;
 
 public interface NamingFactory {
 
-    String packageName(TypeElement element);
+    PackageReference packageName(TypeElement element);
 
-    ClassName type(TypeElement element);
+    String type(ExtendedTypeElement element);
 
     default String method(final String propertyName) {
         return method(propertyName, StringUtils.EMPTY, StringUtils.EMPTY);

@@ -19,36 +19,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.source.TypeSource;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+import javax.annotation.processing.Filer;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public interface ElementUtils {
+final class PartialEntityImpl extends AbstractPartialEntity {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final TypeSource source;
 
-    TypeMirror erasure(Class<?> clazz);
+    PartialEntityImpl(final Identifier genericIdentifier,
+                      final Collection<? extends PartialEntity> parents,
+                      final TypeSource source) {
+        super(genericIdentifier, parents);
+        this.source = source;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    protected CompletableFuture<Void> writePartialEntityTo(final Filer filer) throws IOException {
+        return this.source.writeTo(filer);
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("source", this.source)
+                .toString();
+    }
 }

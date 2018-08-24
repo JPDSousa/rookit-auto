@@ -19,36 +19,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity.noop;
 
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.entity.AbstractPartialEntity;
+import org.rookit.auto.entity.Entity;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.utils.VoidUtils;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+import javax.annotation.processing.Filer;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public interface ElementUtils {
+final class ExclusionPartialEntity extends AbstractPartialEntity {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    ExclusionPartialEntity(final Identifier genericIdentifier,
+                           final Collection<Entity> parents) {
+        super(genericIdentifier, parents);
+    }
 
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
+    @Override
+    protected CompletableFuture<Void> writePartialEntityTo(final Filer filer) {
+        return CompletableFuture.completedFuture(VoidUtils.returnVoid());
+    }
 
 }

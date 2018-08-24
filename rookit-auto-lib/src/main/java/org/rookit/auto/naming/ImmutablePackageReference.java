@@ -27,13 +27,6 @@ import com.google.common.base.MoreObjects;
 public class ImmutablePackageReference implements PackageReference {
 
     private static final Joiner JOINER = Joiner.on('.');
-    private static final PackageReference ORG = new ImmutablePackageReference("org");
-    private static final PackageReference ROOKIT = ORG.concat("rookit");
-
-
-    public static PackageReference basePackage() {
-        return ROOKIT;
-    }
 
     private final String name;
 

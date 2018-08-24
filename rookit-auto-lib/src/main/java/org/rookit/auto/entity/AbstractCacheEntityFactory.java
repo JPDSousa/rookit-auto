@@ -19,36 +19,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Maps;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.Map;
 
-public interface ElementUtils {
+abstract class AbstractCacheEntityFactory implements EntityFactory {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final Map<String, Entity> entityCache;
 
-    TypeMirror erasure(Class<?> clazz);
+    AbstractCacheEntityFactory() {
+        this.entityCache = Maps.newHashMap();
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public Entity create(final ExtendedTypeElement element) {
+        return this.entityCache.computeIfAbsent(element.getQualifiedName().toString(),
+                name -> createNew(element));
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    abstract Entity createNew(ExtendedTypeElement element);
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("entityCache", this.entityCache)
+                .toString();
+    }
 }

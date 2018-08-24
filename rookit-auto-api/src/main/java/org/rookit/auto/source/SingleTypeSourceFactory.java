@@ -19,36 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.source;
 
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+@FunctionalInterface
+public interface SingleTypeSourceFactory {
 
-public interface ElementUtils {
-
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
-
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    TypeSource create(Identifier identifier, ExtendedTypeElement element);
 }

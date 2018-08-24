@@ -19,36 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javapoet.type;
 
-import org.rookit.auto.naming.PackageReference;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.function.Function;
 
-public interface ElementUtils {
+public interface SingletonTypeSpecToolkit {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    MethodSpec constructor();
 
-    TypeMirror erasure(Class<?> clazz);
+    default FieldSpec field(final ClassName type) {
+        return field(type, fieldName -> CodeBlock.of("new $S()", fieldName));
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    FieldSpec field(ClassName type, Function<String, CodeBlock> initializer);
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    default MethodSpec method(final ClassName type) {
+        return method(type, "getInstance");
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
+    MethodSpec method(ClassName type, String methodName);
 
 }

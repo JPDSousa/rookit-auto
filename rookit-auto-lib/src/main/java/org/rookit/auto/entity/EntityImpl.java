@@ -19,36 +19,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.source.TypeSource;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+import javax.annotation.processing.Filer;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
-public interface ElementUtils {
+final class EntityImpl extends AbstractEntity {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final Identifier identifier;
+    private final TypeSource source;
 
-    TypeMirror erasure(Class<?> clazz);
+    EntityImpl(final PartialEntity genericReference,
+               final Identifier identifier,
+               final TypeSource source) {
+        super(genericReference);
+        this.identifier = identifier;
+        this.source = source;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public Identifier identifier() {
+        return this.identifier;
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    protected CompletableFuture<Void> writeEntityTo(final Filer filer) throws IOException {
+        return this.source.writeTo(filer);
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("identifier", this.identifier)
+                .add("source", this.source)
+                .toString();
+    }
 }

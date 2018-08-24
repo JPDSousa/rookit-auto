@@ -19,36 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+import javax.annotation.processing.Filer;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public interface ElementUtils {
+public abstract class AbstractEntity implements Entity {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final PartialEntity genericReference;
 
-    TypeMirror erasure(Class<?> clazz);
+    protected AbstractEntity(final PartialEntity genericReference) {
+        this.genericReference = genericReference;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public Identifier genericIdentifier() {
+        return this.genericReference.genericIdentifier();
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    public Collection<PartialEntity> parents() {
+        return this.genericReference.parents();
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
+    @Override
+    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+        return CompletableFuture.allOf(this.genericReference.writeTo(filer), writeEntityTo(filer));
+    }
 
-    Optional<Element> toElement(TypeMirror typeMirror);
+    protected abstract CompletableFuture<Void> writeEntityTo(final Filer filer) throws IOException;
 
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("genericReference", this.genericReference)
+                .toString();
+    }
 }

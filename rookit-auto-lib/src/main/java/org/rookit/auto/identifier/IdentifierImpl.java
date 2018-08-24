@@ -19,36 +19,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.identifier;
 
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.entity.Identifier;
 import org.rookit.auto.naming.PackageReference;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+final class IdentifierImpl implements Identifier {
 
-public interface ElementUtils {
+    private final PackageReference packageReference;
+    private final String name;
+    private final String original;
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    IdentifierImpl(final PackageReference packageReference, final String name, final String original) {
+        this.original = original;
+        this.packageReference = packageReference;
+        this.name = name;
+    }
 
-    TypeMirror erasure(Class<?> clazz);
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public PackageReference packageName() {
+        return this.packageReference;
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    public String qualifiedOriginal() {
+        return this.original;
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("packageReference", this.packageReference)
+                .add("name", this.name)
+                .add("original", this.original)
+                .toString();
+    }
 }

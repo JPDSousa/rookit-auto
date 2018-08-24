@@ -19,36 +19,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javapoet.naming;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeVariableName;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+public final class NoParamsJavaPoetParameterResolver implements JavaPoetParameterResolver {
 
-public interface ElementUtils {
+    public static JavaPoetParameterResolver create(final JavaPoetNamingFactory namingFactory) {
+        return new NoParamsJavaPoetParameterResolver(namingFactory);
+    }
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final JavaPoetNamingFactory namingFactory;
 
-    TypeMirror erasure(Class<?> clazz);
+    private NoParamsJavaPoetParameterResolver(final JavaPoetNamingFactory namingFactory) {
+        this.namingFactory = namingFactory;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public TypeName resolveParameters(final ExtendedTypeElement element) {
+        return this.namingFactory.classNameFor(element);
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    public Iterable<TypeVariableName> createParameters(final ExtendedTypeElement element) {
+        return ImmutableSet.of();
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("namingFactory", this.namingFactory)
+                .toString();
+    }
 }

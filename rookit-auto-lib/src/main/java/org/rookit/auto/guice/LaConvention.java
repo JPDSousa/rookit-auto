@@ -19,36 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.guice;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.inject.BindingAnnotation;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public interface ElementUtils {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
-
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+@SuppressWarnings("javadoc")
+@Retention(RUNTIME)
+@BindingAnnotation
+@Target({FIELD, METHOD, PARAMETER})
+public @interface LaConvention {
 }

@@ -19,36 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+public final class BaseEntityFactory implements EntityFactory {
 
-public interface ElementUtils {
+    public static EntityFactory create(final EntityFactory entityFactory) {
+        return new BaseEntityFactory(entityFactory);
+    }
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final EntityFactory entityFactory;
 
-    TypeMirror erasure(Class<?> clazz);
+    private BaseEntityFactory(final EntityFactory entityFactory) {
+        this.entityFactory = entityFactory;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public Entity create(final ExtendedTypeElement element) {
+        return this.entityFactory.create(element);
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("entityFactory", this.entityFactory)
+                .toString();
+    }
 }

@@ -23,8 +23,12 @@ package org.rookit.auto;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
+import org.rookit.auto.naming.BasePackageReferenceFactory;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.utils.guice.Dummy;
 import org.rookit.utils.io.DummyInputStream;
 import org.rookit.utils.io.DummyOutputStream;
@@ -39,6 +43,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+@SuppressWarnings("MethodMayBeStatic")
 public final class SourceUtilsModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(new SourceUtilsModule(),
@@ -53,10 +58,17 @@ public final class SourceUtilsModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Filer.class).to(IdempotentFiler.class).in(Singleton.class);
+        bind(PackageReferenceFactory.class).toInstance(BasePackageReferenceFactory.create());
         bind(JavaFileObject.class).annotatedWith(Dummy.class).to(DummyJavaFileObject.class).in(Singleton.class);
         bind(InputStream.class).annotatedWith(Dummy.class).toInstance(DummyInputStream.get());
         bind(OutputStream.class).annotatedWith(Dummy.class).toInstance(DummyOutputStream.get());
         bind(Reader.class).annotatedWith(Dummy.class).toInstance(DummyReader.get());
         bind(Writer.class).annotatedWith(Dummy.class).toInstance(DummyWriter.get());
+    }
+
+    @Singleton
+    @Provides
+    PackageReference basePackage(final PackageReferenceFactory factory) {
+        return factory.basePackage();
     }
 }

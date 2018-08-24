@@ -22,14 +22,15 @@
 package org.rookit.auto;
 
 import javax.lang.model.element.TypeElement;
-import java.io.Closeable;
 
-public interface EntityHandler extends Closeable {
+public interface EntityHandler {
 
     void process(TypeElement entity);
 
     default void process(final Iterable<TypeElement> entities) {
         entities.forEach(this::process);
     }
+
+    void postProcess();
 
 }

@@ -35,8 +35,4 @@ final class TypeElementDecoratorImpl extends AbstractTypeElementDecorator {
         return Optional.empty();
     }
 
-    @Override
-    public boolean hasChild() {
-        return false;
-    }
 }

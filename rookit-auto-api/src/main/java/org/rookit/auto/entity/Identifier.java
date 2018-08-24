@@ -21,12 +21,17 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
+import org.rookit.auto.naming.PackageReference;
+
 public interface Identifier {
 
     String name();
 
-    String packageName();
+    PackageReference packageName();
 
     String qualifiedOriginal();
 
+    default String fqdn() {
+        return packageName().fullName() + '.' + name();
+    }
 }

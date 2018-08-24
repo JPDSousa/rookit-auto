@@ -19,36 +19,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.naming;
 
-import org.rookit.auto.naming.PackageReference;
+import java.util.regex.Pattern;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+public final class BasePackageReferenceFactory implements PackageReferenceFactory {
 
-public interface ElementUtils {
+    private static final Pattern SPLITTER = Pattern.compile("\\.");
+    private static final PackageReference ORG = new ImmutablePackageReference("org");
+    private static final PackageReference ROOKIT = ORG.concat("rookit");
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    public static PackageReferenceFactory create() {
+        return new BasePackageReferenceFactory();
+    }
 
-    TypeMirror erasure(Class<?> clazz);
+    private BasePackageReferenceFactory() {}
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public PackageReference basePackage() {
+        return ROOKIT;
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    public PackageReference create(final CharSequence fqdn) {
+        final String[] packages = SPLITTER.split(fqdn);
+        final int length = packages.length;
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+        // TODO check if not empty
+        PackageReference pkg = new ImmutablePackageReference(packages[0]);
+        for (int i = 1; i < length; i++) {
+            pkg = pkg.concat(packages[i]);
+        }
+        return pkg;
+    }
 }

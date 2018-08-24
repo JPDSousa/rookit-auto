@@ -21,13 +21,13 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.naming;
 
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeVariableName;
+import com.squareup.javapoet.ClassName;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.naming.NamingFactory;
 
-public interface JavaPoetNamingFactory {
+public interface JavaPoetNamingFactory extends NamingFactory {
 
-    TypeName resolveParameters(ExtendedTypeElement element);
-
-    Iterable<TypeVariableName> createParameters(ExtendedTypeElement element);
+    default ClassName classNameFor(final ExtendedTypeElement element) {
+        return ClassName.get(packageName(element).fullName(), type(element));
+    }
 }

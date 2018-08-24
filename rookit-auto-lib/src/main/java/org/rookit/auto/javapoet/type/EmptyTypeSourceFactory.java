@@ -19,51 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto;
+package org.rookit.auto.javapoet.type;
 
 import com.google.common.base.MoreObjects;
-import org.rookit.auto.entity.Entity;
-import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeSpec;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.naming.NamingFactory;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.source.SingleTypeSourceFactory;
+import org.rookit.auto.source.TypeSource;
 
-import javax.annotation.processing.Filer;
-import javax.lang.model.element.TypeElement;
-import java.io.IOException;
+import javax.lang.model.element.Modifier;
 
-public abstract class AbstractEntityHandler implements EntityHandler {
+public final class EmptyTypeSourceFactory implements SingleTypeSourceFactory {
 
-    private final EntityFactory entityFactory;
-    private final ElementUtils utils;
-    private final Filer filer;
-
-    protected AbstractEntityHandler(final EntityFactory entityFactory,
-                                    final ElementUtils utils,
-                                    final Filer filer) {
-        this.entityFactory = entityFactory;
-        this.utils = utils;
-        this.filer = filer;
+    public static SingleTypeSourceFactory create(final NamingFactory namingFactory) {
+        return new EmptyTypeSourceFactory(namingFactory);
     }
 
-    protected ElementUtils utils() {
-        return this.utils;
+    private final NamingFactory namingFactory;
+
+    private EmptyTypeSourceFactory(final NamingFactory namingFactory) {
+        this.namingFactory = namingFactory;
     }
 
     @Override
-    public void process(final TypeElement element) {
-        try {
-            final Entity entity = this.entityFactory.create(this.utils.extend(element));
-            entity.writeTo(this.filer);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+    public TypeSource create(final Identifier identifier,
+                             final ExtendedTypeElement element) {
+        final PackageReference packageReference = this.namingFactory.packageName(element);
+        final String className = this.namingFactory.type(element);
+        final TypeSpec spec = TypeSpec.interfaceBuilder(ClassName.get(packageReference.fullName(), className))
+                .addModifiers(Modifier.PUBLIC)
+                .build();
+        return new BaseTypeSource(identifier, spec);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("entityFactory", this.entityFactory)
-                .add("utils", this.utils)
-                .add("filer", this.filer)
+                .add("namingFactory", this.namingFactory)
                 .toString();
     }
 }

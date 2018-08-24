@@ -22,12 +22,10 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-import org.rookit.utils.convention.annotation.Entity;
-import org.rookit.utils.convention.annotation.EntityExtension;
-import org.rookit.utils.convention.annotation.PartialEntity;
-import org.rookit.utils.convention.annotation.PropertyContainer;
+import org.rookit.auto.guice.LaConvention;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.naming.PackageReferenceFactory;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.Element;
@@ -41,6 +39,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 final class ElementUtilsImpl implements ElementUtils {
 
@@ -48,17 +47,20 @@ final class ElementUtilsImpl implements ElementUtils {
     private final Types types;
     private final TypeParameterExtractor extractor;
     private final Collection<Class<? extends Annotation>> annotations;
+    private final PackageReferenceFactory packageFactory;
 
+    @SuppressWarnings("TypeMayBeWeakened") // due to multibinder
     @Inject
-    private ElementUtilsImpl(final Elements elements, final Types types, final TypeParameterExtractor extractor) {
+    private ElementUtilsImpl(final Elements elements,
+                             final Types types,
+                             final TypeParameterExtractor extractor,
+                             final PackageReferenceFactory packageFactory,
+                             @LaConvention final Set<Class<? extends Annotation>> annotations) {
         this.elements = elements;
         this.types = types;
         this.extractor = extractor;
-        this.annotations = ImmutableSet.of(Entity.class,
-                EntityExtension.class,
-                PartialEntity.class,
-                org.rookit.utils.convention.annotation.Property.class,
-                PropertyContainer.class);
+        this.packageFactory = packageFactory;
+        this.annotations = annotations;
     }
 
     @Override
@@ -109,9 +111,9 @@ final class ElementUtilsImpl implements ElementUtils {
     }
 
     @Override
-    public PackageElement packageOf(final Element element) {
+    public PackageReference packageOf(final Element element) {
         if (element instanceof PackageElement) {
-            return (PackageElement) element;
+            return this.packageFactory.create((PackageElement) element);
         }
         final Element enclosing = element.getEnclosingElement();
         if (Objects.isNull(enclosing)) {
@@ -127,6 +129,7 @@ final class ElementUtilsImpl implements ElementUtils {
                 .add("types", this.types)
                 .add("extractor", this.extractor)
                 .add("annotations", this.annotations)
+                .add("packageFactory", this.packageFactory)
                 .toString();
     }
 }

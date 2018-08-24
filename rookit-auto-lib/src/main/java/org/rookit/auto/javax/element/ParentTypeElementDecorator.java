@@ -41,11 +41,6 @@ final class ParentTypeElementDecorator extends AbstractTypeElementDecorator {
     }
 
     @Override
-    public boolean hasChild() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("child", this.child)

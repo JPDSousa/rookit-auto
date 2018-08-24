@@ -19,36 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javapoet.naming;
 
-import org.rookit.auto.naming.PackageReference;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeVariableName;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+public interface JavaPoetParameterResolver {
 
-public interface ElementUtils {
+    TypeName resolveParameters(ExtendedTypeElement element);
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
-
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    Iterable<TypeVariableName> createParameters(ExtendedTypeElement element);
 }

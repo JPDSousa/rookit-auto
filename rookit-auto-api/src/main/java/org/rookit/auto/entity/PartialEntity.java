@@ -21,16 +21,14 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import javax.annotation.processing.Filer;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
+import org.rookit.auto.source.CodeSource;
 
-public interface PartialEntity {
+import java.util.Collection;
+
+public interface PartialEntity extends CodeSource {
 
     Identifier genericIdentifier();
 
     Collection<PartialEntity> parents();
 
-    CompletableFuture<Void> writeTo(Filer filer) throws IOException;
 }

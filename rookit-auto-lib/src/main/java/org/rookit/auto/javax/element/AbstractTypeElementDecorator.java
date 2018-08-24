@@ -23,6 +23,8 @@ package org.rookit.auto.javax.element;
 
 import com.google.common.base.MoreObjects;
 import one.util.streamex.StreamEx;
+import org.rookit.utils.convention.annotation.Entity;
+import org.rookit.utils.convention.annotation.EntityExtension;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -36,6 +38,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -58,6 +61,12 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
                 .select(TypeElement.class)
                 .filter(this.utils::isConventionElement)
                 .map(element -> new ParentTypeElementDecorator(element, this, this.utils));
+    }
+
+    @Override
+    public boolean isEntity() {
+        return Objects.nonNull(this.getAnnotation(Entity.class))
+                || Objects.nonNull(this.getAnnotation(EntityExtension.class));
     }
 
     @Override

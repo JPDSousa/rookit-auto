@@ -19,51 +19,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto;
+package org.rookit.auto.entity;
 
 import com.google.common.base.MoreObjects;
-import org.rookit.auto.entity.Entity;
-import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.TypeElement;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 
-public abstract class AbstractEntityHandler implements EntityHandler {
+public abstract class AbstractPartialEntity implements PartialEntity {
 
-    private final EntityFactory entityFactory;
-    private final ElementUtils utils;
-    private final Filer filer;
+    private final Identifier genericIdentifier;
+    private final Collection<PartialEntity> parents;
 
-    protected AbstractEntityHandler(final EntityFactory entityFactory,
-                                    final ElementUtils utils,
-                                    final Filer filer) {
-        this.entityFactory = entityFactory;
-        this.utils = utils;
-        this.filer = filer;
-    }
-
-    protected ElementUtils utils() {
-        return this.utils;
+    protected AbstractPartialEntity(final Identifier genericIdentifier,
+                                    final Collection<? extends PartialEntity> parents) {
+        this.genericIdentifier = genericIdentifier;
+        this.parents = ImmutableSet.copyOf(parents);
     }
 
     @Override
-    public void process(final TypeElement element) {
-        try {
-            final Entity entity = this.entityFactory.create(this.utils.extend(element));
-            entity.writeTo(this.filer);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Identifier genericIdentifier() {
+        return this.genericIdentifier;
     }
+
+    @Override
+    public Collection<PartialEntity> parents() {
+        return Collections.unmodifiableCollection(this.parents);
+    }
+
+    @Override
+    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+        for (final PartialEntity parent : parents()) {
+            parent.writeTo(filer);
+        }
+        return writePartialEntityTo(filer);
+    }
+
+    protected abstract CompletableFuture<Void> writePartialEntityTo(Filer filer) throws IOException;
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("entityFactory", this.entityFactory)
-                .add("utils", this.utils)
-                .add("filer", this.filer)
+                .add("genericIdentifier", this.genericIdentifier)
+                .add("parents", this.parents)
                 .toString();
     }
 }

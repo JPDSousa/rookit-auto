@@ -19,29 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto;
+package org.rookit.auto.javapoet.type;
 
-import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import com.google.common.base.MoreObjects;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeSpec;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.source.TypeSource;
+import org.rookit.utils.VoidUtils;
 
 import javax.annotation.processing.Filer;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
-public final class StatelessEntityHandler extends AbstractEntityHandler {
+final class BaseTypeSource implements TypeSource {
 
-    public static EntityHandler create(final EntityFactory entityFactory,
-                                       final ElementUtils utils,
-                                       final Filer filer) {
-        return new StatelessEntityHandler(entityFactory, utils, filer);
-    }
+    private final Identifier identifier;
+    private final TypeSpec source;
 
-    private StatelessEntityHandler(final EntityFactory entityFactory,
-                                   final ElementUtils utils,
-                                   final Filer filer) {
-        super(entityFactory, utils, filer);
+    BaseTypeSource(final Identifier identifier, final TypeSpec source) {
+        this.source = source;
+        this.identifier = identifier;
     }
 
     @Override
-    public void postProcess() {
-        // Nothing to do here
+    public Identifier identifier() {
+        return this.identifier;
+    }
+
+    @Override
+    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+        JavaFile.builder(identifier().packageName().fullName(), this.source)
+                .build()
+                .writeTo(filer);
+        return CompletableFuture.completedFuture(VoidUtils.returnVoid());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("identifier", this.identifier)
+                .add("source", this.source)
+                .toString();
     }
 }

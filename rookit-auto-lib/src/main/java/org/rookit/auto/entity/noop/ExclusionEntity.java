@@ -19,36 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.entity.noop;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.entity.AbstractEntity;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.entity.PartialEntity;
+import org.rookit.utils.VoidUtils;
 
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.Optional;
+import javax.annotation.processing.Filer;
+import java.util.concurrent.CompletableFuture;
 
-public interface ElementUtils {
+final class ExclusionEntity extends AbstractEntity {
 
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
+    private final Identifier identifier;
 
-    TypeMirror erasure(Class<?> clazz);
+    ExclusionEntity(final Identifier identifier, final PartialEntity genericReference) {
+        super(genericReference);
+        this.identifier = identifier;
+    }
 
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
+    @Override
+    public Identifier identifier() {
+        return this.identifier;
+    }
 
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
+    @Override
+    public CompletableFuture<Void> writeEntityTo(final Filer filer) {
+        // Do nothing, as this entity is already implemented
+        return CompletableFuture.completedFuture(VoidUtils.returnVoid());
+    }
 
-    TypeMirror primitive(TypeKind typeKind);
-
-    Optional<Element> toElement(TypeMirror typeMirror);
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("identifier", this.identifier)
+                .toString();
+    }
 }

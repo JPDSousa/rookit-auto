@@ -30,9 +30,9 @@ public interface ExtendedTypeElement extends TypeElement {
 
     Optional<ExtendedTypeElement> child();
 
-    boolean hasChild();
-
     boolean isTopLevel();
+
+    boolean isEntity();
 
     StreamEx<ExtendedTypeElement> conventionInterfaces();
 }

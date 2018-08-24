@@ -19,51 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto;
+package org.rookit.auto.identifier;
 
 import com.google.common.base.MoreObjects;
-import org.rookit.auto.entity.Entity;
-import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import com.google.common.collect.Maps;
+import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.naming.NamingFactory;
+import org.rookit.auto.naming.PackageReference;
 
-import javax.annotation.processing.Filer;
-import javax.lang.model.element.TypeElement;
-import java.io.IOException;
+import java.util.Map;
 
-public abstract class AbstractEntityHandler implements EntityHandler {
+public final class BaseIdentifierFactory implements IdentifierFactory {
 
-    private final EntityFactory entityFactory;
-    private final ElementUtils utils;
-    private final Filer filer;
-
-    protected AbstractEntityHandler(final EntityFactory entityFactory,
-                                    final ElementUtils utils,
-                                    final Filer filer) {
-        this.entityFactory = entityFactory;
-        this.utils = utils;
-        this.filer = filer;
+    public static IdentifierFactory create(final NamingFactory namingFactory) {
+        return new BaseIdentifierFactory(namingFactory);
     }
 
-    protected ElementUtils utils() {
-        return this.utils;
+    private final NamingFactory namingFactory;
+    private final Map<String, Identifier> cache;
+
+    private BaseIdentifierFactory(final NamingFactory namingFactory) {
+        this.namingFactory = namingFactory;
+        this.cache = Maps.newHashMap();
     }
 
     @Override
-    public void process(final TypeElement element) {
-        try {
-            final Entity entity = this.entityFactory.create(this.utils.extend(element));
-            entity.writeTo(this.filer);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Identifier create(final ExtendedTypeElement typeElement) {
+        return this.cache.computeIfAbsent(typeElement.getQualifiedName().toString(), name -> createNew(typeElement));
+    }
+
+    private Identifier createNew(final ExtendedTypeElement typeElement) {
+        final String className = this.namingFactory.type(typeElement);
+        final PackageReference packageReference = this.namingFactory.packageName(typeElement);
+        return new IdentifierImpl(packageReference, className, typeElement.getQualifiedName().toString());
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("entityFactory", this.entityFactory)
-                .add("utils", this.utils)
-                .add("filer", this.filer)
+                .add("namingFactory", this.namingFactory)
+                .add("cache", this.cache)
                 .toString();
     }
 }

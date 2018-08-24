@@ -52,31 +52,56 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
         this.utils = utils;
     }
 
-    @Override
-    public StreamEx<ExtendedTypeElement> conventionInterfaces() {
+    private StreamEx<TypeElement> conventionTypeInterfaces() {
         return StreamEx.of(getInterfaces())
                 .map(this.utils::toElement)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .select(TypeElement.class)
-                .filter(this.utils::isConventionElement)
+                .filter(this.utils::isConventionElement);
+    }
+
+    @Override
+    public boolean isTopLevel() {
+        return !conventionTypeInterfaces()
+                .findFirst()
+                .isPresent();
+    }
+
+    @Override
+    public StreamEx<ExtendedTypeElement> conventionInterfaces() {
+        return conventionTypeInterfaces()
                 .map(element -> new ParentTypeElementDecorator(element, this, this.utils));
     }
 
     @Override
     public boolean isEntity() {
         return Objects.nonNull(this.getAnnotation(Entity.class))
-                || Objects.nonNull(this.getAnnotation(EntityExtension.class));
+                || isEntityExtension();
     }
 
     @Override
-    public boolean isTopLevel() {
-        return StreamEx.of(getInterfaces())
-                .map(this.utils::toElement)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .select(TypeElement.class)
-                .noneMatch(this.utils::isConventionElement);
+    public boolean isEntityExtension() {
+        return Objects.nonNull(this.getAnnotation(EntityExtension.class));
+    }
+
+    @Override
+    public Optional<ExtendedTypeElement> upstreamEntity() {
+        if (isTopLevel()) {
+            return Optional.empty();
+        }
+        if (isEntityExtension()) {
+            return conventionInterfaces()
+                    .map(ExtendedTypeElement::upstreamEntity)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findFirst();
+        }
+        if (isEntity()) {
+            return Optional.of(this);
+        }
+
+        return Optional.empty();
     }
 
     @Override

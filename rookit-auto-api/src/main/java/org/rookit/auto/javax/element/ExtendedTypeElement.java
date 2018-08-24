@@ -34,5 +34,9 @@ public interface ExtendedTypeElement extends TypeElement {
 
     boolean isEntity();
 
+    boolean isEntityExtension();
+
+    Optional<ExtendedTypeElement> upstreamEntity();
+
     StreamEx<ExtendedTypeElement> conventionInterfaces();
 }

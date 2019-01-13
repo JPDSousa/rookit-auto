@@ -19,15 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javapoet.type;
+package org.rookit.auto.javax.element;
 
-import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.identifier.Identifier;
-import org.rookit.auto.source.TypeSource;
+import javax.lang.model.element.TypeElement;
 
-@FunctionalInterface
-public interface TypeSourceAdapter {
+public interface ExtendedTypeElementFactory {
 
-    TypeSource fromTypeSpec(Identifier identifier, TypeSpec source);
+    ExtendedTypeElement extend(TypeElement baseElement);
 
 }

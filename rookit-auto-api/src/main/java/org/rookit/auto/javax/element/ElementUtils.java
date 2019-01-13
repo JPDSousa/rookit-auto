@@ -55,6 +55,8 @@ public interface ElementUtils {
 
     TypeMirror primitive(TypeKind typeKind);
 
+    TypeMirror boxIfPrimitive(TypeMirror typeMirror);
+
     Optional<Element> toElement(TypeMirror typeMirror);
 
     boolean isConventionElement(AnnotatedConstruct element);

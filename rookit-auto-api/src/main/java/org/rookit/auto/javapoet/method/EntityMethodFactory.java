@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javapoet;
+package org.rookit.auto.javapoet.method;
 
 import com.squareup.javapoet.MethodSpec;
-import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
+@FunctionalInterface
 public interface EntityMethodFactory {
 
-    StreamEx<MethodSpec> create(ExtendedTypeElement element);
+    Iterable<MethodSpec> create(ExtendedTypeElement element);
 }

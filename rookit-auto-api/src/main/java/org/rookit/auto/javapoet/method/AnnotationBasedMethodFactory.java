@@ -19,26 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javapoet;
+package org.rookit.auto.javapoet.method;
 
-import com.squareup.javapoet.MethodSpec;
-import org.rookit.auto.javax.ExtendedProperty;
-
+import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public interface MethodFactory {
+public interface AnnotationBasedMethodFactory extends MethodFactory {
 
-    default Collection<MethodSpec> filterCompatible(final Collection<ExtendedProperty> properties) {
-        return properties.stream()
-                .filter(this::isCompatible)
-                .flatMap(this::create)
-                .collect(Collectors.toList());
-    }
-
-    Stream<MethodSpec> create(ExtendedProperty property);
-
-    boolean isCompatible(ExtendedProperty property);
+    Collection<Class<? extends Annotation>> supportedAnnotations();
 
 }

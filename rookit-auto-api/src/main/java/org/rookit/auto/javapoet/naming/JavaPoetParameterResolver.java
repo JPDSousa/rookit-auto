@@ -27,7 +27,7 @@ import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 public interface JavaPoetParameterResolver {
 
-    TypeName resolveParameters(ExtendedTypeElement element);
+    TypeName resolveParameters(ExtendedTypeElement element, TypeVariableName... typeVariables);
 
     Iterable<TypeVariableName> createParameters(ExtendedTypeElement element);
 }

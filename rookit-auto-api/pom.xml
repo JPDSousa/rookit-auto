@@ -11,5 +11,6 @@
 
     <artifactId>rookit-auto-api</artifactId>
 
+    <name>Rookit Auto Api</name>
 
 </project>

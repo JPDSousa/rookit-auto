@@ -24,25 +24,33 @@ package org.rookit.auto.javax;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.type.ExtendedClassFactory;
 
 final class FastUtilInt2ObjectMapProvider implements Provider<KeyedRepetitiveTypeMirror> {
 
     private final RepetitiveTypeMirrorFactory factory;
+    private final ExtendedClassFactory classFactory;
 
     @Inject
-    private FastUtilInt2ObjectMapProvider(final RepetitiveTypeMirrorFactory factory) {
+    private FastUtilInt2ObjectMapProvider(final RepetitiveTypeMirrorFactory factory,
+                                          final ExtendedClassFactory classFactory) {
         this.factory = factory;
+        this.classFactory = classFactory;
     }
 
     @Override
     public KeyedRepetitiveTypeMirror get() {
-        return this.factory.createKeyed(Int2ObjectMap.class, int.class, 0);
+        final ExtendedClass<?> extendedClass = this.classFactory.create(Int2ObjectMap.class);
+        final ExtendedClass<?> keyClass = this.classFactory.create(int.class);
+        return this.factory.createKeyed(extendedClass, keyClass, 0);
     }
 
     @Override
     public String toString() {
         return "FastUtilInt2ObjectMapProvider{" +
                 "factory=" + this.factory +
+                ", classFactory=" + this.classFactory +
                 "}";
     }
 }

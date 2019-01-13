@@ -23,27 +23,33 @@ package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.type.ExtendedClassFactory;
 
 import java.util.Queue;
 
 final class JavaQueueProvider implements Provider<RepetitiveTypeMirror> {
 
     private final RepetitiveTypeMirrorFactory factory;
+    private final ExtendedClassFactory classFactory;
 
     @Inject
-    private JavaQueueProvider(final RepetitiveTypeMirrorFactory factory) {
+    private JavaQueueProvider(final RepetitiveTypeMirrorFactory factory, final ExtendedClassFactory classFactory) {
         this.factory = factory;
+        this.classFactory = classFactory;
     }
 
     @Override
     public RepetitiveTypeMirror get() {
-        return this.factory.create(Queue.class, 0);
+        final ExtendedClass<?> extendedClass = this.classFactory.create(Queue.class);
+        return this.factory.create(extendedClass, 0);
     }
 
     @Override
     public String toString() {
         return "JavaQueueProvider{" +
                 "factory=" + this.factory +
+                ", classFactory=" + this.classFactory +
                 "}";
     }
 }

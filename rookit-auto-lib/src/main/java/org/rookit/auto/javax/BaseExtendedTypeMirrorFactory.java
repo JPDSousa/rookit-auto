@@ -23,20 +23,28 @@ package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
 import org.rookit.auto.javax.element.ElementUtils;
+import org.rookit.utils.type.ClassVisitor;
+import org.rookit.utils.type.ExtendedClass;
 
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
-public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory {
+public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory,
+        ClassVisitor<ExtendedTypeMirror> {
 
-    public static ExtendedTypeMirrorFactory create(final ElementUtils utils) {
-        return new BaseExtendedTypeMirrorFactory(utils);
+    public static ExtendedTypeMirrorFactory create(final ElementUtils utils, final Types types) {
+        return new BaseExtendedTypeMirrorFactory(utils, types);
     }
 
     private final ElementUtils utils;
+    private final Types types;
 
     @Inject
-    private BaseExtendedTypeMirrorFactory(final ElementUtils utils) {
+    private BaseExtendedTypeMirrorFactory(final ElementUtils utils,
+                                          final Types types) {
         this.utils = utils;
+        this.types = types;
     }
 
     @Override
@@ -44,15 +52,60 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
         return new ExtendedTypeMirrorImpl(typeMirror, this.utils);
     }
 
+    private ExtendedTypeMirror create(final TypeKind typeKind) {
+        return create(this.types.getPrimitiveType(typeKind));
+    }
+
     @Override
-    public ExtendedTypeMirror create(final Class<?> clazz) {
-        return new ExtendedTypeMirrorImpl(this.utils.erasure(clazz), this.utils);
+    public ExtendedTypeMirror create(final ExtendedClass<?> clazz) {
+        return clazz.accept(this);
+    }
+
+    @Override
+    public ExtendedTypeMirror booleanClass() {
+        return create(TypeKind.BOOLEAN);
+    }
+
+    @Override
+    public ExtendedTypeMirror byteClass() {
+        return create(TypeKind.BYTE);
+    }
+
+    @Override
+    public ExtendedTypeMirror shortClass() {
+        return create(TypeKind.SHORT);
+    }
+
+    @Override
+    public ExtendedTypeMirror intClass() {
+        return create(TypeKind.INT);
+    }
+
+    @Override
+    public ExtendedTypeMirror floatClass() {
+        return create(TypeKind.FLOAT);
+    }
+
+    @Override
+    public ExtendedTypeMirror doubleClass() {
+        return create(TypeKind.DOUBLE);
+    }
+
+    @Override
+    public ExtendedTypeMirror longClass() {
+        return create(TypeKind.LONG);
+    }
+
+    @Override
+    public ExtendedTypeMirror regularClass(final Class<?> clazz) {
+        return create(this.utils.erasure(clazz));
     }
 
     @Override
     public String toString() {
         return "BaseExtendedTypeMirrorFactory{" +
                 "utils=" + this.utils +
+                ", types=" + this.types +
                 "}";
     }
 }

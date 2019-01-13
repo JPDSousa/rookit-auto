@@ -23,27 +23,33 @@ package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.type.ExtendedClassFactory;
 
 import java.util.Map;
 
 final class JavaMapProvider implements Provider<KeyedRepetitiveTypeMirror> {
 
     private final RepetitiveTypeMirrorFactory factory;
+    private final ExtendedClassFactory classFactory;
 
     @Inject
-    private JavaMapProvider(final RepetitiveTypeMirrorFactory factory) {
+    private JavaMapProvider(final RepetitiveTypeMirrorFactory factory, final ExtendedClassFactory classFactory) {
         this.factory = factory;
+        this.classFactory = classFactory;
     }
 
     @Override
     public KeyedRepetitiveTypeMirror get() {
-        return this.factory.createKeyed(Map.class, 0, 1);
+        final ExtendedClass<?> extendedClass = this.classFactory.create(Map.class);
+        return this.factory.createKeyed(extendedClass, 0, 1);
     }
 
     @Override
     public String toString() {
         return "JavaMapProvider{" +
                 "factory=" + this.factory +
+                ", classFactory=" + this.classFactory +
                 "}";
     }
 }

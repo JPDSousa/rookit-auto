@@ -23,27 +23,33 @@ package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.type.ExtendedClassFactory;
 
 import java.util.Set;
 
 final class JavaSetProvider implements Provider<RepetitiveTypeMirror> {
 
     private final RepetitiveTypeMirrorFactory factory;
+    private final ExtendedClassFactory classFactory;
 
     @Inject
-    private JavaSetProvider(final RepetitiveTypeMirrorFactory factory) {
+    private JavaSetProvider(final RepetitiveTypeMirrorFactory factory, final ExtendedClassFactory classFactory) {
         this.factory = factory;
+        this.classFactory = classFactory;
     }
 
     @Override
     public RepetitiveTypeMirror get() {
-        return this.factory.create(Set.class, 0);
+        final ExtendedClass<?> extendedClass = this.classFactory.create(Set.class);
+        return this.factory.create(extendedClass, 0);
     }
 
     @Override
     public String toString() {
         return "JavaSetProvider{" +
                 "factory=" + this.factory +
+                ", classFactory=" + this.classFactory +
                 "}";
     }
 }

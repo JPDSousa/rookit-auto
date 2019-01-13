@@ -35,10 +35,10 @@ import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
 import org.rookit.auto.javapoet.type.BaseTypeSourceAdapter;
 import org.rookit.auto.javapoet.type.TypeSourceAdapter;
+import org.rookit.auto.javax.BaseExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.BaseJavaxRepetitionFactory;
 import org.rookit.auto.javax.BaseRepetitiveTypeMirrorFactory;
 import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
-import org.rookit.auto.javax.BaseExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
 import org.rookit.auto.javax.JavaxUtilsModule;
 import org.rookit.auto.javax.RepetitiveTypeMirrorFactory;
@@ -66,6 +66,8 @@ import org.rookit.utils.primitive.VoidUtils;
 import org.rookit.utils.primitive.VoidUtilsImpl;
 import org.rookit.utils.string.StringUtils;
 import org.rookit.utils.string.StringUtilsImpl;
+import org.rookit.utils.type.BaseExtendedClassFactory;
+import org.rookit.utils.type.ExtendedClassFactory;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.type.TypeMirror;
@@ -119,6 +121,7 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(StringUtils.class).to(StringUtilsImpl.class).in(Singleton.class);
         bind(OptionalFactory.class).to(OptionalFactoryImpl.class).in(Singleton.class);
         bind(Closer.class).toInstance(Closer.create());
+        bind(ExtendedClassFactory.class).to(BaseExtendedClassFactory.class).in(Singleton.class);
         // TODO end todo
     }
 

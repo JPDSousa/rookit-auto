@@ -21,20 +21,22 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.utils.type.ExtendedClass;
+
 import javax.lang.model.type.TypeMirror;
 
 public interface RepetitiveTypeMirrorFactory {
 
     RepetitiveTypeMirror create(TypeMirror delegate, int parameterIndex);
 
-    RepetitiveTypeMirror create(Class<?> delegate, int parameterIndex);
+    RepetitiveTypeMirror create(ExtendedClass<?> delegate, int parameterIndex);
 
     KeyedRepetitiveTypeMirror createKeyed(TypeMirror delegate, int keyIndex, int valueIndex);
 
-    KeyedRepetitiveTypeMirror createKeyed(Class<?> delegate, int keyIndex, int valueIndex);
+    KeyedRepetitiveTypeMirror createKeyed(ExtendedClass<?> delegate, int keyIndex, int valueIndex);
 
-    KeyedRepetitiveTypeMirror createKeyed(TypeMirror delegate, Class<?> constantKey, int valueIndex);
+    KeyedRepetitiveTypeMirror createKeyed(TypeMirror delegate, ExtendedClass<?> constantKey, int valueIndex);
 
-    KeyedRepetitiveTypeMirror createKeyed(Class<?> delegate, Class<?> constantKey, int valueIndex);
+    KeyedRepetitiveTypeMirror createKeyed(ExtendedClass<?> delegate, ExtendedClass<?> constantKey, int valueIndex);
 
 }

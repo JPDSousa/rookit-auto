@@ -22,7 +22,8 @@
 package org.rookit.auto.javapoet;
 
 import com.squareup.javapoet.FieldSpec;
-import org.rookit.auto.javax.ExtendedProperty;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.ExtendedProperty;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -30,14 +31,15 @@ import java.util.stream.Stream;
 
 public interface FieldFactory {
 
-    default Collection<FieldSpec> filterCompatible(final Collection<ExtendedProperty> properties) {
+    default Collection<FieldSpec> filterCompatible(final ExtendedTypeElement owner,
+                                                   final Collection<ExtendedProperty> properties) {
         return properties.stream()
                 .filter(this::isCompatible)
-                .flatMap(this::create)
+                .flatMap(property -> create(owner, property))
                 .collect(Collectors.toList());
     }
 
-    Stream<FieldSpec> create(ExtendedProperty property);
+    Stream<FieldSpec> create(ExtendedTypeElement owner, ExtendedProperty property);
 
     boolean isCompatible(ExtendedProperty property);
 }

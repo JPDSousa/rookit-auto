@@ -19,19 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity;
+package org.rookit.auto.identifier;
 
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-public interface Identifier {
+@FunctionalInterface
+public interface EntityIdentifierFactory {
 
-    String name();
-
-    PackageReference packageName();
-
-    String qualifiedOriginal();
-
-    default String fqdn() {
-        return packageName().fullName() + '.' + name();
-    }
+    Identifier create(ExtendedTypeElement typeElement);
 }

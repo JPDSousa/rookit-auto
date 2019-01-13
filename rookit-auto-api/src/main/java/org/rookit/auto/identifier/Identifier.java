@@ -21,11 +21,17 @@
  ******************************************************************************/
 package org.rookit.auto.identifier;
 
-import org.rookit.auto.entity.Identifier;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.naming.PackageReference;
 
-@FunctionalInterface
-public interface IdentifierFactory {
+public interface Identifier {
 
-    Identifier create(ExtendedTypeElement typeElement);
+    String name();
+
+    PackageReference packageName();
+
+    String qualifiedOriginal();
+
+    default String fqdn() {
+        return packageName().fullName() + '.' + name();
+    }
 }

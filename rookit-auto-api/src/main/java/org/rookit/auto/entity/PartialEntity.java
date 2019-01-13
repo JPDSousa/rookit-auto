@@ -21,13 +21,14 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.CodeSource;
 
 import java.util.Collection;
 
 public interface PartialEntity extends CodeSource {
 
-    Identifier genericIdentifier();
+    org.rookit.utils.optional.Optional<Identifier> genericIdentifier();
 
     Collection<PartialEntity> parents();
 

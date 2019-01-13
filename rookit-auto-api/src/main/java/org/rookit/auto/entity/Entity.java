@@ -21,6 +21,8 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
+import org.rookit.auto.identifier.Identifier;
+
 public interface Entity extends PartialEntity {
 
     Identifier identifier();

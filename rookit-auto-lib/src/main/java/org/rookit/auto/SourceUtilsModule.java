@@ -37,6 +37,8 @@ import org.rookit.auto.javapoet.type.BaseTypeSourceAdapter;
 import org.rookit.auto.javapoet.type.TypeSourceAdapter;
 import org.rookit.auto.javax.BaseJavaxRepetitionFactory;
 import org.rookit.auto.javax.BaseRepetitiveTypeMirrorFactory;
+import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
+import org.rookit.auto.javax.BaseExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
 import org.rookit.auto.javax.JavaxUtilsModule;
 import org.rookit.auto.javax.RepetitiveTypeMirrorFactory;
@@ -107,6 +109,7 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(PropertyAdapter.class).to(BasePropertyAdapter.class).in(Singleton.class);
         bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
         bind(JavaxRepetitionFactory.class).to(BaseJavaxRepetitionFactory.class).in(Singleton.class);
+        bind(ExtendedTypeMirrorFactory.class).to(BaseExtendedTypeMirrorFactory.class).in(Singleton.class);
         bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
         bind(PropertyExtractor.class).to(BasePropertyExtractor.class).in(Singleton.class);
         bind(TypeSourceAdapter.class).to(BaseTypeSourceAdapter.class).in(Singleton.class);

@@ -20,3 +20,5 @@ hs_err_pid*
 rookit-auto-api/target/
 
 rookit-auto-lib/target/
+
+rookit-auto-test/target/

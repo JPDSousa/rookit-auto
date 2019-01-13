@@ -26,16 +26,16 @@ import org.rookit.auto.javax.element.ElementUtils;
 
 import javax.lang.model.type.TypeMirror;
 
-public final class ExtendedTypeMirrorFactoryImpl implements ExtendedTypeMirrorFactory {
+public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory {
 
     public static ExtendedTypeMirrorFactory create(final ElementUtils utils) {
-        return new ExtendedTypeMirrorFactoryImpl(utils);
+        return new BaseExtendedTypeMirrorFactory(utils);
     }
 
     private final ElementUtils utils;
 
     @Inject
-    private ExtendedTypeMirrorFactoryImpl(final ElementUtils utils) {
+    private BaseExtendedTypeMirrorFactory(final ElementUtils utils) {
         this.utils = utils;
     }
 
@@ -51,7 +51,7 @@ public final class ExtendedTypeMirrorFactoryImpl implements ExtendedTypeMirrorFa
 
     @Override
     public String toString() {
-        return "ExtendedTypeMirrorFactoryImpl{" +
+        return "BaseExtendedTypeMirrorFactory{" +
                 "utils=" + this.utils +
                 "}";
     }

@@ -21,17 +21,29 @@
  ******************************************************************************/
 package org.rookit.auto.javax.element;
 
-import org.rookit.auto.naming.PackageReference;
+import com.google.common.collect.ImmutableSet;
+import org.rookit.utils.optional.Optional;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.Collection;
-import java.util.Optional;
 
 public interface ElementUtils {
+
+    default <T extends TypeMirror> Collection<T> intersection(final Collection<T> types,
+                                                              final Collection<T> moreTypes) {
+        final ImmutableSet.Builder<T> builder = ImmutableSet.builder();
+        for (final T type : types) {
+            for (final T anotherType : moreTypes) {
+                if (isSameType(type, anotherType)) {
+                    builder.add(type);
+                }
+            }
+        }
+        return builder.build();
+    }
 
     boolean isSameType(TypeMirror type, TypeMirror anotherType);
 

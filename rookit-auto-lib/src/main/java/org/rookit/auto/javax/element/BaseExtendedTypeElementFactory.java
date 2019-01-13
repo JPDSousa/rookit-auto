@@ -27,37 +27,52 @@ import org.rookit.auto.javax.property.PropertyExtractor;
 import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.utils.optional.OptionalFactory;
 
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 public final class BaseExtendedTypeElementFactory implements ExtendedTypeElementFactory {
 
     public static ExtendedTypeElementFactory create(final PackageReferenceFactory packageFactory,
                                                     final OptionalFactory optionalFactory,
                                                     final PropertyExtractor extractor,
-                                                    final ElementUtils utils) {
-        return new BaseExtendedTypeElementFactory(packageFactory, optionalFactory, extractor, utils);
+                                                    final ElementUtils utils,
+                                                    final Messager messager) {
+        return new BaseExtendedTypeElementFactory(packageFactory, optionalFactory, extractor, utils, messager);
     }
 
     private final PackageReferenceFactory packageFactory;
     private final OptionalFactory optionalFactory;
     private final PropertyExtractor extractor;
     private final ElementUtils utils;
+    private final Messager messager;
 
     @Inject
     private BaseExtendedTypeElementFactory(final PackageReferenceFactory packageFactory,
                                            final OptionalFactory optionalFactory,
                                            final PropertyExtractor extractor,
-                                           final ElementUtils utils) {
+                                           final ElementUtils utils,
+                                           final Messager messager) {
         this.packageFactory = packageFactory;
         this.optionalFactory = optionalFactory;
         this.extractor = extractor;
         this.utils = utils;
+        this.messager = messager;
     }
 
     @Override
     public ExtendedTypeElement extend(final TypeElement baseElement) {
+        if (baseElement instanceof ExtendedTypeElement) {
+            final String errMsg = format("%s is already a %s. Bypassing creation.", baseElement,
+                    ExtendedTypeElement.class.getName());
+            this.messager.printMessage(Diagnostic.Kind.NOTE, errMsg);
+            return (ExtendedTypeElement) baseElement;
+        }
+
         final Collection<ExtendedProperty> properties = this.extractor.fromType(baseElement)
                 .collect(Collectors.toList());
         return new TypeElementDecoratorImpl(baseElement, this.utils,
@@ -71,6 +86,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
                 ", optionalFactory=" + this.optionalFactory +
                 ", extractor=" + this.extractor +
                 ", utils=" + this.utils +
+                ", messager=" + this.messager +
                 "}";
     }
 }

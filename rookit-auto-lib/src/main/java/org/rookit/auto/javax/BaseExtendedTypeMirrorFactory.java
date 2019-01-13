@@ -26,29 +26,42 @@ import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.utils.type.ClassVisitor;
 import org.rookit.utils.type.ExtendedClass;
 
+import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
+
+import static java.lang.String.format;
 
 public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory,
         ClassVisitor<ExtendedTypeMirror> {
 
-    public static ExtendedTypeMirrorFactory create(final ElementUtils utils, final Types types) {
-        return new BaseExtendedTypeMirrorFactory(utils, types);
+    public static ExtendedTypeMirrorFactory create(final ElementUtils utils, final Types types, final Messager messager) {
+        return new BaseExtendedTypeMirrorFactory(utils, types, messager);
     }
 
     private final ElementUtils utils;
     private final Types types;
+    private final Messager messager;
 
     @Inject
     private BaseExtendedTypeMirrorFactory(final ElementUtils utils,
-                                          final Types types) {
+                                          final Types types,
+                                          final Messager messager) {
         this.utils = utils;
         this.types = types;
+        this.messager = messager;
     }
 
     @Override
     public ExtendedTypeMirror create(final TypeMirror typeMirror) {
+        if (typeMirror instanceof ExtendedTypeMirror) {
+            final String errMsg = format("%s is already a %s. Bypassing creation.", typeMirror,
+                    ExtendedTypeMirror.class.getName());
+            this.messager.printMessage(Diagnostic.Kind.NOTE, errMsg);
+            return (ExtendedTypeMirror) typeMirror;
+        }
         return new ExtendedTypeMirrorImpl(typeMirror, this.utils);
     }
 
@@ -106,6 +119,7 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
         return "BaseExtendedTypeMirrorFactory{" +
                 "utils=" + this.utils +
                 ", types=" + this.types +
+                ", messager=" + this.messager +
                 "}";
     }
 }

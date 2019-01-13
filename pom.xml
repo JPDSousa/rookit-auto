@@ -15,6 +15,7 @@
     <modules>
         <module>rookit-auto-api</module>
         <module>rookit-auto-lib</module>
+        <module>rookit-auto-test</module>
     </modules>
 
     <dependencies>

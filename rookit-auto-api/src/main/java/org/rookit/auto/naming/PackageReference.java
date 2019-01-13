@@ -27,5 +27,8 @@ public interface PackageReference {
 
     String fullName();
 
-    PackageReference concat(String name);
+    PackageReference resolve(String name);
+
+    PackageReference resolve(PackageReference packageReference);
+
 }

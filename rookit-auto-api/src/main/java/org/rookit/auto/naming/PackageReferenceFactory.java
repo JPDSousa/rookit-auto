@@ -21,15 +21,17 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
+import org.rookit.utils.optional.Optional;
+
 import javax.lang.model.element.PackageElement;
 
 public interface PackageReferenceFactory {
 
-    PackageReference basePackage();
-
-    PackageReference create(CharSequence fqdn);
+    PackageReference create(String fqdn);
 
     default PackageReference create(final PackageElement element) {
-        return create(element.getQualifiedName());
+        return create(element.getQualifiedName().toString());
     }
+
+    Optional<PackageReference> relativize(PackageReference packageReference, PackageReference basePackage);
 }

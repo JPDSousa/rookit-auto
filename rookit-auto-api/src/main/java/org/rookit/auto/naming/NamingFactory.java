@@ -24,11 +24,9 @@ package org.rookit.auto.naming;
 import org.apache.commons.lang3.StringUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.element.TypeElement;
-
 public interface NamingFactory {
 
-    PackageReference packageName(TypeElement element);
+    PackageReference packageName(ExtendedTypeElement element);
 
     String type(ExtendedTypeElement element);
 

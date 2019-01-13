@@ -61,8 +61,4 @@ public interface ElementUtils {
 
     boolean isConventionElement(AnnotatedConstruct element);
 
-    ExtendedTypeElement extend(TypeElement baseElement);
-
-    PackageReference packageOf(Element element);
-
 }

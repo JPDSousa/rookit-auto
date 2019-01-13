@@ -13,4 +13,21 @@
 
     <name>Rookit Auto Api</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>${rookit.group}</groupId>
+            <artifactId>rookit-io-path-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${rookit.group}</groupId>
+                <artifactId>rookit-io-path-api</artifactId>
+                <version>${rookit.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>

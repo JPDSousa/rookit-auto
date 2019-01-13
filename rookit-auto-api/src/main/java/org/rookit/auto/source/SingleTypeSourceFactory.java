@@ -21,7 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto.source;
 
-import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 @FunctionalInterface

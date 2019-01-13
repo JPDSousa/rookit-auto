@@ -21,16 +21,12 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 
-@FunctionalInterface
-public interface ExtendedPropertyFactory {
+public interface ExtendedTypeMirrorFactory {
 
-    ExtendedProperty create(String name, TypeMirror type);
+    ExtendedTypeMirror create(TypeMirror typeMirror);
 
-    default ExtendedProperty create(final ExecutableElement method) {
-        return create(method.getSimpleName().toString(), method.getReturnType());
-    }
+    ExtendedTypeMirror create(Class<?> clazz);
 
 }

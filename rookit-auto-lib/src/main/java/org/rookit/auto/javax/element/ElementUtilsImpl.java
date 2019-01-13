@@ -21,16 +21,16 @@
  ******************************************************************************/
 package org.rookit.auto.javax.element;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import org.rookit.auto.guice.LaConvention;
-import org.rookit.auto.naming.PackageReference;
-import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.auto.javax.ExtendedTypeMirror;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -38,7 +38,6 @@ import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 final class ElementUtilsImpl implements ElementUtils {
@@ -47,25 +46,32 @@ final class ElementUtilsImpl implements ElementUtils {
     private final Types types;
     private final TypeParameterExtractor extractor;
     private final Collection<Class<? extends Annotation>> annotations;
-    private final PackageReferenceFactory packageFactory;
+    private final OptionalFactory optionalFactory;
 
     @SuppressWarnings("TypeMayBeWeakened") // due to multibinder
     @Inject
     private ElementUtilsImpl(final Elements elements,
                              final Types types,
                              final TypeParameterExtractor extractor,
-                             final PackageReferenceFactory packageFactory,
-                             @LaConvention final Set<Class<? extends Annotation>> annotations) {
+                             @LaConvention final Set<Class<? extends Annotation>> annotations,
+                             final OptionalFactory optionalFactory) {
         this.elements = elements;
         this.types = types;
         this.extractor = extractor;
-        this.packageFactory = packageFactory;
-        this.annotations = annotations;
+        this.annotations = ImmutableSet.copyOf(annotations);
+        this.optionalFactory = optionalFactory;
     }
 
     @Override
     public boolean isSameType(final TypeMirror type, final TypeMirror anotherType) {
-        return this.types.isSameType(type, anotherType);
+        final TypeMirror originalType = (type instanceof ExtendedTypeMirror)
+                ? ((ExtendedTypeMirror) type).original()
+                : type;
+        final TypeMirror originalAnother = (anotherType instanceof  ExtendedTypeMirror)
+                ? ((ExtendedTypeMirror) anotherType).original()
+                : anotherType;
+
+        return this.types.isSameType(originalType, originalAnother);
     }
 
     @Override
@@ -91,8 +97,16 @@ final class ElementUtilsImpl implements ElementUtils {
     }
 
     @Override
+    public TypeMirror boxIfPrimitive(final TypeMirror typeMirror) {
+        if (typeMirror.getKind().isPrimitive()) {
+            return this.types.boxedClass((PrimitiveType) typeMirror).asType();
+        }
+        return typeMirror;
+    }
+
+    @Override
     public Optional<Element> toElement(final TypeMirror typeMirror) {
-        return Optional.ofNullable(this.types.asElement(typeMirror));
+        return this.optionalFactory.ofNullable(this.types.asElement(typeMirror));
     }
 
     @Override
@@ -106,30 +120,13 @@ final class ElementUtilsImpl implements ElementUtils {
     }
 
     @Override
-    public ExtendedTypeElement extend(final TypeElement baseElement) {
-        return new TypeElementDecoratorImpl(baseElement, this);
-    }
-
-    @Override
-    public PackageReference packageOf(final Element element) {
-        if (element instanceof PackageElement) {
-            return this.packageFactory.create((PackageElement) element);
-        }
-        final Element enclosing = element.getEnclosingElement();
-        if (Objects.isNull(enclosing)) {
-            throw new IllegalArgumentException("Cannot extract package from: " + element);
-        }
-        return packageOf(enclosing);
-    }
-
-    @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("elements", this.elements)
-                .add("types", this.types)
-                .add("extractor", this.extractor)
-                .add("annotations", this.annotations)
-                .add("packageFactory", this.packageFactory)
-                .toString();
+        return "ElementUtilsImpl{" +
+                "elements=" + this.elements +
+                ", types=" + this.types +
+                ", extractor=" + this.extractor +
+                ", annotations=" + this.annotations +
+                ", optionalFactory=" + this.optionalFactory +
+                "}";
     }
 }

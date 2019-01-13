@@ -21,37 +21,37 @@
  ******************************************************************************/
 package org.rookit.auto;
 
-import com.google.common.base.MoreObjects;
+import org.rookit.auto.config.ProcessorConfig;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 
-public abstract class AbstractEntityHandler implements EntityHandler {
+public abstract class AbstractEntityHandler extends AbstractConfigAwareEntityHandler {
 
     private final EntityFactory entityFactory;
-    private final ElementUtils utils;
     private final Filer filer;
+    private final ExtendedTypeElementFactory elementFactory;
 
     protected AbstractEntityHandler(final EntityFactory entityFactory,
-                                    final ElementUtils utils,
-                                    final Filer filer) {
+                                    final Filer filer,
+                                    final ExtendedTypeElementFactory elementFactory,
+                                    final ProcessorConfig config,
+                                    final Messager messager) {
+        super(config, messager);
         this.entityFactory = entityFactory;
-        this.utils = utils;
         this.filer = filer;
-    }
-
-    protected ElementUtils utils() {
-        return this.utils;
+        this.elementFactory = elementFactory;
     }
 
     @Override
-    public void process(final TypeElement element) {
+    protected void doProcessEntity(final TypeElement element) {
         try {
-            final Entity entity = this.entityFactory.create(this.utils.extend(element));
+            final Entity entity = this.entityFactory.create(this.elementFactory.extend(element));
             entity.writeTo(this.filer);
         } catch (final IOException e) {
             throw new RuntimeException(e);
@@ -60,10 +60,10 @@ public abstract class AbstractEntityHandler implements EntityHandler {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("entityFactory", this.entityFactory)
-                .add("utils", this.utils)
-                .add("filer", this.filer)
-                .toString();
+        return "AbstractEntityHandler{" +
+                "entityFactory=" + this.entityFactory +
+                ", filer=" + this.filer +
+                ", elementFactory=" + this.elementFactory +
+                "}";
     }
 }

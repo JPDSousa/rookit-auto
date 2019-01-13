@@ -24,18 +24,21 @@ package org.rookit.auto.javax.element;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import org.rookit.auto.guice.LaConvention;
-import org.rookit.utils.convention.annotation.Entity;
-import org.rookit.utils.convention.annotation.EntityExtension;
-import org.rookit.utils.convention.annotation.PartialEntity;
-import org.rookit.utils.convention.annotation.Property;
-import org.rookit.utils.convention.annotation.PropertyContainer;
+import org.rookit.convention.annotation.Entity;
+import org.rookit.convention.annotation.EntityExtension;
+import org.rookit.convention.annotation.PartialEntity;
+import org.rookit.convention.annotation.Property;
+import org.rookit.convention.annotation.PropertyContainer;
+import org.rookit.utils.primitive.VoidUtils;
 
 import java.lang.annotation.Annotation;
 
+@SuppressWarnings("MethodMayBeStatic")
 public final class ElementModule extends AbstractModule {
 
     private static final Module MODULE = new ElementModule();
@@ -57,6 +60,11 @@ public final class ElementModule extends AbstractModule {
         mBinder.addBinding().toInstance(PropertyContainer.class);
 
         bind(ElementUtils.class).to(ElementUtilsImpl.class).in(Singleton.class);
-        bind(TypeParameterExtractor.class).to(TypeVisitorParameterExtractor.class).in(Singleton.class);
+    }
+
+    @Singleton
+    @Provides
+    TypeParameterExtractor typeParameterExtractor(final VoidUtils voidUtils) {
+        return TypeVisitorParameterExtractor.create(voidUtils);
     }
 }

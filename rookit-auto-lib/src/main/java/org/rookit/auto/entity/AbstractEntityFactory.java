@@ -21,8 +21,8 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
-import org.rookit.auto.identifier.IdentifierFactory;
+import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
@@ -30,27 +30,19 @@ import org.rookit.auto.source.TypeSource;
 public abstract class AbstractEntityFactory extends AbstractCacheEntityFactory {
 
     private final PartialEntityFactory partialEntityFactory;
-    private final EntityFactory noopFactory;
-    private final IdentifierFactory identifierFactory;
+    private final EntityIdentifierFactory identifierFactory;
     private final SingleTypeSourceFactory typeSpecFactory;
 
     protected AbstractEntityFactory(final PartialEntityFactory partialEntityFactory,
-                                    final EntityFactory noopFactory,
-                                    final IdentifierFactory identifierFactory,
+                                    final EntityIdentifierFactory identifierFactory,
                                     final SingleTypeSourceFactory typeSpecFactory) {
         this.partialEntityFactory = partialEntityFactory;
-        this.noopFactory = noopFactory;
         this.identifierFactory = identifierFactory;
         this.typeSpecFactory = typeSpecFactory;
     }
 
-    protected abstract boolean contains(ExtendedTypeElement element);
-
     @Override
-    Entity createNew(final ExtendedTypeElement element) {
-        if (contains(element)) {
-            return this.noopFactory.create(element);
-        }
+    protected Entity createNew(final ExtendedTypeElement element) {
         final PartialEntity partialEntity = this.partialEntityFactory.create(element);
         final Identifier identifier = this.identifierFactory.create(element);
         final TypeSource source = this.typeSpecFactory.create(identifier, element);
@@ -60,11 +52,10 @@ public abstract class AbstractEntityFactory extends AbstractCacheEntityFactory {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("partialEntityFactory", this.partialEntityFactory)
-                .add("noopFactory", this.noopFactory)
-                .add("identifierFactory", this.identifierFactory)
-                .add("typeSpecFactory", this.typeSpecFactory)
-                .toString();
+        return "AbstractEntityFactory{" +
+                "partialEntityFactory=" + this.partialEntityFactory +
+                ", identifierFactory=" + this.identifierFactory +
+                ", typeSpecFactory=" + this.typeSpecFactory +
+                "} " + super.toString();
     }
 }

@@ -22,68 +22,53 @@
 package org.rookit.auto;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.rookit.utils.convention.annotation.Entity;
-import org.rookit.utils.convention.annotation.EntityExtension;
+import com.google.inject.util.Modules;
+import org.rookit.convention.annotation.Entity;
+import org.rookit.convention.annotation.EntityExtension;
+import org.rookit.utils.guice.LazyInjector;
 import org.rookit.utils.guice.Proxied;
 
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
 import java.util.Set;
 
-public abstract class AbstractEntityProcessor extends AbstractProcessor {
+public abstract class AbstractEntityProcessor extends AbstractInjectorEntityProcessor {
 
+    @SuppressWarnings("InstanceVariableMayNotBeInitialized")
     private Injector injector;
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.injector = Guice.createInjector(SourceUtilsModule.getModule(),
-                sourceModule(),
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(Elements.class).toInstance(processingEnv.getElementUtils());
-                        bind(Types.class).toInstance(processingEnv.getTypeUtils());
-                        bind(Messager.class).toInstance(processingEnv.getMessager());
-                        bind(Filer.class).annotatedWith(Proxied.class).toInstance(processingEnv.getFiler());
-                    }
-                });
+        final Module module = Modules.override(SourceUtilsModule.getModule())
+                .with(sourceModule(),
+                        new AbstractModule() {
+                            @Override
+                            protected void configure() {
+                                bind(Elements.class).toInstance(processingEnv.getElementUtils());
+                                bind(Types.class).toInstance(processingEnv.getTypeUtils());
+                                bind(Messager.class).toInstance(processingEnv.getMessager());
+                                bind(Filer.class).annotatedWith(Proxied.class).toInstance(processingEnv.getFiler());
+                            }
+                        });
+        this.injector = LazyInjector.create(ImmutableList.of(module));
+    }
+
+    @Override
+    public Injector injector() {
+        return this.injector;
     }
 
     protected abstract Module sourceModule();
-
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        final Messager messager = this.injector.getInstance(Messager.class);
-        try {
-            final EntityHandler builder = this.injector.getInstance(EntityHandler.class);
-            for (final TypeElement annotation : annotations) {
-                messager.printMessage(Diagnostic.Kind.NOTE, "Processing: " + annotation.getQualifiedName());
-                builder.process(ElementFilter.typesIn(roundEnv.getElementsAnnotatedWith(annotation)));
-            }
-            builder.postProcess();
-            return false;
-        } catch (final RuntimeException e) {
-            final String stackTrace = ExceptionUtils.getStackTrace(e);
-            messager.printMessage(Diagnostic.Kind.ERROR, stackTrace);
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public String toString() {

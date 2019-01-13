@@ -22,22 +22,33 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
 
 import javax.lang.model.element.TypeElement;
-import java.util.Optional;
+import java.util.Collection;
 
 final class ParentTypeElementDecorator extends AbstractTypeElementDecorator {
 
     private final ExtendedTypeElement child;
 
-    ParentTypeElementDecorator(final TypeElement delegate, final ExtendedTypeElement child, final ElementUtils utils) {
-        super(delegate, utils);
+    ParentTypeElementDecorator(final TypeElement delegate,
+                               final ExtendedTypeElement child,
+                               final ElementUtils utils,
+                               final OptionalFactory optionalFactory,
+                               final PackageReferenceFactory packageFactory,
+                               final Collection<ExtendedProperty> properties,
+                               final PropertyExtractor extractor) {
+        super(delegate, utils, optionalFactory, packageFactory, properties, extractor);
         this.child = child;
     }
 
     @Override
     public Optional<ExtendedTypeElement> child() {
-        return Optional.of(this.child);
+        return optionalFactory().of(this.child);
     }
 
     @Override

@@ -21,33 +21,70 @@
  ******************************************************************************/
 package org.rookit.auto;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.Closer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
+import org.apache.commons.collections4.Bag;
+import org.rookit.auto.config.ConfigurationModule;
+import org.rookit.auto.guice.Self;
+import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
+import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
+import org.rookit.auto.javapoet.type.BaseTypeSourceAdapter;
+import org.rookit.auto.javapoet.type.TypeSourceAdapter;
+import org.rookit.auto.javax.BaseJavaxRepetitionFactory;
+import org.rookit.auto.javax.BaseRepetitiveTypeMirrorFactory;
+import org.rookit.auto.javax.JavaxRepetitionFactory;
+import org.rookit.auto.javax.JavaxUtilsModule;
+import org.rookit.auto.javax.RepetitiveTypeMirrorFactory;
+import org.rookit.auto.javax.element.BaseExtendedTypeElementFactory;
+import org.rookit.auto.javax.element.ElementModule;
+import org.rookit.auto.javax.element.ElementUtils;
+import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
+import org.rookit.auto.javax.property.BaseExtendedPropertyFactory;
+import org.rookit.auto.javax.property.BasePropertyExtractor;
+import org.rookit.auto.javax.property.ExtendedPropertyFactory;
+import org.rookit.auto.javax.property.PropertyAdapter;
+import org.rookit.auto.javax.property.PropertyExtractor;
 import org.rookit.auto.naming.BasePackageReferenceFactory;
-import org.rookit.auto.naming.PackageReference;
 import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.auto.property.BasePropertyAdapter;
+import org.rookit.io.path.PathModule;
 import org.rookit.utils.guice.Dummy;
 import org.rookit.utils.io.DummyInputStream;
 import org.rookit.utils.io.DummyOutputStream;
 import org.rookit.utils.io.DummyReader;
 import org.rookit.utils.io.DummyWriter;
-import org.rookit.auto.javax.element.ElementModule;
+import org.rookit.utils.optional.OptionalFactory;
+import org.rookit.utils.optional.OptionalFactoryImpl;
+import org.rookit.utils.primitive.VoidUtils;
+import org.rookit.utils.primitive.VoidUtilsImpl;
+import org.rookit.utils.string.StringUtils;
+import org.rookit.utils.string.StringUtilsImpl;
 
 import javax.annotation.processing.Filer;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.JavaFileObject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
-@SuppressWarnings("MethodMayBeStatic")
+@SuppressWarnings({"MethodMayBeStatic", "FeatureEnvy"})
 public final class SourceUtilsModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(new SourceUtilsModule(),
-            ElementModule.getModule());
+            ConfigurationModule.getModule(),
+            PathModule.getModule(),
+            ElementModule.getModule(),
+            JavaxUtilsModule.getModule());
 
     public static Module getModule() {
         return MODULE;
@@ -58,17 +95,46 @@ public final class SourceUtilsModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Filer.class).to(IdempotentFiler.class).in(Singleton.class);
-        bind(PackageReferenceFactory.class).toInstance(BasePackageReferenceFactory.create());
+        bind(PackageReferenceFactory.class).to(BasePackageReferenceFactory.class).in(Singleton.class);
         bind(JavaFileObject.class).annotatedWith(Dummy.class).to(DummyJavaFileObject.class).in(Singleton.class);
         bind(InputStream.class).annotatedWith(Dummy.class).toInstance(DummyInputStream.get());
         bind(OutputStream.class).annotatedWith(Dummy.class).toInstance(DummyOutputStream.get());
         bind(Reader.class).annotatedWith(Dummy.class).toInstance(DummyReader.get());
         bind(Writer.class).annotatedWith(Dummy.class).toInstance(DummyWriter.get());
+
+        bind(ExtendedTypeElementFactory.class).to(BaseExtendedTypeElementFactory.class).in(Singleton.class);
+        bind(ExtendedPropertyFactory.class).to(BaseExtendedPropertyFactory.class).in(Singleton.class);
+        bind(PropertyAdapter.class).to(BasePropertyAdapter.class).in(Singleton.class);
+        bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
+        bind(JavaxRepetitionFactory.class).to(BaseJavaxRepetitionFactory.class).in(Singleton.class);
+        bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
+        bind(PropertyExtractor.class).to(BasePropertyExtractor.class).in(Singleton.class);
+        bind(TypeSourceAdapter.class).to(BaseTypeSourceAdapter.class).in(Singleton.class);
+
+        // TODO this should not be here, but Guice is not able to find my UtilsModule :(
+        bind(VoidUtils.class).to(VoidUtilsImpl.class).in(Singleton.class);
+        bind(StringUtils.class).to(StringUtilsImpl.class).in(Singleton.class);
+        bind(OptionalFactory.class).to(OptionalFactoryImpl.class).in(Singleton.class);
+        bind(Closer.class).toInstance(Closer.create());
+        // TODO end todo
+    }
+
+    @Provides
+    @Singleton
+    @org.rookit.auto.guice.Collection
+    Collection<TypeMirror> collectionTypes(final ElementUtils utils) {
+        return ImmutableList.of(utils.erasure(Collection.class),
+                utils.erasure(List.class),
+                utils.erasure(Set.class),
+                utils.erasure(Queue.class),
+                utils.erasure(Bag.class));
     }
 
     @Singleton
     @Provides
-    PackageReference basePackage(final PackageReferenceFactory factory) {
-        return factory.basePackage();
+    @Self
+    JavaPoetNamingFactory selfQueryNamingFactory(final PackageReferenceFactory packageFactory) {
+        return SelfJavaPoetNamingFactory.create(packageFactory);
     }
+
 }

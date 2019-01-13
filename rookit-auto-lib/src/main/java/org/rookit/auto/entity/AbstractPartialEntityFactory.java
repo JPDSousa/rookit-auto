@@ -21,42 +21,38 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
 import one.util.streamex.StreamEx;
-import org.rookit.auto.identifier.IdentifierFactory;
+import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
+import org.rookit.utils.optional.OptionalFactory;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 public abstract class AbstractPartialEntityFactory implements PartialEntityFactory {
 
-    private final PartialEntityFactory noopFactory;
-    private final IdentifierFactory identifierFactory;
+    private final EntityIdentifierFactory identifierFactory;
     private final SingleTypeSourceFactory typeSourceFactory;
+    private final OptionalFactory optionalFactory;
 
-    protected AbstractPartialEntityFactory(final PartialEntityFactory noopFactory,
-                                           final IdentifierFactory identifierFactory,
-                                           final SingleTypeSourceFactory typeSourceFactory) {
-        this.noopFactory = noopFactory;
+    protected AbstractPartialEntityFactory(final EntityIdentifierFactory identifierFactory,
+                                           final SingleTypeSourceFactory typeSourceFactory,
+                                           final OptionalFactory optionalFactory) {
         this.identifierFactory = identifierFactory;
         this.typeSourceFactory = typeSourceFactory;
+        this.optionalFactory = optionalFactory;
     }
-
-    protected abstract boolean contains(ExtendedTypeElement element);
 
     @Override
     public PartialEntity create(final ExtendedTypeElement element) {
-        if (contains(element)) {
-            return this.noopFactory.create(element);
-        }
         final Identifier identifier = this.identifierFactory.create(element);
         final Collection<PartialEntity> parents = createParentsOf(element);
         final TypeSource source = this.typeSourceFactory.create(identifier, element);
 
-        return new PartialEntityImpl(identifier, parents, source);
+        return new PartialEntityImpl(identifier, parents, source, this.optionalFactory);
     }
 
     private Collection<PartialEntity> createParentsOf(final ExtendedTypeElement baseElement) {
@@ -65,14 +61,16 @@ public abstract class AbstractPartialEntityFactory implements PartialEntityFacto
                 .collect(Collectors.toSet());
     }
 
-    protected abstract StreamEx<PartialEntity> entitiesFor(ExtendedTypeElement parent);
+    protected StreamEx<PartialEntity> entitiesFor(final ExtendedTypeElement parent) {
+        return StreamEx.of(create(parent));
+    }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("noopFactory", this.noopFactory)
-                .add("identifierFactory", this.identifierFactory)
-                .add("typeSourceFactory", this.typeSourceFactory)
-                .toString();
+        return "AbstractPartialEntityFactory{" +
+                ", identifierFactory=" + this.identifierFactory +
+                ", typeSourceFactory=" + this.typeSourceFactory +
+                ", optionalFactory=" + this.optionalFactory +
+                "}";
     }
 }

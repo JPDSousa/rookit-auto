@@ -22,6 +22,7 @@
 package org.rookit.auto.entity;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.identifier.Identifier;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public abstract class AbstractEntity implements Entity {
     }
 
     @Override
-    public Identifier genericIdentifier() {
+    public org.rookit.utils.optional.Optional<Identifier> genericIdentifier() {
         return this.genericReference.genericIdentifier();
     }
 

@@ -21,30 +21,23 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import com.google.inject.Inject;
+import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.source.SingleTypeSourceFactory;
 
-public final class BaseEntityFactory implements EntityFactory {
+public final class BaseEntityFactory extends AbstractEntityFactory {
 
-    public static EntityFactory create(final EntityFactory entityFactory) {
-        return new BaseEntityFactory(entityFactory);
+    public static EntityFactory create(final PartialEntityFactory partialEntityFactory,
+                                       final EntityIdentifierFactory identifierFactory,
+                                       final SingleTypeSourceFactory typeSpecFactory) {
+        return new BaseEntityFactory(partialEntityFactory, identifierFactory, typeSpecFactory);
     }
 
-    private final EntityFactory entityFactory;
-
-    private BaseEntityFactory(final EntityFactory entityFactory) {
-        this.entityFactory = entityFactory;
+    @Inject
+    private BaseEntityFactory(final PartialEntityFactory partialEntityFactory,
+                              final EntityIdentifierFactory identifierFactory,
+                              final SingleTypeSourceFactory typeSpecFactory) {
+        super(partialEntityFactory, identifierFactory, typeSpecFactory);
     }
 
-    @Override
-    public Entity create(final ExtendedTypeElement element) {
-        return this.entityFactory.create(element);
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("entityFactory", this.entityFactory)
-                .toString();
-    }
 }

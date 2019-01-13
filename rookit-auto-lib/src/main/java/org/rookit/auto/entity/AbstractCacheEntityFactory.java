@@ -27,11 +27,11 @@ import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 import java.util.Map;
 
-abstract class AbstractCacheEntityFactory implements EntityFactory {
+public abstract class AbstractCacheEntityFactory implements EntityFactory {
 
     private final Map<String, Entity> entityCache;
 
-    AbstractCacheEntityFactory() {
+    protected AbstractCacheEntityFactory() {
         this.entityCache = Maps.newHashMap();
     }
 
@@ -41,7 +41,7 @@ abstract class AbstractCacheEntityFactory implements EntityFactory {
                 name -> createNew(element));
     }
 
-    abstract Entity createNew(ExtendedTypeElement element);
+    protected abstract Entity createNew(ExtendedTypeElement element);
 
     @Override
     public String toString() {

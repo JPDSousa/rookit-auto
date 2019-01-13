@@ -22,7 +22,9 @@
 package org.rookit.auto.entity;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
+import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -35,8 +37,9 @@ final class PartialEntityImpl extends AbstractPartialEntity {
 
     PartialEntityImpl(final Identifier genericIdentifier,
                       final Collection<? extends PartialEntity> parents,
-                      final TypeSource source) {
-        super(genericIdentifier, parents);
+                      final TypeSource source,
+                      final OptionalFactory optionalFactory) {
+        super(genericIdentifier, parents, optionalFactory);
         this.source = source;
     }
 

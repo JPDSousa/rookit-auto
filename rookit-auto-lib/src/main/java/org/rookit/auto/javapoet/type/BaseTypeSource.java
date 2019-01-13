@@ -24,9 +24,9 @@ package org.rookit.auto.javapoet.type;
 import com.google.common.base.MoreObjects;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
-import org.rookit.utils.VoidUtils;
+import org.rookit.utils.primitive.VoidUtils;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -36,10 +36,12 @@ final class BaseTypeSource implements TypeSource {
 
     private final Identifier identifier;
     private final TypeSpec source;
+    private final VoidUtils voidUtils;
 
-    BaseTypeSource(final Identifier identifier, final TypeSpec source) {
+    BaseTypeSource(final Identifier identifier, final TypeSpec source, final VoidUtils voidUtils) {
         this.source = source;
         this.identifier = identifier;
+        this.voidUtils = voidUtils;
     }
 
     @Override
@@ -52,7 +54,7 @@ final class BaseTypeSource implements TypeSource {
         JavaFile.builder(identifier().packageName().fullName(), this.source)
                 .build()
                 .writeTo(filer);
-        return CompletableFuture.completedFuture(VoidUtils.returnVoid());
+        return this.voidUtils.completeVoid();
     }
 
     @Override
@@ -60,6 +62,7 @@ final class BaseTypeSource implements TypeSource {
         return MoreObjects.toStringHelper(this)
                 .add("identifier", this.identifier)
                 .add("source", this.source)
+                .add("voidUtils", this.voidUtils)
                 .toString();
     }
 }

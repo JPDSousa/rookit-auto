@@ -21,20 +21,61 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.type;
 
+import com.google.inject.Inject;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.entity.Identifier;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
+import org.rookit.utils.primitive.VoidUtils;
+
+import javax.lang.model.element.Modifier;
 
 public final class BaseTypeSourceAdapter implements TypeSourceAdapter {
 
-    public static TypeSourceAdapter create() {
-        return new BaseTypeSourceAdapter();
+    public static TypeSourceAdapter create(final VoidUtils voidUtils) {
+        return new BaseTypeSourceAdapter(voidUtils);
     }
 
-    private BaseTypeSourceAdapter() {}
+    private final VoidUtils voidUtils;
+
+    @Inject
+    private BaseTypeSourceAdapter(final VoidUtils voidUtils) {
+        this.voidUtils = voidUtils;
+    }
 
     @Override
     public TypeSource fromTypeSpec(final Identifier identifier, final TypeSpec source) {
-        return new BaseTypeSource(identifier, source);
+        if ((source.kind != TypeSpec.Kind.INTERFACE) && (source.kind != TypeSpec.Kind.ANNOTATION)) {
+            return new BaseTypeSource(identifier, createToString(source), this.voidUtils);
+        }
+        return new BaseTypeSource(identifier, source, this.voidUtils);
+    }
+
+    private TypeSpec createToString(final TypeSpec original) {
+        final CodeBlock.Builder codeBlock = CodeBlock.builder()
+                .add("return \"$L{\" +\n", original.name);
+        for (final FieldSpec field : original.fieldSpecs) {
+            codeBlock.add("\"$L=\" + this.$L +\n", field.name, field.name);
+        }
+        codeBlock.add("\"} \" + super.toString();\n");
+
+        final MethodSpec toString = MethodSpec.methodBuilder("toString")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(String.class)
+                .addCode(codeBlock.build())
+                .build();
+        return original.toBuilder()
+                .addMethod(toString)
+                .build();
+    }
+
+    @Override
+    public String toString() {
+        return "BaseTypeSourceAdapter{" +
+                "voidUtils=" + this.voidUtils +
+                "}";
     }
 }

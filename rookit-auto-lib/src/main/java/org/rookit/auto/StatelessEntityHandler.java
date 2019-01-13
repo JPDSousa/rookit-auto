@@ -21,23 +21,32 @@
  ******************************************************************************/
 package org.rookit.auto;
 
+import com.google.inject.Inject;
+import org.rookit.auto.config.ProcessorConfig;
 import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ElementUtils;
+import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 
 public final class StatelessEntityHandler extends AbstractEntityHandler {
 
     public static EntityHandler create(final EntityFactory entityFactory,
-                                       final ElementUtils utils,
-                                       final Filer filer) {
-        return new StatelessEntityHandler(entityFactory, utils, filer);
+                                       final Filer filer,
+                                       final ExtendedTypeElementFactory elementFactory,
+                                       final ProcessorConfig config,
+                                       final Messager messager) {
+        return new StatelessEntityHandler(entityFactory, filer, elementFactory, config, messager);
     }
 
+    @SuppressWarnings("TypeMayBeWeakened") // due to guice
+    @Inject
     private StatelessEntityHandler(final EntityFactory entityFactory,
-                                   final ElementUtils utils,
-                                   final Filer filer) {
-        super(entityFactory, utils, filer);
+                                   final Filer filer,
+                                   final ExtendedTypeElementFactory elementFactory,
+                                   final ProcessorConfig config,
+                                   final Messager messager) {
+        super(entityFactory, filer, elementFactory, config, messager);
     }
 
     @Override

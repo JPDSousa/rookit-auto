@@ -21,8 +21,9 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import org.rookit.auto.identifier.Identifier;
+import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -34,16 +35,19 @@ public abstract class AbstractPartialEntity implements PartialEntity {
 
     private final Identifier genericIdentifier;
     private final Collection<PartialEntity> parents;
+    private final OptionalFactory optionalFactory;
 
     protected AbstractPartialEntity(final Identifier genericIdentifier,
-                                    final Collection<? extends PartialEntity> parents) {
+                                    final Collection<? extends PartialEntity> parents,
+                                    final OptionalFactory optionalFactory) {
         this.genericIdentifier = genericIdentifier;
         this.parents = ImmutableSet.copyOf(parents);
+        this.optionalFactory = optionalFactory;
     }
 
     @Override
-    public Identifier genericIdentifier() {
-        return this.genericIdentifier;
+    public org.rookit.utils.optional.Optional<Identifier> genericIdentifier() {
+        return this.optionalFactory.of(this.genericIdentifier);
     }
 
     @Override
@@ -63,9 +67,10 @@ public abstract class AbstractPartialEntity implements PartialEntity {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("genericIdentifier", this.genericIdentifier)
-                .add("parents", this.parents)
-                .toString();
+        return "AbstractPartialEntity{" +
+                "genericIdentifier=" + this.genericIdentifier +
+                ", parents=" + this.parents +
+                ", optionalFactory=" + this.optionalFactory +
+                "}";
     }
 }

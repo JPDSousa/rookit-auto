@@ -21,35 +21,51 @@
  ******************************************************************************/
 package org.rookit.auto.javax.element;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import one.util.streamex.StreamEx;
-import org.rookit.utils.convention.annotation.Entity;
-import org.rookit.utils.convention.annotation.EntityExtension;
+import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.convention.annotation.Entity;
+import org.rookit.convention.annotation.EntityExtension;
+import org.rookit.convention.annotation.PartialEntity;
+import org.rookit.convention.annotation.PropertyContainer;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
 
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ElementVisitor;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
-import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
-import javax.lang.model.type.TypeMirror;
-import java.lang.annotation.Annotation;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
+abstract class AbstractTypeElementDecorator extends DelegateTypeElement implements ExtendedTypeElement {
 
-    private final TypeElement delegate;
     private final ElementUtils utils;
+    private final OptionalFactory optionalFactory;
+    private final PackageReferenceFactory packageReferenceFactory;
+    private final Collection<ExtendedProperty> properties;
+    private final PropertyExtractor extractor;
 
-    AbstractTypeElementDecorator(final TypeElement delegate, final ElementUtils utils) {
-        this.delegate = delegate;
+    AbstractTypeElementDecorator(final TypeElement delegate,
+                                 final ElementUtils utils,
+                                 final OptionalFactory optionalFactory,
+                                 final PackageReferenceFactory packageFactory,
+                                 final Collection<ExtendedProperty> properties,
+                                 final PropertyExtractor extractor) {
+        super(delegate);
         this.utils = utils;
+        this.optionalFactory = optionalFactory;
+        this.packageReferenceFactory = packageFactory;
+        this.properties = ImmutableList.copyOf(properties);
+        this.extractor = extractor;
+    }
+
+    final OptionalFactory optionalFactory() {
+        return this.optionalFactory;
     }
 
     private StreamEx<TypeElement> conventionTypeInterfaces() {
@@ -62,6 +78,21 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     }
 
     @Override
+    public PackageReference packageInfo() {
+        Element enclosingElement = getEnclosingElement();
+        while(enclosingElement.getKind() != ElementKind.PACKAGE) {
+            enclosingElement = enclosingElement.getEnclosingElement();
+        }
+        return this.packageReferenceFactory.create((PackageElement) enclosingElement);
+    }
+
+    @Override
+    public Collection<ExtendedProperty> properties() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType as already immutable
+        return this.properties;
+    }
+
+    @Override
     public boolean isTopLevel() {
         return !conventionTypeInterfaces()
                 .findFirst()
@@ -71,7 +102,14 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     @Override
     public StreamEx<ExtendedTypeElement> conventionInterfaces() {
         return conventionTypeInterfaces()
-                .map(element -> new ParentTypeElementDecorator(element, this, this.utils));
+                .map(this::createParent);
+    }
+
+    private ExtendedTypeElement createParent(final TypeElement element) {
+        final Collection<ExtendedProperty> properties = this.extractor.fromType(element)
+                .collect(Collectors.toList());
+        return new ParentTypeElementDecorator(element, this, this.utils,
+                this.optionalFactory, this.packageReferenceFactory, properties, this.extractor);
     }
 
     @Override
@@ -81,109 +119,47 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     }
 
     @Override
+    public boolean isPartialEntity() {
+        return Objects.nonNull(getAnnotation(PartialEntity.class));
+    }
+
+    @Override
     public boolean isEntityExtension() {
-        return Objects.nonNull(this.getAnnotation(EntityExtension.class));
+        return Objects.nonNull(getAnnotation(EntityExtension.class));
+    }
+
+    @Override
+    public boolean isPropertyContainer() {
+        return Objects.nonNull(getAnnotation(PropertyContainer.class));
     }
 
     @Override
     public Optional<ExtendedTypeElement> upstreamEntity() {
         if (isTopLevel()) {
-            return Optional.empty();
+            return this.optionalFactory.empty();
         }
         if (isEntityExtension()) {
-            return conventionInterfaces()
+            return this.optionalFactory.fromJavaOptional(conventionInterfaces()
                     .map(ExtendedTypeElement::upstreamEntity)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .findFirst();
+                    .findFirst());
         }
         if (isEntity()) {
-            return Optional.of(this);
+            return this.optionalFactory.of(this);
         }
 
-        return Optional.empty();
-    }
-
-    @Override
-    public List<? extends Element> getEnclosedElements() {
-        return this.delegate.getEnclosedElements();
-    }
-
-    @Override
-    public List<? extends AnnotationMirror> getAnnotationMirrors() {
-        return this.delegate.getAnnotationMirrors();
-    }
-
-    @Override
-    public <A extends Annotation> A getAnnotation(final Class<A> annotationType) {
-        return this.delegate.getAnnotation(annotationType);
-    }
-
-    @Override
-    public <A extends Annotation> A[] getAnnotationsByType(final Class<A> annotationType) {
-        return this.delegate.getAnnotationsByType(annotationType);
-    }
-
-    @Override
-    public <R, P> R accept(final ElementVisitor<R, P> v, final P p) {
-        return this.delegate.accept(v, p);
-    }
-
-    @Override
-    public NestingKind getNestingKind() {
-        return this.delegate.getNestingKind();
-    }
-
-    @Override
-    public Name getQualifiedName() {
-        return this.delegate.getQualifiedName();
-    }
-
-    @Override
-    public TypeMirror asType() {
-        return this.delegate.asType();
-    }
-
-    @Override
-    public ElementKind getKind() {
-        return this.delegate.getKind();
-    }
-
-    @Override
-    public Set<Modifier> getModifiers() {
-        return this.delegate.getModifiers();
-    }
-
-    @Override
-    public Name getSimpleName() {
-        return this.delegate.getSimpleName();
-    }
-
-    @Override
-    public TypeMirror getSuperclass() {
-        return this.delegate.getSuperclass();
-    }
-
-    @Override
-    public List<? extends TypeMirror> getInterfaces() {
-        return this.delegate.getInterfaces();
-    }
-
-    @Override
-    public List<? extends TypeParameterElement> getTypeParameters() {
-        return this.delegate.getTypeParameters();
-    }
-
-    @Override
-    public Element getEnclosingElement() {
-        return this.delegate.getEnclosingElement();
+        return this.optionalFactory.empty();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("delegate", this.delegate)
-                .add("utils", this.utils)
-                .toString();
+        return "AbstractTypeElementDecorator{" +
+                "utils=" + this.utils +
+                ", optionalFactory=" + this.optionalFactory +
+                ", packageReferenceFactory=" + this.packageReferenceFactory +
+                ", properties=" + this.properties +
+                ", extractor=" + this.extractor +
+                "} " + super.toString();
     }
 }

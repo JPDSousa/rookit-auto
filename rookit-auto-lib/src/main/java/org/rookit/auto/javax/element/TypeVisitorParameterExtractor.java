@@ -22,7 +22,7 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.collect.ImmutableList;
-import org.rookit.utils.VoidUtils;
+import org.rookit.utils.primitive.VoidUtils;
 
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -38,9 +38,20 @@ import javax.lang.model.type.TypeVisitor;
 import javax.lang.model.type.UnionType;
 import javax.lang.model.type.WildcardType;
 import java.util.Collection;
+import java.util.List;
 
 final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? extends TypeMirror>, Void>,
         TypeParameterExtractor {
+
+    public static TypeParameterExtractor create(final VoidUtils voidUtils) {
+        return new TypeVisitorParameterExtractor(voidUtils);
+    }
+
+    private final VoidUtils voidUtils;
+
+    private TypeVisitorParameterExtractor(final VoidUtils voidUtils) {
+        this.voidUtils = voidUtils;
+    }
 
     @Override
     public Collection<TypeMirror> visit(final TypeMirror t, final Void aVoid) {
@@ -113,7 +124,14 @@ final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? ex
     }
 
     @Override
-    public Collection<? extends TypeMirror> extract(final TypeMirror type) {
-        return type.accept(this, VoidUtils.returnVoid());
+    public List<? extends TypeMirror> extract(final TypeMirror type) {
+        return ImmutableList.copyOf(type.accept(this, this.voidUtils.returnVoid()));
+    }
+
+    @Override
+    public String toString() {
+        return "TypeVisitorParameterExtractor{" +
+                "voidUtils=" + this.voidUtils +
+                "}";
     }
 }

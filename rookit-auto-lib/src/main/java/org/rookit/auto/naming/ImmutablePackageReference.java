@@ -24,14 +24,29 @@ package org.rookit.auto.naming;
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 
-public class ImmutablePackageReference implements PackageReference {
+import java.util.regex.Pattern;
 
-    private static final Joiner JOINER = Joiner.on('.');
+class ImmutablePackageReference extends AbstractPackageReference {
 
     private final String name;
 
-    ImmutablePackageReference(final String name) {
+    @SuppressWarnings("FieldNotUsedInToString") // not useful
+    private final Joiner joiner;
+    private final Pattern splitter;
+
+    ImmutablePackageReference(final String name, final Joiner joiner, final Pattern splitter) {
         this.name = name;
+        this.joiner = joiner;
+        this.splitter = splitter;
+    }
+
+    Joiner joiner() {
+        return this.joiner;
+    }
+
+    @Override
+    Pattern splitter() {
+        return this.splitter;
     }
 
     @Override
@@ -42,11 +57,6 @@ public class ImmutablePackageReference implements PackageReference {
     @Override
     public String fullName() {
         return name();
-    }
-
-    @Override
-    public PackageReference concat(final String name) {
-        return new ImmutableParentPackageReference(name, this, JOINER);
     }
 
     @Override

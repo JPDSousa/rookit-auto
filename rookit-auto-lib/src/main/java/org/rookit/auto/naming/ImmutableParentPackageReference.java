@@ -22,34 +22,30 @@
 package org.rookit.auto.naming;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.MoreObjects;
+
+import java.util.regex.Pattern;
 
 final class ImmutableParentPackageReference extends ImmutablePackageReference {
 
     private final PackageReference parent;
-    private final Joiner joiner;
 
-    ImmutableParentPackageReference(final String name, final PackageReference parent, final Joiner joiner) {
-        super(name);
+    ImmutableParentPackageReference(final String name,
+                                    final PackageReference parent,
+                                    final Joiner joiner,
+                                    final Pattern splitter) {
+        super(name, joiner, splitter);
         this.parent = parent;
-        this.joiner = joiner;
     }
 
     @Override
     public String fullName() {
-        return this.joiner.join(this.parent.fullName(), name());
-    }
-
-    @Override
-    public PackageReference concat(final String name) {
-        return new ImmutableParentPackageReference(name, this, this.joiner);
+        return joiner().join(this.parent.fullName(), name());
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("parent", this.parent)
-                .add("joiner", this.joiner)
-                .toString();
+        return "ImmutableParentPackageReference{" +
+                "parent=" + this.parent +
+                "} " + super.toString();
     }
 }

@@ -22,6 +22,7 @@
 package org.rookit.auto.entity;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
 
 import javax.annotation.processing.Filer;

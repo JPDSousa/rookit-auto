@@ -21,35 +21,74 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
+import com.google.common.base.Joiner;
+import com.google.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
+
 import java.util.regex.Pattern;
+
+import static java.lang.String.format;
 
 public final class BasePackageReferenceFactory implements PackageReferenceFactory {
 
-    private static final Pattern SPLITTER = Pattern.compile("\\.");
-    private static final PackageReference ORG = new ImmutablePackageReference("org");
-    private static final PackageReference ROOKIT = ORG.concat("rookit");
+    private static final String SEPARATOR = ".";
+    private static final Joiner JOINER = Joiner.on(SEPARATOR);
 
-    public static PackageReferenceFactory create() {
-        return new BasePackageReferenceFactory();
+    private static final Pattern SPLITTER = Pattern.compile("\\" + SEPARATOR);
+
+    public static PackageReferenceFactory create(final OptionalFactory optionalFactory) {
+        return new BasePackageReferenceFactory(optionalFactory);
     }
 
-    private BasePackageReferenceFactory() {}
+    private final OptionalFactory optionalFactory;
 
-    @Override
-    public PackageReference basePackage() {
-        return ROOKIT;
+    @Inject
+    private BasePackageReferenceFactory(final OptionalFactory optionalFactory) {
+        this.optionalFactory = optionalFactory;
     }
 
     @Override
-    public PackageReference create(final CharSequence fqdn) {
+    public PackageReference create(final String fqdn) {
+        if (StringUtils.isBlank(fqdn)) {
+            throw  new IllegalArgumentException("Cannot create a package with an empty name");
+        }
+        if (fqdn.startsWith(SEPARATOR)) {
+            final String errorMessage = format("Invalid package name '%s', as it starts with a separator", fqdn);
+            throw new IllegalArgumentException(errorMessage);
+        }
+
         final String[] packages = SPLITTER.split(fqdn);
         final int length = packages.length;
 
         // TODO check if not empty
-        PackageReference pkg = new ImmutablePackageReference(packages[0]);
+        PackageReference pkg = new ImmutablePackageReference(packages[0], JOINER, SPLITTER);
         for (int i = 1; i < length; i++) {
-            pkg = pkg.concat(packages[i]);
+            pkg = pkg.resolve(packages[i]);
         }
         return pkg;
+    }
+
+    @Override
+    public Optional<PackageReference> relativize(final PackageReference packageReference,
+                                                 final PackageReference basePackage) {
+        final String prFullName = packageReference.fullName();
+        final String baseName = basePackage.fullName();
+        if (!prFullName.startsWith(baseName)) {
+            throw new IllegalArgumentException(format("%s cannot be relativized from %s", prFullName, baseName));
+        }
+        else if (prFullName.equals(baseName)) {
+            return this.optionalFactory.empty();
+        }
+
+        return this.optionalFactory.of(create(prFullName.substring(baseName.length() + SEPARATOR.length())));
+    }
+
+    @Override
+    public String toString() {
+        return "BasePackageReferenceFactory{" +
+                ", optionalFactory=" + this.optionalFactory +
+                "}";
     }
 }

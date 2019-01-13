@@ -19,12 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.javapoet.naming;
 
-import javax.lang.model.element.TypeElement;
-import java.util.stream.Stream;
+import com.squareup.javapoet.TypeName;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.ExtendedProperty;
 
-public interface PropertyExtractor {
+@FunctionalInterface
+public interface JavaPoetPropertyNamingFactory {
 
-    Stream<ExtendedProperty> fromType(TypeElement element);
+    TypeName typeNameFor(ExtendedTypeElement owner, ExtendedProperty property);
+
 }

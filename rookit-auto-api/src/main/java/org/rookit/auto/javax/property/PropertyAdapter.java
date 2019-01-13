@@ -19,27 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity.noop;
+package org.rookit.auto.javax.property;
 
-import org.rookit.auto.entity.AbstractPartialEntity;
-import org.rookit.auto.entity.Entity;
-import org.rookit.auto.entity.Identifier;
-import org.rookit.utils.VoidUtils;
+import javax.lang.model.type.TypeMirror;
 
-import javax.annotation.processing.Filer;
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
+public interface PropertyAdapter {
 
-final class ExclusionPartialEntity extends AbstractPartialEntity {
+    ExtendedProperty changeReturnType(ExtendedProperty source, TypeMirror newReturnType);
 
-    ExclusionPartialEntity(final Identifier genericIdentifier,
-                           final Collection<Entity> parents) {
-        super(genericIdentifier, parents);
-    }
-
-    @Override
-    protected CompletableFuture<Void> writePartialEntityTo(final Filer filer) {
-        return CompletableFuture.completedFuture(VoidUtils.returnVoid());
-    }
+    ExtendedProperty changeName(ExtendedProperty source, String newName);
 
 }

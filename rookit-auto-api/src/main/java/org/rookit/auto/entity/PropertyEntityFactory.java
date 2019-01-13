@@ -19,14 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.entity;
 
-import javax.lang.model.type.TypeMirror;
+import org.rookit.auto.javax.property.ExtendedProperty;
 
-public interface PropertyAdapter {
+@FunctionalInterface
+public interface PropertyEntityFactory {
 
-    ExtendedProperty changeReturnType(ExtendedProperty source, TypeMirror newReturnType);
-
-    ExtendedProperty changeName(ExtendedProperty source, String newName);
-
+    Entity create(ExtendedProperty property);
 }

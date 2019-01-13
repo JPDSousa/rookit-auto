@@ -19,20 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.identifier;
 
+import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-import javax.lang.model.type.TypeMirror;
+public interface PropertyIdentifierFactory {
 
-public interface ExtendedProperty {
+    Identifier create(ExtendedTypeElement element, ExtendedProperty property);
 
-    String name();
-
-    TypeMirror type();
-
-    ExtendedTypeElement typeAsElement();
-
-    boolean isContainer();
+    Identifier create(ExtendedProperty property);
 
 }

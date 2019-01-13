@@ -22,9 +22,12 @@
 package org.rookit.auto.javax.element;
 
 import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.utils.optional.Optional;
 
 import javax.lang.model.element.TypeElement;
-import java.util.Optional;
+import java.util.Collection;
 
 public interface ExtendedTypeElement extends TypeElement {
 
@@ -34,9 +37,17 @@ public interface ExtendedTypeElement extends TypeElement {
 
     boolean isEntity();
 
+    boolean isPartialEntity();
+
     boolean isEntityExtension();
+
+    boolean isPropertyContainer();
 
     Optional<ExtendedTypeElement> upstreamEntity();
 
     StreamEx<ExtendedTypeElement> conventionInterfaces();
+
+    PackageReference packageInfo();
+
+    Collection<ExtendedProperty> properties();
 }

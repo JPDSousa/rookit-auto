@@ -22,10 +22,10 @@
 package org.rookit.auto.javax.element;
 
 import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
+import java.util.List;
 
 @FunctionalInterface
 public interface TypeParameterExtractor {
 
-    Collection<? extends TypeMirror> extract(TypeMirror type);
+    List<? extends TypeMirror> extract(TypeMirror type);
 }

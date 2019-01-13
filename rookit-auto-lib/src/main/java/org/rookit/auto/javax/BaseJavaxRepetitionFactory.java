@@ -27,7 +27,6 @@ import org.rookit.auto.guice.Optional;
 import org.rookit.auto.javax.element.ElementUtils;
 
 import javax.annotation.processing.Messager;
-import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.Collection;
 import java.util.Set;
@@ -76,7 +75,7 @@ public final class BaseJavaxRepetitionFactory implements JavaxRepetitionFactory 
 
     // TODO break me down into pieces
     @Override
-    public JavaxRepetition fromTypeMirror(final TypeMirror typeMirror) {
+    public JavaxRepetition fromTypeMirror(final ExtendedTypeMirror typeMirror) {
         final String inferMessage = "Infering %s as %s";
 
         // for optionals

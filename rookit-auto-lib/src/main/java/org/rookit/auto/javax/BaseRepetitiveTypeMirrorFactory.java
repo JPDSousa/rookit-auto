@@ -45,7 +45,7 @@ public final class BaseRepetitiveTypeMirrorFactory implements RepetitiveTypeMirr
         this.delegateFactory = delegateFactory;
     }
 
-    private Function<TypeMirror, TypeMirror> extractParam(final int parameterIndex) {
+    private Function<TypeMirror, ExtendedTypeMirror> extractParam(final int parameterIndex) {
         return typeMirror -> this.extractor.extract(typeMirror).get(parameterIndex);
     }
 

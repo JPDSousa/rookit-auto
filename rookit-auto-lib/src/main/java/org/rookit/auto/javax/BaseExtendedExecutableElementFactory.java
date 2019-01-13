@@ -21,64 +21,42 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import com.google.inject.Inject;
+
 import javax.annotation.processing.Messager;
+import javax.lang.model.element.ExecutableElement;
+import javax.tools.Diagnostic;
 
 import static java.lang.String.format;
-import static javax.tools.Diagnostic.Kind.WARNING;
 
-abstract class AbstractRepetition<R extends RepetitiveTypeMirror> implements JavaxRepetition {
+final class BaseExtendedExecutableElementFactory implements ExtendedExecutableElementFactory {
 
-    private final String name;
+    private final ExtendedTypeMirrorFactory typeMirrorFactory;
     private final Messager messager;
-    private final boolean multi;
-    private final boolean optional;
-    private final R repetitiveTypeMirror;
 
-    AbstractRepetition(final Messager messager,
-                       final boolean optional,
-                       final R repetitiveTypeMirror,
-                       final boolean multi,
-                       final String name) {
+    @Inject
+    private BaseExtendedExecutableElementFactory(final ExtendedTypeMirrorFactory typeMirrorFactory,
+                                                 final Messager messager) {
+        this.typeMirrorFactory = typeMirrorFactory;
         this.messager = messager;
-        this.optional = optional;
-        this.repetitiveTypeMirror = repetitiveTypeMirror;
-        this.multi = multi;
-        this.name = name;
     }
 
     @Override
-    public ExtendedTypeMirror unwrap(final ExtendedTypeMirror wrappedType) {
-        if (this.repetitiveTypeMirror.isSameTypeErasure(wrappedType)) {
-            return this.repetitiveTypeMirror.unwrap(wrappedType);
+    public ExtendedExecutableElement create(final ExecutableElement executableElement) {
+        if (executableElement instanceof ExtendedExecutableElement) {
+            final String errMsg = format("%s is already a %s. Bypassing creation.", executableElement,
+                    ExtendedExecutableElement.class.getName());
+            this.messager.printMessage(Diagnostic.Kind.NOTE, errMsg);
+            return (ExtendedExecutableElement) executableElement;
         }
-        final String message = format("Type %s was not unwrapped because is not valid for repetition type %s",
-                wrappedType, this.name);
-        this.messager.printMessage(WARNING, message);
-        return wrappedType;
-    }
-
-    @Override
-    public boolean isMulti() {
-        return this.multi;
-    }
-
-    @Override
-    public boolean isOptional() {
-        return this.optional;
-    }
-
-    R repetitiveTypeMirror() {
-        return this.repetitiveTypeMirror;
+        return new ExtendedExecutableElementImpl(executableElement, this.typeMirrorFactory);
     }
 
     @Override
     public String toString() {
-        return "BaseRepetition{" +
-                "name='" + this.name + '\'' +
+        return "BaseExtendedExecutableElementFactory{" +
+                "typeMirrorFactory=" + this.typeMirrorFactory +
                 ", messager=" + this.messager +
-                ", multi=" + this.multi +
-                ", optional=" + this.optional +
-                ", repetitiveTypeMirror=" + this.repetitiveTypeMirror +
                 "}";
     }
 }

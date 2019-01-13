@@ -22,13 +22,12 @@
 package org.rookit.auto.property;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 import org.rookit.auto.javax.property.AbstractExtendedProperty;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.utils.repetition.Repetition;
-
-import javax.lang.model.type.TypeMirror;
 
 final class NameProperty extends AbstractExtendedProperty {
 
@@ -50,7 +49,7 @@ final class NameProperty extends AbstractExtendedProperty {
     }
 
     @Override
-    public TypeMirror type() {
+    public ExtendedTypeMirror type() {
         return this.property.type();
     }
 

@@ -22,14 +22,13 @@
 package org.rookit.auto.property;
 
 import com.google.inject.Inject;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
 import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.property.PropertyAdapter;
 import org.rookit.utils.repetition.Repetition;
-
-import javax.lang.model.type.TypeMirror;
 
 public final class BasePropertyAdapter implements PropertyAdapter {
 
@@ -53,7 +52,7 @@ public final class BasePropertyAdapter implements PropertyAdapter {
     }
 
     @Override
-    public ExtendedProperty changeReturnType(final ExtendedProperty source, final TypeMirror newReturnType) {
+    public ExtendedProperty changeReturnType(final ExtendedProperty source, final ExtendedTypeMirror newReturnType) {
         final Repetition repetition = this.repetitionFactory.fromTypeMirror(newReturnType);
         return new ReturnProperty(source, repetition, newReturnType, this.utils,
                 this.elementFactory);

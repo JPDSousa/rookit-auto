@@ -41,7 +41,7 @@ final class KeyedRepetitionImpl extends AbstractRepetition<KeyedRepetitiveTypeMi
     }
 
     @Override
-    public TypeMirror unwrapKey(final TypeMirror typeMirror) {
+    public ExtendedTypeMirror unwrapKey(final TypeMirror typeMirror) {
         return repetitiveTypeMirror().unwrapKey(typeMirror);
     }
 }

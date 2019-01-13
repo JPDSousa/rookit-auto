@@ -22,12 +22,14 @@
 package org.rookit.auto.javax.element;
 
 import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.naming.PackageReference;
 import org.rookit.utils.optional.Optional;
 
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
+import java.util.List;
 
 public interface ExtendedTypeElement extends TypeElement {
 
@@ -50,4 +52,7 @@ public interface ExtendedTypeElement extends TypeElement {
     PackageReference packageInfo();
 
     Collection<ExtendedProperty> properties();
+
+    @Override
+    List<? extends ExtendedTypeMirror> getInterfaces();
 }

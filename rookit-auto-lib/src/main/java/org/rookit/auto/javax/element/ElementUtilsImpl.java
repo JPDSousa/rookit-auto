@@ -24,14 +24,11 @@ package org.rookit.auto.javax.element;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import org.rookit.auto.guice.LaConvention;
-import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.Element;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -60,48 +57,6 @@ final class ElementUtilsImpl implements ElementUtils {
         this.extractor = extractor;
         this.annotations = ImmutableSet.copyOf(annotations);
         this.optionalFactory = optionalFactory;
-    }
-
-    @Override
-    public boolean isSameType(final TypeMirror type, final TypeMirror anotherType) {
-        final TypeMirror originalType = (type instanceof ExtendedTypeMirror)
-                ? ((ExtendedTypeMirror) type).original()
-                : type;
-        final TypeMirror originalAnother = (anotherType instanceof  ExtendedTypeMirror)
-                ? ((ExtendedTypeMirror) anotherType).original()
-                : anotherType;
-
-        return this.types.isSameType(originalType, originalAnother);
-    }
-
-    @Override
-    public TypeMirror erasure(final Class<?> clazz) {
-        return this.types.erasure(this.elements.getTypeElement(clazz.getCanonicalName()).asType());
-    }
-
-    @Override
-    public boolean isSameTypeErasure(final TypeMirror type, final TypeMirror anotherType) {
-        final TypeMirror typeErasure = this.types.erasure(type);
-        final TypeMirror anotherTypeErasure = this.types.erasure(anotherType);
-        return isSameType(typeErasure, anotherTypeErasure);
-    }
-
-    @Override
-    public Collection<? extends TypeMirror> typeParameters(final TypeMirror type) {
-        return this.extractor.extract(type);
-    }
-
-    @Override
-    public TypeMirror primitive(final TypeKind typeKind) {
-        return this.types.getPrimitiveType(typeKind);
-    }
-
-    @Override
-    public TypeMirror boxIfPrimitive(final TypeMirror typeMirror) {
-        if (typeMirror.getKind().isPrimitive()) {
-            return this.types.boxedClass((PrimitiveType) typeMirror).asType();
-        }
-        return typeMirror;
     }
 
     @Override

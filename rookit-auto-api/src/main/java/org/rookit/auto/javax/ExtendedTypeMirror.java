@@ -21,18 +21,32 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.utils.optional.Optional;
+
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVisitor;
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
 
 public interface ExtendedTypeMirror extends TypeMirror {
 
-    boolean isSameTypeErasure(TypeMirror other);
+    Optional<Element> toElement();
+
+    boolean isSameTypeErasure(ExtendedTypeMirror other);
+
+    boolean isSameType(ExtendedTypeMirror other);
+
+    ExtendedTypeMirror erasure();
+
+    Collection<? extends ExtendedTypeMirror> typeParameters();
 
     TypeMirror original();
+
+    ExtendedTypeMirror boxIfPrimitive();
 
     @Override
     default TypeKind getKind() {

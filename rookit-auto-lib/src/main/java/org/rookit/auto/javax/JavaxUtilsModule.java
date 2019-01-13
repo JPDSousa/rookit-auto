@@ -47,6 +47,9 @@ public final class JavaxUtilsModule extends AbstractModule {
         bindOptional();
         bindCollection();
         bindMap();
+
+        bind(ExtendedTypeMirrorFactory.class).to(BaseExtendedTypeMirrorFactory.class).in(Singleton.class);
+        bind(ExtendedExecutableElementFactory.class).to(BaseExtendedExecutableElementFactory.class).in(Singleton.class);
     }
 
     private void bindMap() {

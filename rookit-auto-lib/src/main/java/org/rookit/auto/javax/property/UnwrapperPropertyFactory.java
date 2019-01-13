@@ -22,10 +22,9 @@
 package org.rookit.auto.javax.property;
 
 import com.google.inject.Inject;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.JavaxRepetition;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
-
-import javax.lang.model.type.TypeMirror;
 
 public final class UnwrapperPropertyFactory implements ExtendedPropertyFactory {
 
@@ -45,22 +44,24 @@ public final class UnwrapperPropertyFactory implements ExtendedPropertyFactory {
     }
 
     @Override
-    public ExtendedProperty create(final String name, final TypeMirror type) {
+    public ExtendedProperty create(final String name, final ExtendedTypeMirror type) {
         return create(name, type, this.repetitionFactory.fromTypeMirror(type));
     }
 
     @Override
-    public ExtendedProperty create(final String name, final TypeMirror type, final JavaxRepetition repetition) {
+    public ExtendedProperty create(final String name, final ExtendedTypeMirror type, final JavaxRepetition repetition) {
         return this.delegate.create(name, repetition.unwrap(type), repetition);
     }
 
     @Override
-    public ExtendedProperty createFinal(final String name, final TypeMirror type) {
+    public ExtendedProperty createFinal(final String name, final ExtendedTypeMirror type) {
         return createFinal(name, type, this.repetitionFactory.fromTypeMirror(type));
     }
 
     @Override
-    public ExtendedProperty createFinal(final String name, final TypeMirror type, final JavaxRepetition repetition) {
+    public ExtendedProperty createFinal(final String name,
+                                        final ExtendedTypeMirror type,
+                                        final JavaxRepetition repetition) {
         return this.delegate.createFinal(name, repetition.unwrap(type), repetition);
     }
 

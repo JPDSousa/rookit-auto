@@ -21,18 +21,17 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.repetition.Repetition;
-
-import javax.lang.model.type.TypeMirror;
 
 // TODO why is this called extended property, if it doesn't extend anything?
 public interface ExtendedProperty {
 
     String name();
 
-    TypeMirror type();
+    ExtendedTypeMirror type();
 
     Optional<ExtendedTypeElement> typeAsElement();
 

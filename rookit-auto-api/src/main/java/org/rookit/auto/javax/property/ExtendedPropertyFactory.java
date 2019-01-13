@@ -21,26 +21,25 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
+import org.rookit.auto.javax.ExtendedExecutableElement;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.JavaxRepetition;
-
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.type.TypeMirror;
 
 public interface ExtendedPropertyFactory {
 
-    ExtendedProperty create(String name, TypeMirror type);
+    ExtendedProperty create(String name, ExtendedTypeMirror type);
 
-    ExtendedProperty create(String name, TypeMirror type, JavaxRepetition repetition);
+    ExtendedProperty create(String name, ExtendedTypeMirror type, JavaxRepetition repetition);
 
-    ExtendedProperty createFinal(String name, TypeMirror type);
+    ExtendedProperty createFinal(String name, ExtendedTypeMirror type);
 
-    ExtendedProperty createFinal(String name, TypeMirror type, JavaxRepetition repetition);
+    ExtendedProperty createFinal(String name, ExtendedTypeMirror type, JavaxRepetition repetition);
 
-    default ExtendedProperty create(final ExecutableElement method) {
+    default ExtendedProperty create(final ExtendedExecutableElement method) {
         return create(method.getSimpleName().toString(), method.getReturnType());
     }
 
-    default ExtendedProperty createFinal(final ExecutableElement method) {
+    default ExtendedProperty createFinal(final ExtendedExecutableElement method) {
         return createFinal(method.getSimpleName().toString(), method.getReturnType());
     }
 

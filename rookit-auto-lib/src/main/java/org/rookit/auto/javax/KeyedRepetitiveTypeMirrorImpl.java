@@ -22,37 +22,58 @@
 package org.rookit.auto.javax;
 
 import javax.lang.model.type.TypeMirror;
+import java.util.Collection;
 import java.util.function.Function;
 
 final class KeyedRepetitiveTypeMirrorImpl implements KeyedRepetitiveTypeMirror {
 
     private final RepetitiveTypeMirror delegate;
-    private final Function<TypeMirror, TypeMirror> keyUnwrapper;
+    private final Function<TypeMirror, ExtendedTypeMirror> keyUnwrapper;
 
     KeyedRepetitiveTypeMirrorImpl(final RepetitiveTypeMirror delegate,
-                                  final Function<TypeMirror, TypeMirror> keyUnwrapper) {
+                                  final Function<TypeMirror, ExtendedTypeMirror> keyUnwrapper) {
         this.delegate = delegate;
         this.keyUnwrapper = keyUnwrapper;
     }
 
     @Override
-    public TypeMirror unwrapKey(final TypeMirror typeMirror) {
+    public ExtendedTypeMirror unwrapKey(final TypeMirror typeMirror) {
         return this.keyUnwrapper.apply(typeMirror);
     }
 
     @Override
-    public TypeMirror unwrap(final TypeMirror type) {
+    public ExtendedTypeMirror unwrap(final ExtendedTypeMirror type) {
         return this.delegate.unwrap(type);
     }
 
     @Override
-    public boolean isSameTypeErasure(final TypeMirror other) {
+    public boolean isSameTypeErasure(final ExtendedTypeMirror other) {
         return this.delegate.isSameTypeErasure(other);
+    }
+
+    @Override
+    public boolean isSameType(final ExtendedTypeMirror other) {
+        return this.delegate.isSameType(other);
+    }
+
+    @Override
+    public ExtendedTypeMirror erasure() {
+        return this.delegate.erasure();
+    }
+
+    @Override
+    public Collection<? extends ExtendedTypeMirror> typeParameters() {
+        return this.delegate.typeParameters();
     }
 
     @Override
     public TypeMirror original() {
         return this.delegate.original();
+    }
+
+    @Override
+    public ExtendedTypeMirror boxIfPrimitive() {
+        return this.delegate.boxIfPrimitive();
     }
 
     @Override

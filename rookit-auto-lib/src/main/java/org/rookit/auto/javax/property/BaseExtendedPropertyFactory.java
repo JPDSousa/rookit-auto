@@ -23,12 +23,11 @@ package org.rookit.auto.javax.property;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.JavaxRepetition;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
 import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
-
-import javax.lang.model.type.TypeMirror;
 
 public final class BaseExtendedPropertyFactory implements ExtendedPropertyFactory {
 
@@ -40,7 +39,6 @@ public final class BaseExtendedPropertyFactory implements ExtendedPropertyFactor
 
     private final JavaxRepetitionFactory repetitionFactory;
     private final ElementUtils utils;
-    @SuppressWarnings("FieldNotUsedInToString") // to avoid stack overflow
     private final Provider<ExtendedTypeElementFactory> elementFactory;
 
     @Inject
@@ -53,23 +51,25 @@ public final class BaseExtendedPropertyFactory implements ExtendedPropertyFactor
     }
 
     @Override
-    public ExtendedProperty create(final String name, final TypeMirror type) {
+    public ExtendedProperty create(final String name, final ExtendedTypeMirror type) {
         return create(name, type, this.repetitionFactory.fromTypeMirror(type));
     }
 
     @Override
-    public ExtendedProperty create(final String name, final TypeMirror type, final JavaxRepetition repetition) {
+    public ExtendedProperty create(final String name, final ExtendedTypeMirror type, final JavaxRepetition repetition) {
         return new BaseExtendedProperty(name, type, repetition, this.utils,
                 false, this.elementFactory.get());
     }
 
     @Override
-    public ExtendedProperty createFinal(final String name, final TypeMirror type) {
+    public ExtendedProperty createFinal(final String name, final ExtendedTypeMirror type) {
         return createFinal(name, type, this.repetitionFactory.fromTypeMirror(type));
     }
 
     @Override
-    public ExtendedProperty createFinal(final String name, final TypeMirror type, final JavaxRepetition repetition) {
+    public ExtendedProperty createFinal(final String name,
+                                        final ExtendedTypeMirror type,
+                                        final JavaxRepetition repetition) {
         return new BaseExtendedProperty(name, type, repetition, this.utils, true,
                 this.elementFactory.get());
     }
@@ -79,6 +79,7 @@ public final class BaseExtendedPropertyFactory implements ExtendedPropertyFactor
         return "BaseExtendedPropertyFactory{" +
                 "repetitionFactory=" + this.repetitionFactory +
                 ", utils=" + this.utils +
+                ", elementFactory=" + this.elementFactory +
                 "}";
     }
 }

@@ -21,10 +21,8 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import javax.lang.model.type.TypeMirror;
-
 public interface RepetitiveTypeMirror extends ExtendedTypeMirror {
 
-    TypeMirror unwrap(TypeMirror type);
+    ExtendedTypeMirror unwrap(ExtendedTypeMirror type);
 
 }

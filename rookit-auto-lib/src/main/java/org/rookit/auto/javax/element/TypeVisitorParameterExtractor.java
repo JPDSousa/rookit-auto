@@ -22,6 +22,10 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
+import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.ExtendedTypeMirror;
+import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.utils.primitive.VoidUtils;
 
 import javax.lang.model.type.ArrayType;
@@ -43,14 +47,19 @@ import java.util.List;
 final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? extends TypeMirror>, Void>,
         TypeParameterExtractor {
 
-    public static TypeParameterExtractor create(final VoidUtils voidUtils) {
-        return new TypeVisitorParameterExtractor(voidUtils);
+    public static TypeParameterExtractor create(final VoidUtils voidUtils,
+                                                final ExtendedTypeMirrorFactory typeMirrorFactory) {
+        return new TypeVisitorParameterExtractor(voidUtils, typeMirrorFactory);
     }
 
     private final VoidUtils voidUtils;
+    private final ExtendedTypeMirrorFactory typeMirrorFactory;
 
-    private TypeVisitorParameterExtractor(final VoidUtils voidUtils) {
+    @Inject
+    private TypeVisitorParameterExtractor(final VoidUtils voidUtils,
+                                          final ExtendedTypeMirrorFactory typeMirrorFactory) {
         this.voidUtils = voidUtils;
+        this.typeMirrorFactory = typeMirrorFactory;
     }
 
     @Override
@@ -124,14 +133,18 @@ final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? ex
     }
 
     @Override
-    public List<? extends TypeMirror> extract(final TypeMirror type) {
-        return ImmutableList.copyOf(type.accept(this, this.voidUtils.returnVoid()));
+    public List<? extends ExtendedTypeMirror> extract(final TypeMirror type) {
+        return StreamEx.of(type.accept(this, this.voidUtils.returnVoid()))
+                .map(this.typeMirrorFactory::create)
+                .toImmutableList();
     }
+
 
     @Override
     public String toString() {
         return "TypeVisitorParameterExtractor{" +
                 "voidUtils=" + this.voidUtils +
+                ", typeMirrorFactory=" + this.typeMirrorFactory +
                 "}";
     }
 }

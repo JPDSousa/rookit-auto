@@ -21,23 +21,61 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import org.rookit.auto.javax.element.ElementUtils;
+import com.google.common.collect.ImmutableList;
+import org.rookit.auto.javax.element.TypeParameterExtractor;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
+import java.util.Collection;
 
 final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
 
     private final TypeMirror delegate;
-    private final ElementUtils utils;
+    private final Types types;
+    private final ExtendedTypeMirrorFactory factory;
+    private final Collection<? extends ExtendedTypeMirror> typeParameters;
+    private final OptionalFactory optionalFactory;
 
-    ExtendedTypeMirrorImpl(final TypeMirror delegate, final ElementUtils utils) {
+    ExtendedTypeMirrorImpl(final TypeMirror delegate,
+                           final Types types,
+                           final ExtendedTypeMirrorFactory factory,
+                           final TypeParameterExtractor extractor,
+                           final OptionalFactory optionalFactory) {
         this.delegate = delegate;
-        this.utils = utils;
+        this.types = types;
+        this.factory = factory;
+        this.typeParameters = ImmutableList.copyOf(extractor.extract(original()));
+        this.optionalFactory = optionalFactory;
     }
 
     @Override
-    public boolean isSameTypeErasure(final TypeMirror other) {
-        return this.utils.isSameTypeErasure(this.delegate, other);
+    public Collection<? extends ExtendedTypeMirror> typeParameters() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType already immutable
+        return this.typeParameters;
+    }
+
+    @Override
+    public Optional<Element> toElement() {
+        return this.optionalFactory.ofNullable(this.types.asElement(original()));
+    }
+
+    @Override
+    public boolean isSameTypeErasure(final ExtendedTypeMirror other) {
+        return isSameType(other.erasure());
+    }
+
+    @Override
+    public boolean isSameType(final ExtendedTypeMirror other) {
+        return this.types.isSameType(original(), other.original());
+    }
+
+    @Override
+    public ExtendedTypeMirror erasure() {
+        return this.factory.create(this.types.erasure(original()));
     }
 
     @Override
@@ -46,10 +84,21 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
     }
 
     @Override
+    public ExtendedTypeMirror boxIfPrimitive() {
+        if (getKind().isPrimitive()) {
+            return this.factory.create(this.types.boxedClass((PrimitiveType) original()).asType());
+        }
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "ExtendedTypeMirrorImpl{" +
                 "delegate=" + this.delegate +
-                ", utils=" + this.utils +
+                ", types=" + this.types +
+                ", factory=" + this.factory +
+                ", typeParameters=" + this.typeParameters +
+                ", optionalFactory=" + this.optionalFactory +
                 "}";
     }
 }

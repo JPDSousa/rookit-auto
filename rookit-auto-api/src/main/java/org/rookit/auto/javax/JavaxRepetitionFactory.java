@@ -21,9 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import javax.lang.model.type.TypeMirror;
-
 public interface JavaxRepetitionFactory {
 
-    JavaxRepetition fromTypeMirror(TypeMirror typeMirror);
+    JavaxRepetition fromTypeMirror(ExtendedTypeMirror typeMirror);
 }

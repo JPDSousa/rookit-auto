@@ -21,12 +21,10 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import javax.lang.model.type.TypeMirror;
-
 final class SingleRepetition implements JavaxRepetition {
 
     @Override
-    public TypeMirror unwrap(final TypeMirror wrappedType) {
+    public ExtendedTypeMirror unwrap(final ExtendedTypeMirror wrappedType) {
         // no unwrapping necessary
         return wrappedType;
     }

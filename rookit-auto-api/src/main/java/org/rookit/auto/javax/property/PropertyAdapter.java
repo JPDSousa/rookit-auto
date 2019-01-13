@@ -21,11 +21,11 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
-import javax.lang.model.type.TypeMirror;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 
 public interface PropertyAdapter {
 
-    ExtendedProperty changeReturnType(ExtendedProperty source, TypeMirror newReturnType);
+    ExtendedProperty changeReturnType(ExtendedProperty source, ExtendedTypeMirror newReturnType);
 
     ExtendedProperty changeName(ExtendedProperty source, String newName);
 

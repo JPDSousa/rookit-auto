@@ -19,34 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javapoet.method.type;
+package org.rookit.auto.javax;
 
-import com.google.common.base.MoreObjects;
-import org.rookit.auto.javapoet.method.TypeBasedMethodFactory;
-import org.rookit.auto.javax.element.ElementUtils;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import javax.lang.model.element.ExecutableElement;
 
-public abstract class AbstractTypeBasedMethodFactory implements TypeBasedMethodFactory {
-
-    private final ElementUtils utils;
-
-    protected AbstractTypeBasedMethodFactory(final ElementUtils types) {
-        this.utils = types;
-    }
-
-    protected ElementUtils utils() {
-        return this.utils;
-    }
+public interface ExtendedExecutableElement extends ExecutableElement {
 
     @Override
-    public boolean isCompatible(final ExtendedProperty property) {
-        return this.utils.isSameType(type(), property.type());
-    }
+    ExtendedTypeMirror getReturnType();
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("utils", this.utils)
-                .toString();
-    }
 }

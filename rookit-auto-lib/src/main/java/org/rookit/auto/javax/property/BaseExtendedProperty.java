@@ -21,21 +21,20 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 import org.rookit.utils.repetition.Repetition;
 
-import javax.lang.model.type.TypeMirror;
-
 final class BaseExtendedProperty extends AbstractExtendedProperty {
 
     private final String name;
-    private final TypeMirror type;
+    private final ExtendedTypeMirror type;
     private final boolean isFinal;
     private final Repetition repetition;
 
     BaseExtendedProperty(final String name,
-                         final TypeMirror type,
+                         final ExtendedTypeMirror type,
                          final Repetition repetition,
                          final ElementUtils utils,
                          final boolean isFinal,
@@ -54,7 +53,7 @@ final class BaseExtendedProperty extends AbstractExtendedProperty {
     }
 
     @Override
-    public TypeMirror type() {
+    public ExtendedTypeMirror type() {
         return this.type;
     }
 

@@ -25,5 +25,5 @@ import javax.lang.model.type.TypeMirror;
 
 public interface JavaxKeyedRepetition extends JavaxRepetition {
 
-    TypeMirror unwrapKey(TypeMirror typeMirror);
+    ExtendedTypeMirror unwrapKey(TypeMirror typeMirror);
 }

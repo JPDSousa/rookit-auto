@@ -21,30 +21,25 @@
  ******************************************************************************/
 package org.rookit.auto;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Closer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
-import org.apache.commons.collections4.Bag;
 import org.rookit.auto.config.ConfigurationModule;
 import org.rookit.auto.guice.Self;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
 import org.rookit.auto.javapoet.type.BaseTypeSourceAdapter;
 import org.rookit.auto.javapoet.type.TypeSourceAdapter;
-import org.rookit.auto.javax.BaseExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.BaseJavaxRepetitionFactory;
 import org.rookit.auto.javax.BaseRepetitiveTypeMirrorFactory;
-import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.JavaxRepetitionFactory;
 import org.rookit.auto.javax.JavaxUtilsModule;
 import org.rookit.auto.javax.RepetitiveTypeMirrorFactory;
 import org.rookit.auto.javax.element.BaseExtendedTypeElementFactory;
 import org.rookit.auto.javax.element.ElementModule;
-import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
 import org.rookit.auto.javax.property.BaseExtendedPropertyFactory;
 import org.rookit.auto.javax.property.BasePropertyExtractor;
@@ -70,16 +65,11 @@ import org.rookit.utils.type.BaseExtendedClassFactory;
 import org.rookit.utils.type.ExtendedClassFactory;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.type.TypeMirror;
 import javax.tools.JavaFileObject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 
 @SuppressWarnings({"MethodMayBeStatic", "FeatureEnvy"})
 public final class SourceUtilsModule extends AbstractModule {
@@ -111,7 +101,6 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(PropertyAdapter.class).to(BasePropertyAdapter.class).in(Singleton.class);
         bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
         bind(JavaxRepetitionFactory.class).to(BaseJavaxRepetitionFactory.class).in(Singleton.class);
-        bind(ExtendedTypeMirrorFactory.class).to(BaseExtendedTypeMirrorFactory.class).in(Singleton.class);
         bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
         bind(PropertyExtractor.class).to(BasePropertyExtractor.class).in(Singleton.class);
         bind(TypeSourceAdapter.class).to(BaseTypeSourceAdapter.class).in(Singleton.class);
@@ -123,17 +112,6 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(Closer.class).toInstance(Closer.create());
         bind(ExtendedClassFactory.class).to(BaseExtendedClassFactory.class).in(Singleton.class);
         // TODO end todo
-    }
-
-    @Provides
-    @Singleton
-    @org.rookit.auto.guice.Collection
-    Collection<TypeMirror> collectionTypes(final ElementUtils utils) {
-        return ImmutableList.of(utils.erasure(Collection.class),
-                utils.erasure(List.class),
-                utils.erasure(Set.class),
-                utils.erasure(Queue.class),
-                utils.erasure(Bag.class));
     }
 
     @Singleton

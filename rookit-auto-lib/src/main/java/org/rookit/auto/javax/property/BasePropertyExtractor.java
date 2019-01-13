@@ -25,6 +25,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.ExtendedExecutableElement;
+import org.rookit.auto.javax.ExtendedExecutableElementFactory;
 import org.rookit.convention.annotation.Property;
 
 import javax.lang.model.element.ElementKind;
@@ -37,15 +39,19 @@ import java.util.stream.Stream;
 
 public final class BasePropertyExtractor implements PropertyExtractor {
 
-    public static PropertyExtractor create(final ExtendedPropertyFactory propertyFactory) {
-        return new BasePropertyExtractor(propertyFactory);
+    public static PropertyExtractor create(final ExtendedPropertyFactory propertyFactory,
+                                           final ExtendedExecutableElementFactory executableFactory) {
+        return new BasePropertyExtractor(executableFactory, propertyFactory);
     }
 
+    private final ExtendedExecutableElementFactory executableElementFactory;
     private final ExtendedPropertyFactory propertyFactory;
     private final Multimap<String, ExtendedProperty> propertyCache;
 
     @Inject
-    private BasePropertyExtractor(final ExtendedPropertyFactory propertyFactory) {
+    private BasePropertyExtractor(final ExtendedExecutableElementFactory executableFactory,
+                                  final ExtendedPropertyFactory propertyFactory) {
+        this.executableElementFactory = executableFactory;
         this.propertyFactory = propertyFactory;
         this.propertyCache = HashMultimap.create();
     }
@@ -61,13 +67,14 @@ public final class BasePropertyExtractor implements PropertyExtractor {
                 .filter(el -> el.getKind() == ElementKind.METHOD)
                 .filter(el -> Objects.nonNull(el.getAnnotation(Property.class)))
                 .select(ExecutableElement.class)
+                .map(this.executableElementFactory::create)
                 .map(this::createProperty)
                 .collect(Collectors.toSet());
         this.propertyCache.putAll(key, properties);
         return properties.stream();
     }
 
-    private ExtendedProperty createProperty(final ExecutableElement executableElement) {
+    private ExtendedProperty createProperty(final ExtendedExecutableElement executableElement) {
         final Property annotation = executableElement.getAnnotation(Property.class);
         return annotation.isSettable()
                 ? this.propertyFactory.createFinal(executableElement)
@@ -77,7 +84,8 @@ public final class BasePropertyExtractor implements PropertyExtractor {
     @Override
     public String toString() {
         return "BasePropertyExtractor{" +
-                "propertyFactory=" + this.propertyFactory +
+                "executableElementFactory=" + this.executableElementFactory +
+                ", propertyFactory=" + this.propertyFactory +
                 ", propertyCache=" + this.propertyCache +
                 "}";
     }

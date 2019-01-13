@@ -22,6 +22,7 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.collect.ImmutableSet;
+import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.utils.optional.Optional;
 
 import javax.lang.model.AnnotatedConstruct;
@@ -32,30 +33,18 @@ import java.util.Collection;
 
 public interface ElementUtils {
 
-    default <T extends TypeMirror> Collection<T> intersection(final Collection<T> types,
+    default <T extends ExtendedTypeMirror> Collection<T> intersection(final Collection<T> types,
                                                               final Collection<T> moreTypes) {
         final ImmutableSet.Builder<T> builder = ImmutableSet.builder();
         for (final T type : types) {
             for (final T anotherType : moreTypes) {
-                if (isSameType(type, anotherType)) {
+                if (type.isSameType(anotherType)) {
                     builder.add(type);
                 }
             }
         }
         return builder.build();
     }
-
-    boolean isSameType(TypeMirror type, TypeMirror anotherType);
-
-    TypeMirror erasure(Class<?> clazz);
-
-    boolean isSameTypeErasure(TypeMirror type, TypeMirror anotherType);
-
-    Collection<? extends TypeMirror> typeParameters(TypeMirror type);
-
-    TypeMirror primitive(TypeKind typeKind);
-
-    TypeMirror boxIfPrimitive(TypeMirror typeMirror);
 
     Optional<Element> toElement(TypeMirror typeMirror);
 

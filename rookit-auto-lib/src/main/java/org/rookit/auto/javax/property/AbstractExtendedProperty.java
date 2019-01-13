@@ -44,7 +44,7 @@ public abstract class AbstractExtendedProperty implements ExtendedProperty {
 
     @Override
     public Optional<ExtendedTypeElement> typeAsElement() {
-        return this.utils.toElement(type())
+        return type().toElement()
                 .map(element -> (TypeElement) element)
                 .map(this.elementFactory::extend);
     }

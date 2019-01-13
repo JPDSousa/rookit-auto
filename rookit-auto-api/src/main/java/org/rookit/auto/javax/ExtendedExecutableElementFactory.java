@@ -19,15 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax;
 
-import org.rookit.auto.javax.ExtendedTypeMirror;
+import javax.lang.model.element.ExecutableElement;
 
-import javax.lang.model.type.TypeMirror;
-import java.util.List;
+public interface ExtendedExecutableElementFactory {
 
-@FunctionalInterface
-public interface TypeParameterExtractor {
+    ExtendedExecutableElement create(ExecutableElement executableElement);
 
-    List<? extends ExtendedTypeMirror> extract(TypeMirror type);
 }

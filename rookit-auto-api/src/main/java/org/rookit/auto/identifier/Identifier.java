@@ -29,9 +29,4 @@ public interface Identifier {
 
     PackageReference packageName();
 
-    String qualifiedOriginal();
-
-    default String fqdn() {
-        return packageName().fullName() + '.' + name();
-    }
 }

@@ -28,6 +28,13 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
 import org.rookit.auto.config.ConfigurationModule;
+import org.rookit.auto.entity.PartialEntityFactory;
+import org.rookit.auto.entity.PropertyPartialEntityFactory;
+import org.rookit.auto.entity.parent.BaseParentExtractor;
+import org.rookit.auto.entity.parent.ParentExtractor;
+import org.rookit.auto.entity.property.NoGenericPartialEntityFactory;
+import org.rookit.auto.entity.property.NoGenericPropertyPartialEntityFactory;
+import org.rookit.auto.guice.NoGeneric;
 import org.rookit.auto.guice.Self;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
@@ -49,6 +56,9 @@ import org.rookit.auto.javax.property.PropertyExtractor;
 import org.rookit.auto.naming.BasePackageReferenceFactory;
 import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.auto.property.BasePropertyAdapter;
+import org.rookit.auto.source.BaseCodeSourceContainerFactory;
+import org.rookit.auto.source.CodeSourceContainerFactory;
+import org.rookit.failsafe.FailsafeModule;
 import org.rookit.io.path.PathModule;
 import org.rookit.utils.guice.Dummy;
 import org.rookit.utils.io.DummyInputStream;
@@ -71,6 +81,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+// TODO break me down into pieces
 @SuppressWarnings({"MethodMayBeStatic", "FeatureEnvy"})
 public final class SourceUtilsModule extends AbstractModule {
 
@@ -78,6 +89,7 @@ public final class SourceUtilsModule extends AbstractModule {
             ConfigurationModule.getModule(),
             PathModule.getModule(),
             ElementModule.getModule(),
+            FailsafeModule.getModule(),
             JavaxUtilsModule.getModule());
 
     public static Module getModule() {
@@ -96,6 +108,7 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(Reader.class).annotatedWith(Dummy.class).toInstance(DummyReader.get());
         bind(Writer.class).annotatedWith(Dummy.class).toInstance(DummyWriter.get());
 
+        bind(ParentExtractor.class).to(BaseParentExtractor.class).in(Singleton.class);
         bind(ExtendedTypeElementFactory.class).to(BaseExtendedTypeElementFactory.class).in(Singleton.class);
         bind(ExtendedPropertyFactory.class).to(BaseExtendedPropertyFactory.class).in(Singleton.class);
         bind(PropertyAdapter.class).to(BasePropertyAdapter.class).in(Singleton.class);
@@ -104,6 +117,10 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
         bind(PropertyExtractor.class).to(BasePropertyExtractor.class).in(Singleton.class);
         bind(TypeSourceAdapter.class).to(BaseTypeSourceAdapter.class).in(Singleton.class);
+        bind(PropertyPartialEntityFactory.class).to(NoGenericPropertyPartialEntityFactory.class).in(Singleton.class);
+        bind(PartialEntityFactory.class).annotatedWith(NoGeneric.class)
+                .to(NoGenericPartialEntityFactory.class).in(Singleton.class);
+        bind(CodeSourceContainerFactory.class).to(BaseCodeSourceContainerFactory.class).in(Singleton.class);
 
         // TODO this should not be here, but Guice is not able to find my UtilsModule :(
         bind(VoidUtils.class).to(VoidUtilsImpl.class).in(Singleton.class);

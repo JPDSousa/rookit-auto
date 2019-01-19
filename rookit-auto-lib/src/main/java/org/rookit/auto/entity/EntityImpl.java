@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
 
@@ -54,9 +53,9 @@ final class EntityImpl extends AbstractEntity {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("identifier", this.identifier)
-                .add("source", this.source)
-                .toString();
+        return "EntityImpl{" +
+                "identifier=" + this.identifier +
+                ", source=" + this.source +
+                "} " + super.toString();
     }
 }

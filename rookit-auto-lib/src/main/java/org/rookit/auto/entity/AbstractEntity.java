@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.base.MoreObjects;
 import org.rookit.auto.identifier.Identifier;
 
 import javax.annotation.processing.Filer;
@@ -56,8 +55,8 @@ public abstract class AbstractEntity implements Entity {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("genericReference", this.genericReference)
-                .toString();
+        return "AbstractEntity{" +
+                "genericReference=" + this.genericReference +
+                "}";
     }
 }

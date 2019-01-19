@@ -47,11 +47,6 @@ final class EntityIdentifier implements Identifier {
     }
 
     @Override
-    public String qualifiedOriginal() {
-        return this.original;
-    }
-
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("packageReference", this.packageReference)

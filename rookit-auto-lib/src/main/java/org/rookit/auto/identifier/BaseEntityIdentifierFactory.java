@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.identifier;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
@@ -58,9 +57,9 @@ public final class BaseEntityIdentifierFactory implements EntityIdentifierFactor
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("namingFactory", this.namingFactory)
-                .add("cache", this.cache)
-                .toString();
+        return "BaseEntityIdentifierFactory{" +
+                "namingFactory=" + this.namingFactory +
+                ", cache=" + this.cache +
+                "}";
     }
 }

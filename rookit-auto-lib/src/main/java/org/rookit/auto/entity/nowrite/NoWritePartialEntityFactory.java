@@ -24,10 +24,11 @@ package org.rookit.auto.entity.nowrite;
 import com.google.inject.Inject;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
+import org.rookit.auto.entity.cache.AbstractCachePartialEntityFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.utils.primitive.VoidUtils;
 
-public final class NoWritePartialEntityFactory implements PartialEntityFactory {
+public final class NoWritePartialEntityFactory extends AbstractCachePartialEntityFactory {
 
     public static PartialEntityFactory create(final PartialEntityFactory delegate, final VoidUtils voidUtils) {
         return new NoWritePartialEntityFactory(delegate, voidUtils);
@@ -43,7 +44,7 @@ public final class NoWritePartialEntityFactory implements PartialEntityFactory {
     }
 
     @Override
-    public PartialEntity create(final ExtendedTypeElement element) {
+    protected PartialEntity createNew(final ExtendedTypeElement element) {
         return new NoWritePartialEntity(this.delegate.create(element), this.voidUtils);
     }
 

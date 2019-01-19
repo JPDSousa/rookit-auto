@@ -22,29 +22,58 @@
 package org.rookit.auto.entity;
 
 import com.google.inject.Inject;
-import one.util.streamex.StreamEx;
+import org.rookit.auto.entity.cache.AbstractCachePartialEntityFactory;
+import org.rookit.auto.entity.parent.ParentExtractor;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
+import org.rookit.auto.source.TypeSource;
 import org.rookit.utils.optional.OptionalFactory;
 
-public final class BasePartialEntityFactory extends AbstractPartialEntityFactory {
+import java.util.Collection;
+
+public final class BasePartialEntityFactory extends AbstractCachePartialEntityFactory {
 
     public static PartialEntityFactory create(final EntityIdentifierFactory identifierFactory,
                                               final SingleTypeSourceFactory typeSourceFactory,
-                                              final OptionalFactory optionalFactory) {
-        return new BasePartialEntityFactory(identifierFactory, typeSourceFactory, optionalFactory);
+                                              final OptionalFactory optionalFactory,
+                                              final ParentExtractor parentExtractor) {
+        return new BasePartialEntityFactory(identifierFactory, typeSourceFactory, optionalFactory, parentExtractor);
     }
+
+    private final EntityIdentifierFactory identifierFactory;
+    private final SingleTypeSourceFactory typeSourceFactory;
+    private final OptionalFactory optionalFactory;
+    private final ParentExtractor parentExtractor;
 
     @Inject
     private BasePartialEntityFactory(final EntityIdentifierFactory identifierFactory,
                                      final SingleTypeSourceFactory typeSourceFactory,
-                                     final OptionalFactory optionalFactory) {
-        super(identifierFactory, typeSourceFactory, optionalFactory);
+                                     final OptionalFactory optionalFactory,
+                                     final ParentExtractor parentExtractor) {
+        this.identifierFactory = identifierFactory;
+        this.typeSourceFactory = typeSourceFactory;
+        this.optionalFactory = optionalFactory;
+        this.parentExtractor = parentExtractor;
     }
 
     @Override
-    protected StreamEx<PartialEntity> entitiesFor(final ExtendedTypeElement parent) {
-        return StreamEx.of(create(parent));
+    protected PartialEntity createNew(final ExtendedTypeElement element) {
+        final Identifier identifier = this.identifierFactory.create(element);
+        final Collection<PartialEntity> parents = this.parentExtractor.extractAsIterable(element);
+        final TypeSource source = this.typeSourceFactory.create(identifier, element);
+
+        return new PartialEntityImpl(identifier, parents, source, this.optionalFactory);
+    }
+
+    @Override
+    public String toString() {
+        return "BasePartialEntityFactory{" +
+                "identifierFactory=" + this.identifierFactory +
+                ", typeSourceFactory=" + this.typeSourceFactory +
+                ", optionalFactory=" + this.optionalFactory +
+                ", parentExtractor=" + this.parentExtractor +
+                "} " + super.toString();
     }
 }

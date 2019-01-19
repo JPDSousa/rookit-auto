@@ -22,12 +22,13 @@
 package org.rookit.auto.entity.nowrite;
 
 import com.google.inject.Inject;
+import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.utils.primitive.VoidUtils;
 
-public final class NoWriteEntityFactory implements EntityFactory {
+public final class NoWriteEntityFactory extends AbstractCacheEntityFactory {
 
     public static EntityFactory create(final EntityFactory delegate,
                                        final VoidUtils voidUtils) {
@@ -44,7 +45,7 @@ public final class NoWriteEntityFactory implements EntityFactory {
     }
 
     @Override
-    public Entity create(final ExtendedTypeElement element) {
+    protected Entity createNew(final ExtendedTypeElement element) {
         return new NoWriteEntity(this.delegate.create(element), this.voidUtils);
     }
 

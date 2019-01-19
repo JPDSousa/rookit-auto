@@ -22,10 +22,14 @@
 package org.rookit.auto.entity;
 
 import com.google.inject.Inject;
+import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.Identifier;
+import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
+import org.rookit.auto.source.TypeSource;
 
-public final class BaseEntityFactory extends AbstractEntityFactory {
+public final class BaseEntityFactory extends AbstractCacheEntityFactory {
 
     public static EntityFactory create(final PartialEntityFactory partialEntityFactory,
                                        final EntityIdentifierFactory identifierFactory,
@@ -33,11 +37,34 @@ public final class BaseEntityFactory extends AbstractEntityFactory {
         return new BaseEntityFactory(partialEntityFactory, identifierFactory, typeSpecFactory);
     }
 
+    private final PartialEntityFactory partialEntityFactory;
+    private final EntityIdentifierFactory identifierFactory;
+    private final SingleTypeSourceFactory typeSpecFactory;
+
     @Inject
     private BaseEntityFactory(final PartialEntityFactory partialEntityFactory,
                               final EntityIdentifierFactory identifierFactory,
                               final SingleTypeSourceFactory typeSpecFactory) {
-        super(partialEntityFactory, identifierFactory, typeSpecFactory);
+        this.partialEntityFactory = partialEntityFactory;
+        this.identifierFactory = identifierFactory;
+        this.typeSpecFactory = typeSpecFactory;
     }
 
+    @Override
+    protected Entity createNew(final ExtendedTypeElement element) {
+        final PartialEntity partialEntity = this.partialEntityFactory.create(element);
+        final Identifier identifier = this.identifierFactory.create(element);
+        final TypeSource source = this.typeSpecFactory.create(identifier, element);
+
+        return new EntityImpl(partialEntity, identifier, source);
+    }
+
+    @Override
+    public String toString() {
+        return "BaseEntityFactory{" +
+                "partialEntityFactory=" + this.partialEntityFactory +
+                ", identifierFactory=" + this.identifierFactory +
+                ", typeSpecFactory=" + this.typeSpecFactory +
+                "} " + super.toString();
+    }
 }

@@ -22,7 +22,7 @@
 package org.rookit.auto.entity.nopartial;
 
 import com.google.inject.Inject;
-import org.rookit.auto.entity.AbstractCacheEntityFactory;
+import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
 import org.rookit.auto.identifier.EntityIdentifierFactory;

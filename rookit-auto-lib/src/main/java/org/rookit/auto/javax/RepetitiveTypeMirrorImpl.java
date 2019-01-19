@@ -21,6 +21,9 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.utils.optional.Optional;
+
+import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 import java.util.Collection;
 import java.util.function.Function;
@@ -39,6 +42,11 @@ final class RepetitiveTypeMirrorImpl implements RepetitiveTypeMirror {
     @Override
     public ExtendedTypeMirror unwrap(final ExtendedTypeMirror type) {
         return this.unwrapper.apply(type);
+    }
+
+    @Override
+    public Optional<Element> toElement() {
+        return this.delegate.toElement();
     }
 
     @Override

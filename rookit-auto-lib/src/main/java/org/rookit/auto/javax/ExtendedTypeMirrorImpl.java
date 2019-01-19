@@ -48,7 +48,7 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
         this.delegate = delegate;
         this.types = types;
         this.factory = factory;
-        this.typeParameters = ImmutableList.copyOf(extractor.extract(original()));
+        this.typeParameters = ImmutableList.copyOf(extractor.extract(this.delegate));
         this.optionalFactory = optionalFactory;
     }
 
@@ -59,8 +59,13 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
     }
 
     @Override
+    public TypeMirror original() {
+        return this.delegate;
+    }
+
+    @Override
     public Optional<Element> toElement() {
-        return this.optionalFactory.ofNullable(this.types.asElement(original()));
+        return this.optionalFactory.ofNullable(this.types.asElement(this.delegate));
     }
 
     @Override
@@ -70,23 +75,18 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
 
     @Override
     public boolean isSameType(final ExtendedTypeMirror other) {
-        return this.types.isSameType(original(), other.original());
+        return this.types.isSameType(this.delegate, other.original());
     }
 
     @Override
     public ExtendedTypeMirror erasure() {
-        return this.factory.create(this.types.erasure(original()));
-    }
-
-    @Override
-    public TypeMirror original() {
-        return this.delegate;
+        return this.factory.create(this.types.erasure(this.delegate));
     }
 
     @Override
     public ExtendedTypeMirror boxIfPrimitive() {
         if (getKind().isPrimitive()) {
-            return this.factory.create(this.types.boxedClass((PrimitiveType) original()).asType());
+            return this.factory.create(this.types.boxedClass((PrimitiveType) this.delegate).asType());
         }
         return this;
     }
@@ -101,4 +101,5 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
                 ", optionalFactory=" + this.optionalFactory +
                 "}";
     }
+
 }

@@ -24,6 +24,7 @@ package org.rookit.auto.javax;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.rookit.auto.javax.element.TypeParameterExtractor;
+import org.rookit.utils.optional.OptionalFactory;
 import org.rookit.utils.type.ClassVisitor;
 import org.rookit.utils.type.ExtendedClass;
 
@@ -42,24 +43,28 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
     public static ExtendedTypeMirrorFactory create(final Types types,
                                                    final Messager messager,
                                                    final Elements elements,
-                                                   final Provider<TypeParameterExtractor> extractor) {
-        return new BaseExtendedTypeMirrorFactory(types, elements, messager, extractor);
+                                                   final Provider<TypeParameterExtractor> extractor,
+                                                   final OptionalFactory optionalFactory) {
+        return new BaseExtendedTypeMirrorFactory(types, elements, messager, extractor, optionalFactory);
     }
 
     private final Types types;
     private final Elements elements;
     private final Messager messager;
     private final Provider<TypeParameterExtractor> extractor;
+    private final OptionalFactory optionalFactory;
 
     @Inject
     private BaseExtendedTypeMirrorFactory(final Types types,
                                           final Elements elements,
                                           final Messager messager,
-                                          final Provider<TypeParameterExtractor> extractor) {
+                                          final Provider<TypeParameterExtractor> extractor,
+                                          final OptionalFactory optionalFactory) {
         this.types = types;
         this.elements = elements;
         this.messager = messager;
         this.extractor = extractor;
+        this.optionalFactory = optionalFactory;
     }
 
 
@@ -81,7 +86,7 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
             this.messager.printMessage(Diagnostic.Kind.NOTE, errMsg);
             return (ExtendedTypeMirror) typeMirror;
         }
-        return new ExtendedTypeMirrorImpl(typeMirror, this.types, this, this.extractor.get(), optionalFactory);
+        return new ExtendedTypeMirrorImpl(typeMirror, this.types, this, this.extractor.get(), this.optionalFactory);
     }
 
     @Override
@@ -137,10 +142,11 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
     @Override
     public String toString() {
         return "BaseExtendedTypeMirrorFactory{" +
-                ", types=" + this.types +
+                "types=" + this.types +
                 ", elements=" + this.elements +
                 ", messager=" + this.messager +
                 ", extractor=" + this.extractor +
+                ", optionalFactory=" + this.optionalFactory +
                 "}";
     }
 }

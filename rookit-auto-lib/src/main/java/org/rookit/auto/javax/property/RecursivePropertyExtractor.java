@@ -23,6 +23,8 @@ package org.rookit.auto.javax.property;
 
 import com.google.inject.Inject;
 import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.ExtendedTypeMirror;
+import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.element.ElementUtils;
 import org.rookit.utils.optional.Optional;
 
@@ -32,25 +34,30 @@ import java.util.stream.Stream;
 public final class RecursivePropertyExtractor implements PropertyExtractor {
 
     public static PropertyExtractor create(final PropertyExtractor delegate,
-                                           final ElementUtils utils) {
-        return new RecursivePropertyExtractor(delegate, utils);
+                                           final ElementUtils utils,
+                                           final ExtendedTypeMirrorFactory mirrorFactory) {
+        return new RecursivePropertyExtractor(delegate, utils, mirrorFactory);
     }
 
     private final PropertyExtractor delegate;
     private final ElementUtils utils;
+    private final ExtendedTypeMirrorFactory mirrorFactory;
 
     @Inject
     private RecursivePropertyExtractor(final PropertyExtractor delegate,
-                                       final ElementUtils utils) {
+                                       final ElementUtils utils,
+                                       final ExtendedTypeMirrorFactory mirrorFactory) {
         this.delegate = delegate;
         this.utils = utils;
+        this.mirrorFactory = mirrorFactory;
     }
 
     @Override
     public Stream<ExtendedProperty> fromType(final TypeElement element) {
         // TODO copied from AbstractTypeElementDecorator#conventionInterfaces
         return StreamEx.of(element.getInterfaces())
-                .map(this.utils::toElement)
+                .map(this.mirrorFactory::create)
+                .map(ExtendedTypeMirror::toElement)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .select(TypeElement.class)
@@ -64,6 +71,7 @@ public final class RecursivePropertyExtractor implements PropertyExtractor {
         return "RecursivePropertyExtractor{" +
                 "delegate=" + this.delegate +
                 ", utils=" + this.utils +
+                ", mirrorFactory=" + this.mirrorFactory +
                 "}";
     }
 }

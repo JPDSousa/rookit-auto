@@ -84,7 +84,9 @@ public interface EntityProcessorTest {
 
         final EntityProcessor processor = processor();
         processor.init(environment);
-        assertThatCode(() -> processor.injector().getInstance(EntityHandler.class))
+
+
+        assertThatCode(() -> processor.injector().getInstance(EntityHandler.class).toString())
                 .as("Initializing the Entity Handler")
                 .doesNotThrowAnyException();
     }

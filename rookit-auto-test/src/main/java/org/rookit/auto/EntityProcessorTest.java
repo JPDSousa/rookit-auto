@@ -21,6 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto;
 
+import com.google.common.collect.ImmutableList;
 import io.github.glytching.junit.extension.folder.TemporaryFolder;
 import io.github.glytching.junit.extension.folder.TemporaryFolderExtension;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -64,6 +66,7 @@ public interface EntityProcessorTest {
                               @Mock final Filer filer,
                               @Mock final TypeElement typeElement,
                               @Mock final TypeMirror mirror,
+                              @Mock final PrimitiveType primitiveType,
                               @Mock final FileObject configObject) throws IOException {
         when(environment.getElementUtils()).thenReturn(elementUtils);
         when(environment.getTypeUtils()).thenReturn(typeUtils);
@@ -71,7 +74,10 @@ public interface EntityProcessorTest {
         when(environment.getFiler()).thenReturn(filer);
         when(elementUtils.getTypeElement(anyString())).thenReturn(typeElement);
         when(typeUtils.erasure(any())).thenReturn(mirror);
+        when(typeUtils.getPrimitiveType(any())).thenReturn(primitiveType);
         when(typeElement.asType()).thenReturn(mirror);
+        when(mirror.accept(any(), any())).thenReturn(ImmutableList.of());
+        when(primitiveType.accept(any(), any())).thenReturn(ImmutableList.of());
         when(filer.getResource(StandardLocation.CLASS_OUTPUT, "", "generation.json"))
                 .thenReturn(configObject);
         when(configObject.toUri()).thenReturn(createConfigFile(temporaryFolder));

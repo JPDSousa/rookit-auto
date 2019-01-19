@@ -19,16 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity.propertyflat;
+package org.rookit.auto.entity.property;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
-import org.rookit.utils.optional.OptionalFactory;
+import org.rookit.utils.optional.Optional;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -38,22 +37,19 @@ import java.util.concurrent.CompletableFuture;
 
 final class PropertyFlatEntity implements Entity {
 
-    private final Collection<PartialEntity> parents;
     private final Identifier identifier;
     private final TypeSource source;
     private final Collection<Entity> childEntities;
-    private final OptionalFactory optionalFactory;
+    private final PartialEntity partialEntity;
 
-    PropertyFlatEntity(final Collection<PartialEntity> parents,
-                       final Identifier identifier,
+    PropertyFlatEntity(final Identifier identifier,
                        final Collection<Entity> childEntities,
                        final TypeSource source,
-                       final OptionalFactory optionalFactory) {
-        this.parents = ImmutableSet.copyOf(parents);
+                       final PartialEntity partialEntity) {
         this.identifier = identifier;
         this.source = source;
         this.childEntities = ImmutableSet.copyOf(childEntities);
-        this.optionalFactory = optionalFactory;
+        this.partialEntity = partialEntity;
     }
 
     @Override
@@ -62,26 +58,22 @@ final class PropertyFlatEntity implements Entity {
     }
 
     @Override
-    public org.rookit.utils.optional.Optional<Identifier> genericIdentifier() {
-        return this.optionalFactory.empty();
+    public Optional<Identifier> genericIdentifier() {
+        return this.partialEntity.genericIdentifier();
     }
 
     @Override
     public Collection<PartialEntity> parents() {
-        //noinspection AssignmentOrReturnOfFieldWithMutableType
-        return this.parents;
+        return this.partialEntity.parents();
     }
 
     @Override
     public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
-        final List<CompletableFuture<Void>> ops = ImmutableList.of(
+        return CompletableFuture.allOf(
+                this.partialEntity.writeTo(filer),
                 this.source.writeTo(filer),
-                writeParents(filer),
                 writeChildEntities(filer)
         );
-
-        //noinspection ZeroLengthArrayAllocation
-        return CompletableFuture.allOf(ops.toArray(new CompletableFuture[0]));
     }
 
     private CompletableFuture<Void> writeChildEntities(final Filer filer) throws IOException {
@@ -94,24 +86,13 @@ final class PropertyFlatEntity implements Entity {
         return CompletableFuture.allOf(ops.toArray(new CompletableFuture[0]));
     }
 
-    private CompletableFuture<Void> writeParents(final Filer filer) throws IOException {
-        final List<CompletableFuture<Void>> ops = Lists.newArrayListWithCapacity(this.parents.size());
-        for (final PartialEntity parent : this.parents) {
-            ops.add(parent.writeTo(filer));
-        }
-
-        //noinspection ZeroLengthArrayAllocation
-        return CompletableFuture.allOf(ops.toArray(new CompletableFuture[0]));
-    }
-
     @Override
     public String toString() {
         return "PropertyFlatEntity{" +
-                "parents=" + this.parents +
-                ", identifier=" + this.identifier +
+                "identifier=" + this.identifier +
                 ", source=" + this.source +
                 ", childEntities=" + this.childEntities +
-                ", optionalFactory=" + this.optionalFactory +
+                ", partialEntity=" + this.partialEntity +
                 "}";
     }
 }

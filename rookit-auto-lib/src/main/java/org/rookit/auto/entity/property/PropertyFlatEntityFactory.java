@@ -19,87 +19,79 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity.propertyflat;
+package org.rookit.auto.entity.property;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import org.rookit.auto.entity.AbstractCacheEntityFactory;
+import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.entity.PropertyEntityFactory;
+import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
+import org.rookit.auto.guice.NoGeneric;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.auto.javax.property.PropertyEvaluator;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
-import org.rookit.utils.optional.OptionalFactory;
 
 import java.util.Collection;
-import java.util.Set;
 
-public final class PropertFlatEntityFactory extends AbstractCacheEntityFactory {
+public final class PropertyFlatEntityFactory extends AbstractCacheEntityFactory {
 
     public static EntityFactory create(final EntityIdentifierFactory identifierFactory,
-                                       final Provider<PartialEntityFactory> partialEntityFactory,
+                                       final PartialEntityFactory partialEntityFactory,
                                        final SingleTypeSourceFactory typeSourceFactory,
                                        final PropertyEntityFactory propEntityFactory,
-                                       final OptionalFactory optionalFactory, PropertyEvaluator evaluator) {
-        return new PropertFlatEntityFactory(identifierFactory, partialEntityFactory, typeSourceFactory,
-                propEntityFactory, optionalFactory, evaluator);
+                                       final PropertyEvaluator evaluator) {
+        return new PropertyFlatEntityFactory(
+                identifierFactory,
+                partialEntityFactory,
+                typeSourceFactory,
+                propEntityFactory,
+                evaluator);
     }
 
     private final EntityIdentifierFactory identifierFactory;
-    private final Provider<PartialEntityFactory> partialEntityFactory;
+    private final PartialEntityFactory partialEntityFactory;
     private final SingleTypeSourceFactory singleTypeSourceFactory;
     private final PropertyEntityFactory propertyEntityFactory;
-    private final OptionalFactory optionalFactory;
     private final PropertyEvaluator filter;
 
     @Inject
-    private PropertFlatEntityFactory(final EntityIdentifierFactory identifierFactory,
-                                     final Provider<PartialEntityFactory> partialEntityFactory,
-                                     final SingleTypeSourceFactory typeSourceFactory,
-                                     final PropertyEntityFactory propEntityFactory,
-                                     final OptionalFactory optionalFactory,
-                                     final PropertyEvaluator filter) {
+    private PropertyFlatEntityFactory(final EntityIdentifierFactory identifierFactory,
+                                      @NoGeneric final PartialEntityFactory partialEntityFactory,
+                                      final SingleTypeSourceFactory typeSourceFactory,
+                                      final PropertyEntityFactory propEntityFactory,
+                                      final PropertyEvaluator filter) {
         this.identifierFactory = identifierFactory;
         this.partialEntityFactory = partialEntityFactory;
         this.singleTypeSourceFactory = typeSourceFactory;
         this.propertyEntityFactory = propEntityFactory;
-        this.optionalFactory = optionalFactory;
         this.filter = filter;
     }
 
     @Override
     protected Entity createNew(final ExtendedTypeElement element) {
-        final PartialEntityFactory partialEntityFactory = this.partialEntityFactory.get();
-        final Set<PartialEntity> parents = element.conventionInterfaces()
-                .map(partialEntityFactory::create)
-                .toSet();
         final Identifier identifier = this.identifierFactory.create(element);
-        final Collection<Entity> entities = Lists.newArrayList();
-
         final TypeSource source = this.singleTypeSourceFactory.create(identifier, element);
-        element.properties().stream()
+
+        final Collection<Entity> entities = StreamEx.of(element.properties())
                 .filter(this.filter)
                 .map(this.propertyEntityFactory::create)
-                .forEach(entities::add);
+                .toImmutableSet();
 
-        return new PropertyFlatEntity(parents, identifier, entities, source, this.optionalFactory);
+        return new PropertyFlatEntity(identifier, entities, source, this.partialEntityFactory.create(element));
     }
 
     @Override
     public String toString() {
-        return "PropertFlatEntityFactory{" +
+        return "PropertyFlatEntityFactory{" +
                 "identifierFactory=" + this.identifierFactory +
                 ", partialEntityFactory=" + this.partialEntityFactory +
                 ", singleTypeSourceFactory=" + this.singleTypeSourceFactory +
                 ", propertyEntityFactory=" + this.propertyEntityFactory +
-                ", optionalFactory=" + this.optionalFactory +
                 ", filter=" + this.filter +
                 "} " + super.toString();
     }

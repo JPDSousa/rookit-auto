@@ -26,7 +26,10 @@ import com.google.inject.Inject;
 import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.ExtendedTypeMirror;
 import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
+import org.rookit.failsafe.Failsafe;
 import org.rookit.utils.primitive.VoidUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -47,93 +50,117 @@ import java.util.List;
 final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? extends TypeMirror>, Void>,
         TypeParameterExtractor {
 
+    /**
+     * Logger for this class.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(TypeVisitorParameterExtractor.class);
+
     public static TypeParameterExtractor create(final VoidUtils voidUtils,
-                                                final ExtendedTypeMirrorFactory typeMirrorFactory) {
-        return new TypeVisitorParameterExtractor(voidUtils, typeMirrorFactory);
+                                                final ExtendedTypeMirrorFactory typeMirrorFactory,
+                                                final Failsafe failsafe) {
+        return new TypeVisitorParameterExtractor(failsafe, voidUtils, typeMirrorFactory);
     }
 
+    private final Failsafe failsafe;
     private final VoidUtils voidUtils;
     private final ExtendedTypeMirrorFactory typeMirrorFactory;
 
     @Inject
-    private TypeVisitorParameterExtractor(final VoidUtils voidUtils,
+    private TypeVisitorParameterExtractor(final Failsafe failsafe,
+                                          final VoidUtils voidUtils,
                                           final ExtendedTypeMirrorFactory typeMirrorFactory) {
+        this.failsafe = failsafe;
         this.voidUtils = voidUtils;
         this.typeMirrorFactory = typeMirrorFactory;
     }
 
     @Override
-    public Collection<TypeMirror> visit(final TypeMirror t, final Void aVoid) {
+    public Collection<TypeMirror> visit(final TypeMirror typeMirror, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, typeMirror, "typeMirror");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visit(final TypeMirror t) {
+    public Collection<TypeMirror> visit(final TypeMirror typeMirror) {
+        this.failsafe.checkArgument().isNotNull(logger, typeMirror, "typeMirror");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitPrimitive(final PrimitiveType t, final Void aVoid) {
+    public Collection<TypeMirror> visitPrimitive(final PrimitiveType primitiveType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, primitiveType, "primitiveType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitNull(final NullType t, final Void aVoid) {
+    public Collection<TypeMirror> visitNull(final NullType nullType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, nullType, "nullType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitArray(final ArrayType t, final Void aVoid) {
+    public Collection<TypeMirror> visitArray(final ArrayType arrayType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, arrayType, "arrayType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<? extends TypeMirror> visitDeclared(final DeclaredType t, final Void aVoid) {
-        return t.getTypeArguments();
+    public Collection<? extends TypeMirror> visitDeclared(final DeclaredType declaredType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, declaredType, "declaredType");
+        return declaredType.getTypeArguments();
     }
 
     @Override
-    public Collection<TypeMirror> visitError(final ErrorType t, final Void aVoid) {
+    public Collection<TypeMirror> visitError(final ErrorType errorType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, errorType, "errorType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitTypeVariable(final TypeVariable t, final Void aVoid) {
+    public Collection<TypeMirror> visitTypeVariable(final TypeVariable typeVariable, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, typeVariable, "typeVariable");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitWildcard(final WildcardType t, final Void aVoid) {
+    public Collection<TypeMirror> visitWildcard(final WildcardType wildcardType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, wildcardType, "wildcardType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitExecutable(final ExecutableType t, final Void aVoid) {
+    public Collection<TypeMirror> visitExecutable(final ExecutableType executableType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, executableType, "executableType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitNoType(final NoType t, final Void aVoid) {
+    public Collection<TypeMirror> visitNoType(final NoType noType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, noType, "noType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitUnknown(final TypeMirror t, final Void aVoid) {
+    public Collection<TypeMirror> visitUnknown(final TypeMirror typeMirror, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, typeMirror, "typeMirror");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitUnion(final UnionType t, final Void aVoid) {
+    public Collection<TypeMirror> visitUnion(final UnionType unionType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, unionType, "unionType");
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<TypeMirror> visitIntersection(final IntersectionType t, final Void aVoid) {
+    public Collection<TypeMirror> visitIntersection(final IntersectionType intersectionType, final Void aVoid) {
+        this.failsafe.checkArgument().isNotNull(logger, intersectionType, "intersectionType");
         return ImmutableList.of();
     }
 
     @Override
     public List<? extends ExtendedTypeMirror> extract(final TypeMirror type) {
+        this.failsafe.checkArgument().isNotNull(logger, type, "type");
         return StreamEx.of(type.accept(this, this.voidUtils.returnVoid()))
                 .map(this.typeMirrorFactory::create)
                 .toImmutableList();
@@ -143,7 +170,8 @@ final class TypeVisitorParameterExtractor implements TypeVisitor<Collection<? ex
     @Override
     public String toString() {
         return "TypeVisitorParameterExtractor{" +
-                "voidUtils=" + this.voidUtils +
+                "failsafe=" + this.failsafe +
+                ", voidUtils=" + this.voidUtils +
                 ", typeMirrorFactory=" + this.typeMirrorFactory +
                 "}";
     }

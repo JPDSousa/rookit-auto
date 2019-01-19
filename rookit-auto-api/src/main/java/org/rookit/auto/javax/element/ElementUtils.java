@@ -46,8 +46,6 @@ public interface ElementUtils {
         return builder.build();
     }
 
-    Optional<Element> toElement(TypeMirror typeMirror);
-
     boolean isConventionElement(AnnotatedConstruct element);
 
 }

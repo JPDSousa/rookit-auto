@@ -24,7 +24,7 @@ package org.rookit.auto.entity;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 @FunctionalInterface
-public interface EntityFactory {
+public interface EntityFactory extends PartialEntityFactory {
 
     Entity create(ExtendedTypeElement element);
 

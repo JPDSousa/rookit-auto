@@ -79,7 +79,7 @@ public final class EntityMethodFactory implements AnnotationBasedMethodFactory {
     }
 
     private Element getReturnType(final ExtendedProperty executable) {
-        return this.types.asElement(executable.type());
+        return this.types.asElement(executable.type().original());
     }
 
     @Override

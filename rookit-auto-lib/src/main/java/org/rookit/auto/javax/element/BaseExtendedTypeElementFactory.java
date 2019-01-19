@@ -22,6 +22,7 @@
 package org.rookit.auto.javax.element;
 
 import com.google.inject.Inject;
+import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.property.PropertyExtractor;
 import org.rookit.auto.naming.PackageReferenceFactory;
@@ -41,8 +42,10 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
                                                     final OptionalFactory optionalFactory,
                                                     final PropertyExtractor extractor,
                                                     final ElementUtils utils,
-                                                    final Messager messager) {
-        return new BaseExtendedTypeElementFactory(packageFactory, optionalFactory, extractor, utils, messager);
+                                                    final Messager messager,
+                                                    final ExtendedTypeMirrorFactory mirrorFactory) {
+        return new BaseExtendedTypeElementFactory(packageFactory, optionalFactory,
+                extractor, utils, messager, mirrorFactory);
     }
 
     private final PackageReferenceFactory packageFactory;
@@ -50,18 +53,21 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
     private final PropertyExtractor extractor;
     private final ElementUtils utils;
     private final Messager messager;
+    private final ExtendedTypeMirrorFactory mirrorFactory;
 
     @Inject
     private BaseExtendedTypeElementFactory(final PackageReferenceFactory packageFactory,
                                            final OptionalFactory optionalFactory,
                                            final PropertyExtractor extractor,
                                            final ElementUtils utils,
-                                           final Messager messager) {
+                                           final Messager messager,
+                                           final ExtendedTypeMirrorFactory mirrorFactory) {
         this.packageFactory = packageFactory;
         this.optionalFactory = optionalFactory;
         this.extractor = extractor;
         this.utils = utils;
         this.messager = messager;
+        this.mirrorFactory = mirrorFactory;
     }
 
     @Override
@@ -76,7 +82,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
         final Collection<ExtendedProperty> properties = this.extractor.fromType(baseElement)
                 .collect(Collectors.toList());
         return new TypeElementDecoratorImpl(baseElement, this.utils,
-                this.optionalFactory, this.packageFactory, properties, this.extractor);
+                this.optionalFactory, this.packageFactory, properties, this.extractor, this.mirrorFactory);
     }
 
     @Override
@@ -87,6 +93,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
                 ", extractor=" + this.extractor +
                 ", utils=" + this.utils +
                 ", messager=" + this.messager +
+                ", mirrorFactory=" + this.mirrorFactory +
                 "}";
     }
 }

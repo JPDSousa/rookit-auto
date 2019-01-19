@@ -60,11 +60,6 @@ final class ElementUtilsImpl implements ElementUtils {
     }
 
     @Override
-    public Optional<Element> toElement(final TypeMirror typeMirror) {
-        return this.optionalFactory.ofNullable(this.types.asElement(typeMirror));
-    }
-
-    @Override
     public boolean isConventionElement(final AnnotatedConstruct element) {
         for (final Class<? extends Annotation> annotation : this.annotations) {
             if (Objects.nonNull(element.getAnnotation(annotation))) {

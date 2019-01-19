@@ -22,6 +22,7 @@
 package org.rookit.auto.javax.element;
 
 import com.google.common.base.MoreObjects;
+import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.property.PropertyExtractor;
 import org.rookit.auto.naming.PackageReferenceFactory;
@@ -41,8 +42,9 @@ final class ParentTypeElementDecorator extends AbstractTypeElementDecorator {
                                final OptionalFactory optionalFactory,
                                final PackageReferenceFactory packageFactory,
                                final Collection<ExtendedProperty> properties,
-                               final PropertyExtractor extractor) {
-        super(delegate, utils, optionalFactory, packageFactory, properties, extractor);
+                               final PropertyExtractor extractor,
+                               final ExtendedTypeMirrorFactory factory) {
+        super(delegate, utils, optionalFactory, packageFactory, properties, extractor, factory);
         this.child = child;
     }
 

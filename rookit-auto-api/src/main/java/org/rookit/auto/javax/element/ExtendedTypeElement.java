@@ -55,4 +55,10 @@ public interface ExtendedTypeElement extends TypeElement {
 
     @Override
     List<? extends ExtendedTypeMirror> getInterfaces();
+
+    @Override
+    ExtendedTypeMirror getSuperclass();
+
+    @Override
+    ExtendedTypeMirror asType();
 }

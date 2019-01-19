@@ -19,31 +19,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity;
+package org.rookit.auto.entity.cache;
 
+import com.google.common.collect.Maps;
+import org.rookit.auto.entity.PartialEntity;
+import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
-public final class EntityToPartialEntityFactory implements PartialEntityFactory {
+import java.util.Map;
 
-    public static PartialEntityFactory create(final EntityFactory delegate) {
-        return new EntityToPartialEntityFactory(delegate);
-    }
+public abstract class AbstractCachePartialEntityFactory implements PartialEntityFactory {
 
-    private final EntityFactory delegate;
+    private final Map<String, PartialEntity> cache;
 
-    private EntityToPartialEntityFactory(final EntityFactory delegate) {
-        this.delegate = delegate;
+    protected AbstractCachePartialEntityFactory() {
+        this.cache = Maps.newHashMap();
     }
 
     @Override
     public PartialEntity create(final ExtendedTypeElement element) {
-        return this.delegate.create(element);
+        return this.cache.computeIfAbsent(element.getQualifiedName().toString(),
+                name -> createNew(element));
     }
+
+    protected abstract PartialEntity createNew(final ExtendedTypeElement element);
 
     @Override
     public String toString() {
-        return "EntityToPartialEntityFactory{" +
-                "delegate=" + this.delegate +
+        return "AbstractCachePartialEntityFactory{" +
+                "cache=" + this.cache +
                 "}";
     }
 }

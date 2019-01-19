@@ -19,10 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity;
+package org.rookit.auto.entity.cache;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
+import org.rookit.auto.entity.Entity;
+import org.rookit.auto.entity.EntityFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 import java.util.Map;

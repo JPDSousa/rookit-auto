@@ -41,7 +41,6 @@ final class AutoConfigImpl implements AutoConfig {
         return this.pathConfigFactory.create(this.configuration.getConfig("path"));
     }
 
-    // TODO we may be able to generalize this logic
     @Override
     public Configuration getProcessorConfig(final String name) {
         return this.configuration.getConfig(name);

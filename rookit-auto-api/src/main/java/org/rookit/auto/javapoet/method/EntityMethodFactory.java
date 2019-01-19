@@ -22,10 +22,15 @@
 package org.rookit.auto.javapoet.method;
 
 import com.squareup.javapoet.MethodSpec;
+import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
 @FunctionalInterface
 public interface EntityMethodFactory {
 
-    Iterable<MethodSpec> create(ExtendedTypeElement element);
+    StreamEx<MethodSpec> create(ExtendedTypeElement element);
+
+    default Iterable<MethodSpec> createAsSet(final ExtendedTypeElement element) {
+        return create(element).toImmutableSet();
+    }
 }

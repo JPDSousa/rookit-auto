@@ -21,6 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto.identifier;
 
+import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
@@ -29,5 +30,14 @@ public interface PropertyIdentifierFactory {
     Identifier create(ExtendedTypeElement element, ExtendedProperty property);
 
     Identifier create(ExtendedProperty property);
+
+    default StreamEx<Identifier> createAll(final ExtendedTypeElement element) {
+        return StreamEx.of(element.properties())
+                .map(property -> create(element, property));
+    }
+
+    default Iterable<Identifier> createAllAsIterable(final ExtendedTypeElement element) {
+        return createAll(element).toImmutableSet();
+    }
 
 }

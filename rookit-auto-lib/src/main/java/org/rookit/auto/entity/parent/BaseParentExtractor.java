@@ -19,43 +19,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.entity;
+package org.rookit.auto.entity.parent;
 
-import org.rookit.auto.identifier.EntityIdentifierFactory;
-import org.rookit.auto.identifier.Identifier;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import one.util.streamex.StreamEx;
+import org.rookit.auto.entity.PartialEntity;
+import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
-import org.rookit.auto.source.SingleTypeSourceFactory;
-import org.rookit.auto.source.TypeSource;
 
-public abstract class AbstractEntityFactory extends AbstractCacheEntityFactory {
+public final class BaseParentExtractor implements ParentExtractor {
 
-    private final PartialEntityFactory partialEntityFactory;
-    private final EntityIdentifierFactory identifierFactory;
-    private final SingleTypeSourceFactory typeSpecFactory;
+    public static ParentExtractor create(final Provider<PartialEntityFactory> partialEntityFactory) {
+        return new BaseParentExtractor(partialEntityFactory);
+    }
 
-    protected AbstractEntityFactory(final PartialEntityFactory partialEntityFactory,
-                                    final EntityIdentifierFactory identifierFactory,
-                                    final SingleTypeSourceFactory typeSpecFactory) {
+    private final Provider<PartialEntityFactory> partialEntityFactory;
+
+    @Inject
+    private BaseParentExtractor(final Provider<PartialEntityFactory> partialEntityFactory) {
         this.partialEntityFactory = partialEntityFactory;
-        this.identifierFactory = identifierFactory;
-        this.typeSpecFactory = typeSpecFactory;
     }
 
     @Override
-    protected Entity createNew(final ExtendedTypeElement element) {
-        final PartialEntity partialEntity = this.partialEntityFactory.create(element);
-        final Identifier identifier = this.identifierFactory.create(element);
-        final TypeSource source = this.typeSpecFactory.create(identifier, element);
+    public StreamEx<PartialEntity> extractFrom(final ExtendedTypeElement element) {
+        return element.conventionInterfaces()
+                .flatMap(this::entitiesFor);
+    }
 
-        return new EntityImpl(partialEntity, identifier, source);
+    private StreamEx<PartialEntity> entitiesFor(final ExtendedTypeElement parent) {
+        return StreamEx.of(this.partialEntityFactory.get().create(parent));
     }
 
     @Override
     public String toString() {
-        return "AbstractEntityFactory{" +
+        return "BaseParentExtractor{" +
                 "partialEntityFactory=" + this.partialEntityFactory +
-                ", identifierFactory=" + this.identifierFactory +
-                ", typeSpecFactory=" + this.typeSpecFactory +
-                "} " + super.toString();
+                "}";
     }
 }

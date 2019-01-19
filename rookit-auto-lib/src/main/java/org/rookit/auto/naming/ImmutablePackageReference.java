@@ -22,7 +22,6 @@
 package org.rookit.auto.naming;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.MoreObjects;
 
 import java.util.regex.Pattern;
 
@@ -61,8 +60,9 @@ class ImmutablePackageReference extends AbstractPackageReference {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("name", this.name)
-                .toString();
+        return "ImmutablePackageReference{" +
+                "name='" + this.name + '\'' +
+                ", splitter=" + this.splitter +
+                "} " + super.toString();
     }
 }

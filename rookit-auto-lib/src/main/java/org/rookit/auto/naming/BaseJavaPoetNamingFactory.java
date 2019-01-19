@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
-import com.google.common.base.MoreObjects;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 
@@ -75,11 +74,11 @@ public final class BaseJavaPoetNamingFactory implements JavaPoetNamingFactory {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("packageReference", this.packageReference)
-                .add("entitySuffix", this.entitySuffix)
-                .add("entityPrefix", this.entityPrefix)
-                .add("methodPrefix", this.methodPrefix)
-                .toString();
+        return "BaseJavaPoetNamingFactory{" +
+                "packageReference=" + this.packageReference +
+                ", entitySuffix='" + this.entitySuffix + '\'' +
+                ", entityPrefix='" + this.entityPrefix + '\'' +
+                ", methodPrefix='" + this.methodPrefix + '\'' +
+                "}";
     }
 }

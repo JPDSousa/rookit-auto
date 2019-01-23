@@ -25,6 +25,8 @@ package org.rookit.auto.config;
 // TODO processor
 public interface ProcessorConfig {
 
+    String name();
+
     boolean isEnabled();
 
 }

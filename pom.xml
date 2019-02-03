@@ -2,53 +2,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>rookit</artifactId>
-        <groupId>com.github.JPDSousa</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>rookit-auto</artifactId>
+
     <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.github.JPDSousa</groupId>
+        <artifactId>rookit</artifactId>
+        <version>-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.github.JPDSousa.rookit-auto</groupId>
+    <artifactId>rookit-auto</artifactId>
+
     <name>Rookit Auto</name>
     <description>A Module that manages code generation</description>
+
     <modules>
-        <module>rookit-auto-api</module>
-        <module>rookit-auto-lib</module>
-        <module>rookit-auto-test</module>
+        <module>api</module>
+        <module>lib</module>
+        <module>test</module>
     </modules>
 
+    <properties>
+            <javapoet.version>1.11.1</javapoet.version>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${rookit.group}</groupId>
-            <artifactId>rookit-utils-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>javapoet</artifactId>
-        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.google.auto.service</groupId>
-                <artifactId>auto-service</artifactId>
-                <version>1.0-rc4</version>
-            </dependency>
-            <dependency>
-                <groupId>${rookit.group}</groupId>
-                <artifactId>rookit-utils-api</artifactId>
-                <version>${rookit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup</groupId>
-                <artifactId>javapoet</artifactId>
-                <version>1.11.1</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

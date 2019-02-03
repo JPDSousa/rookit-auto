@@ -22,15 +22,16 @@
 package org.rookit.auto;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import org.rookit.convention.annotation.Entity;
 import org.rookit.convention.annotation.EntityExtension;
-import org.rookit.utils.guice.LazyInjector;
 import org.rookit.utils.guice.Proxied;
 
 import javax.annotation.processing.Filer;
@@ -40,11 +41,12 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public abstract class AbstractEntityProcessor extends AbstractInjectorEntityProcessor {
 
     @SuppressWarnings("InstanceVariableMayNotBeInitialized")
-    private Injector injector;
+    private Supplier<Injector> injector;
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
@@ -60,12 +62,12 @@ public abstract class AbstractEntityProcessor extends AbstractInjectorEntityProc
                                 bind(Filer.class).annotatedWith(Proxied.class).toInstance(processingEnv.getFiler());
                             }
                         });
-        this.injector = LazyInjector.create(ImmutableList.of(module));
+        this.injector = Suppliers.memoize(() -> Guice.createInjector(ImmutableList.of(module)));
     }
 
     @Override
     public Injector injector() {
-        return this.injector;
+        return this.injector.get();
     }
 
     protected abstract Module sourceModule();

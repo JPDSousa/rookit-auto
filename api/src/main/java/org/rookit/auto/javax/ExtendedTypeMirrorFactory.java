@@ -21,7 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
-import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.reflect.ExtendedClass;
 
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;

@@ -24,8 +24,8 @@ package org.rookit.auto.javax;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.apache.commons.collections4.Bag;
-import org.rookit.utils.type.ExtendedClass;
-import org.rookit.utils.type.ExtendedClassFactory;
+import org.rookit.utils.reflect.ExtendedClass;
+import org.rookit.utils.reflect.ExtendedClassFactory;
 
 final class ApacheBagProvider implements Provider<RepetitiveTypeMirror> {
 

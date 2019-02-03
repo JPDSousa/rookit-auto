@@ -23,7 +23,7 @@ package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
 import org.rookit.auto.javax.element.TypeParameterExtractor;
-import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.reflect.ExtendedClass;
 
 import javax.lang.model.type.TypeMirror;
 import java.util.function.Function;

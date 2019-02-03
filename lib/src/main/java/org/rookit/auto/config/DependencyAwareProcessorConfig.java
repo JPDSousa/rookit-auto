@@ -22,6 +22,7 @@
 package org.rookit.auto.config;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
@@ -29,18 +30,25 @@ import java.util.Collection;
 
 import static java.lang.String.format;
 
-final class ProcessorConfigImpl implements ProcessorConfig {
+public final class DependencyAwareProcessorConfig implements ProcessorConfig {
 
     private static final String DEPENDENCY_DISABLED = "Considering %s processor disabled, as " +
             "%s processor is disabled.";
+
+    public static ProcessorConfig create(final ProcessorConfig delegate,
+                                         final Collection<ProcessorConfig> dependencies,
+                                         final Messager messager) {
+        return new DependencyAwareProcessorConfig(delegate, dependencies, messager);
+    }
 
     private final ProcessorConfig delegate;
     private final Collection<ProcessorConfig> dependencies;
     private final Messager messager;
 
-    ProcessorConfigImpl(final ProcessorConfig delegate,
-                        final Collection<ProcessorConfig> dependencies,
-                        final Messager messager) {
+    @Inject
+    private DependencyAwareProcessorConfig(final ProcessorConfig delegate,
+                                   final Collection<ProcessorConfig> dependencies,
+                                   final Messager messager) {
         this.delegate = delegate;
         this.dependencies = ImmutableList.copyOf(dependencies);
         this.messager = messager;
@@ -69,7 +77,7 @@ final class ProcessorConfigImpl implements ProcessorConfig {
 
     @Override
     public String toString() {
-        return "ProcessorConfigImpl{" +
+        return "DependencyAwareProcessorConfig{" +
                 "delegate=" + this.delegate +
                 ", dependencies=" + this.dependencies +
                 ", messager=" + this.messager +

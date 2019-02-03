@@ -25,7 +25,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.util.Modules;
 import org.rookit.config.ConfigurationFactory;
 import org.rookit.config.exception.UnsupportedConfigurationException;
 import org.rookit.config.guice.Config;
@@ -40,10 +39,7 @@ import java.net.URI;
 @SuppressWarnings("MethodMayBeStatic")
 public final class ConfigurationModule extends AbstractModule {
 
-    private static final Module MODULE = Modules.combine(
-            new ConfigurationModule(),
-            org.rookit.config.ConfigurationModule.getModule()
-    );
+    private static final Module MODULE = new ConfigurationModule();
 
     public static Module getModule() {
         return MODULE;

@@ -25,8 +25,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.rookit.auto.javax.element.TypeParameterExtractor;
 import org.rookit.utils.optional.OptionalFactory;
-import org.rookit.utils.type.ClassVisitor;
-import org.rookit.utils.type.ExtendedClass;
+import org.rookit.utils.reflect.ClassVisitor;
+import org.rookit.utils.reflect.ExtendedClass;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;

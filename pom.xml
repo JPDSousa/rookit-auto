@@ -29,11 +29,4 @@
             <javapoet.version>1.11.1</javapoet.version>
     </properties>
 
-    <dependencies>
-    </dependencies>
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
-
 </project>

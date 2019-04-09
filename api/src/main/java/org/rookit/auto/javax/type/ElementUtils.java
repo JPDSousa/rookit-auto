@@ -19,21 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.guice;
+package org.rookit.auto.javax.type;
 
-import com.google.inject.BindingAnnotation;
+import com.google.common.collect.ImmutableSet;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javax.lang.model.AnnotatedConstruct;
+import java.util.Collection;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+public interface ElementUtils {
 
-@SuppressWarnings("javadoc")
-@Retention(RUNTIME)
-@BindingAnnotation
-@Target({FIELD, METHOD, PARAMETER})
-public @interface Collection {
+    default <T extends ExtendedTypeMirror> Collection<T> intersection(final Collection<T> types,
+                                                              final Collection<T> moreTypes) {
+        final ImmutableSet.Builder<T> builder = ImmutableSet.builder();
+        for (final T type : types) {
+            for (final T anotherType : moreTypes) {
+                if (type.isSameType(anotherType)) {
+                    builder.add(type);
+                }
+            }
+        }
+        return builder.build();
+    }
+
+    boolean isConventionElement(AnnotatedConstruct element);
+
 }

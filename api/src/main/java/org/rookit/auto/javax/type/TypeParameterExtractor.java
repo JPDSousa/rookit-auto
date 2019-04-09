@@ -19,33 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
-import com.google.common.collect.ImmutableSet;
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.utils.optional.Optional;
-
-import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
+import java.util.List;
 
-public interface ElementUtils {
+@FunctionalInterface
+public interface TypeParameterExtractor {
 
-    default <T extends ExtendedTypeMirror> Collection<T> intersection(final Collection<T> types,
-                                                              final Collection<T> moreTypes) {
-        final ImmutableSet.Builder<T> builder = ImmutableSet.builder();
-        for (final T type : types) {
-            for (final T anotherType : moreTypes) {
-                if (type.isSameType(anotherType)) {
-                    builder.add(type);
-                }
-            }
-        }
-        return builder.build();
-    }
-
-    boolean isConventionElement(AnnotatedConstruct element);
-
+    List<? extends ExtendedTypeMirror> extract(TypeMirror type);
 }

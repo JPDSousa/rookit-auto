@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
-import javax.lang.model.element.TypeElement;
+import com.squareup.javapoet.MethodSpec;
+import org.rookit.utils.aggregate.Aggregator;
 
-public interface ExtendedTypeElementFactory {
-
-    ExtendedTypeElement extend(TypeElement baseElement);
+public interface ExtendedTypeElementMethodAggregator extends Aggregator<ExtendedTypeElement,
+        ExtendedTypeElementMethodAggregator, MethodSpec> {
 
 }

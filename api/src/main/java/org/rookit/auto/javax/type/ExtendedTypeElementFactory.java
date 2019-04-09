@@ -19,23 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.javax.type;
 
-import org.rookit.utils.reflect.ExtendedClass;
+import javax.lang.model.element.TypeElement;
 
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+public interface ExtendedTypeElementFactory {
 
-public interface ExtendedTypeMirrorFactory {
-
-    ExtendedTypeMirror createWithErasure(Class<?> clazz);
-
-    ExtendedTypeMirror createWithErasure(TypeMirror typeMirror);
-
-    ExtendedTypeMirror create(TypeMirror typeMirror);
-
-    ExtendedTypeMirror create(TypeKind typeKind);
-
-    ExtendedTypeMirror create(ExtendedClass<?> clazz);
+    ExtendedTypeElement extend(TypeElement baseElement);
 
 }

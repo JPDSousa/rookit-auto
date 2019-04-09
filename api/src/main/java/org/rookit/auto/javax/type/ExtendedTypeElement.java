@@ -19,15 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
-import org.rookit.auto.javax.ExtendedTypeMirror;
+import one.util.streamex.StreamEx;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.naming.PackageReference;
+import org.rookit.utils.optional.Optional;
 
-import javax.lang.model.type.TypeMirror;
+import javax.lang.model.element.TypeElement;
+import java.util.Collection;
 import java.util.List;
 
-@FunctionalInterface
-public interface TypeParameterExtractor {
+public interface ExtendedTypeElement extends TypeElement {
 
-    List<? extends ExtendedTypeMirror> extract(TypeMirror type);
+    Optional<ExtendedTypeElement> child();
+
+    boolean isTopLevel();
+
+    boolean isEntity();
+
+    boolean isPartialEntity();
+
+    boolean isEntityExtension();
+
+    boolean isPropertyContainer();
+
+    boolean isConvention();
+
+    Optional<ExtendedTypeElement> upstreamEntity();
+
+    StreamEx<ExtendedTypeElement> conventionInterfaces();
+
+    PackageReference packageInfo();
+
+    Collection<Property> properties();
+
+    @Override
+    List<? extends ExtendedTypeMirror> getInterfaces();
+
+    @Override
+    ExtendedTypeMirror getSuperclass();
+
+    @Override
+    ExtendedTypeMirror asType();
 }

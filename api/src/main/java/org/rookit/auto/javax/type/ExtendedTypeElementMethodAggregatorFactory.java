@@ -19,46 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
-import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.naming.PackageReference;
-import org.rookit.utils.optional.Optional;
+public interface ExtendedTypeElementMethodAggregatorFactory {
 
-import javax.lang.model.element.TypeElement;
-import java.util.Collection;
-import java.util.List;
+    ExtendedTypeElementMethodAggregator create();
 
-public interface ExtendedTypeElement extends TypeElement {
-
-    Optional<ExtendedTypeElement> child();
-
-    boolean isTopLevel();
-
-    boolean isEntity();
-
-    boolean isPartialEntity();
-
-    boolean isEntityExtension();
-
-    boolean isPropertyContainer();
-
-    Optional<ExtendedTypeElement> upstreamEntity();
-
-    StreamEx<ExtendedTypeElement> conventionInterfaces();
-
-    PackageReference packageInfo();
-
-    Collection<ExtendedProperty> properties();
-
-    @Override
-    List<? extends ExtendedTypeMirror> getInterfaces();
-
-    @Override
-    ExtendedTypeMirror getSuperclass();
-
-    @Override
-    ExtendedTypeMirror asType();
 }

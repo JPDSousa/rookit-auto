@@ -22,3 +22,9 @@ rookit-auto-api/target/
 rookit-auto-lib/target/
 
 rookit-auto-test/target/
+
+test/target/
+
+lib/target/
+
+api/target/

@@ -31,8 +31,9 @@ import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.guice.NoGeneric;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.identifier.IdentifierFactory;
 import org.rookit.auto.javax.property.PropertyEvaluator;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 

@@ -29,7 +29,7 @@ import com.squareup.javapoet.TypeName;
 import org.rookit.auto.javapoet.method.AnnotationBasedMethodFactory;
 import org.rookit.auto.javapoet.method.MethodSpecFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.convention.annotation.Entity;
 
 import javax.lang.model.element.Element;

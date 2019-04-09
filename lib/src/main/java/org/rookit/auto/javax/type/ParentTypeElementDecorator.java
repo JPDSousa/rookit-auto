@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
-import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.property.PropertyExtractor;
+import com.google.common.base.MoreObjects;
+import org.rookit.auto.javax.property.ExtendedPropertyExtractor;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
@@ -31,21 +31,31 @@ import org.rookit.utils.optional.OptionalFactory;
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
 
-final class TypeElementDecoratorImpl extends AbstractTypeElementDecorator {
+final class ParentTypeElementDecorator extends AbstractTypeElementDecorator {
 
-    TypeElementDecoratorImpl(final TypeElement delegate,
-                             final ElementUtils utils,
-                             final OptionalFactory optionalFactory,
-                             final PackageReferenceFactory packageFactory,
-                             final Collection<ExtendedProperty> properties,
-                             final PropertyExtractor extractor,
-                             final ExtendedTypeMirrorFactory factory) {
+    private final ExtendedTypeElement child;
+
+    ParentTypeElementDecorator(final TypeElement delegate,
+                               final ExtendedTypeElement child,
+                               final ElementUtils utils,
+                               final OptionalFactory optionalFactory,
+                               final PackageReferenceFactory packageFactory,
+                               final Collection<Property> properties,
+                               final ExtendedPropertyExtractor extractor,
+                               final ExtendedTypeMirrorFactory factory) {
         super(delegate, utils, optionalFactory, packageFactory, properties, extractor, factory);
+        this.child = child;
     }
 
     @Override
     public Optional<ExtendedTypeElement> child() {
-        return optionalFactory().empty();
+        return optionalFactory().of(this.child);
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("child", this.child)
+                .toString();
+    }
 }

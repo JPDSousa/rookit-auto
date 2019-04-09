@@ -25,7 +25,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
 
 import java.util.stream.Stream;
 

@@ -24,7 +24,7 @@ package org.rookit.auto.entity.cache;
 import com.google.common.collect.Maps;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 import java.util.Map;
 

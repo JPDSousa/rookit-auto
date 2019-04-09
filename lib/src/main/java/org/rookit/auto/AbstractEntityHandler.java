@@ -24,7 +24,7 @@ package org.rookit.auto;
 import org.rookit.auto.config.ProcessorConfig;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
+import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;

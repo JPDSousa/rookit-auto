@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 

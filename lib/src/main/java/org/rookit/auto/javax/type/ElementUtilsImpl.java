@@ -19,17 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import org.rookit.auto.guice.LaConvention;
-import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
 
 import javax.lang.model.AnnotatedConstruct;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.lang.annotation.Annotation;

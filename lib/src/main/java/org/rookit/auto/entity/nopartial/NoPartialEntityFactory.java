@@ -27,7 +27,7 @@ import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
 import org.rookit.auto.identifier.EntityIdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 import org.rookit.utils.optional.OptionalFactory;

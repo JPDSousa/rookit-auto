@@ -31,7 +31,7 @@ import org.rookit.auto.javapoet.method.AnnotationBasedMethodFactory;
 import org.rookit.auto.javapoet.method.MethodFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
 import org.rookit.auto.javax.property.PropertyAdapter;
-import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.javax.element.ExtendedTypeElement;
 import org.rookit.convention.annotation.Property;
 

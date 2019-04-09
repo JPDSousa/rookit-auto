@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PropertyPartialEntityFactory;
 import org.rookit.auto.entity.parent.ParentExtractor;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.source.CodeSourceContainer;
 import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.utils.optional.OptionalFactory;

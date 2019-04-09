@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
@@ -37,15 +37,15 @@ import org.rookit.convention.annotation.PropertyContainer;
 import java.lang.annotation.Annotation;
 
 @SuppressWarnings("MethodMayBeStatic")
-public final class ElementModule extends AbstractModule {
+public final class ExtendedTypeModule extends AbstractModule {
 
-    private static final Module MODULE = new ElementModule();
+    private static final Module MODULE = new ExtendedTypeModule();
 
     public static Module getModule() {
         return MODULE;
     }
 
-    private ElementModule() {}
+    private ExtendedTypeModule() {}
 
     @Override
     protected void configure() {
@@ -59,6 +59,7 @@ public final class ElementModule extends AbstractModule {
 
         bind(ElementUtils.class).to(ElementUtilsImpl.class).in(Singleton.class);
         bind(TypeParameterExtractor.class).to(TypeVisitorParameterExtractor.class).in(Singleton.class);
+        bind(ExtendedTypeMirrorFactory.class).to(BaseExtendedTypeMirrorFactory.class).in(Singleton.class);
     }
 
 }

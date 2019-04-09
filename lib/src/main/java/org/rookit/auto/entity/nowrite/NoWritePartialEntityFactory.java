@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.entity.cache.AbstractCachePartialEntityFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.utils.primitive.VoidUtils;
 
 public final class NoWritePartialEntityFactory extends AbstractCachePartialEntityFactory {

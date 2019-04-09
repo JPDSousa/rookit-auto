@@ -19,10 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.javax.type;
 
 import com.google.common.collect.ImmutableList;
-import org.rookit.auto.javax.element.TypeParameterExtractor;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
 

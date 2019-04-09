@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.MethodSpec;
 import org.rookit.auto.javapoet.method.AnnotationBasedMethodFactory;
 import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;

@@ -29,8 +29,9 @@ import org.rookit.auto.entity.EntityFactory;
 import org.rookit.auto.entity.PropertyEntityFactory;
 import org.rookit.auto.entity.PropertyPartialEntityFactory;
 import org.rookit.auto.identifier.PropertyIdentifierFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.PropertyTypeSourceFactory;
 
 import java.util.Collection;

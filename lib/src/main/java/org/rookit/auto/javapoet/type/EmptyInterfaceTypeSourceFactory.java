@@ -26,7 +26,7 @@ import com.squareup.javapoet.TypeSpec;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.JavaPoetParameterResolver;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 import org.rookit.utils.primitive.VoidUtils;

@@ -26,7 +26,7 @@ import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.entity.cache.AbstractCachePartialEntityFactory;
 import org.rookit.auto.entity.parent.ParentExtractor;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.CodeSourceContainer;
 import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.utils.optional.OptionalFactory;

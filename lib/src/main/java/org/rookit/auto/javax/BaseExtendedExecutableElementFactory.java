@@ -22,6 +22,7 @@
 package org.rookit.auto.javax;
 
 import com.google.inject.Inject;
+import org.rookit.auto.javax.type.ExtendedTypeMirrorFactory;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;

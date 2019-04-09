@@ -19,14 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
 import com.google.common.collect.ImmutableList;
 import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.javax.property.ExtendedPropertyExtractor;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.naming.PackageReference;
 import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.convention.annotation.Entity;
@@ -59,16 +57,16 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     private final ElementUtils utils;
     private final OptionalFactory optionalFactory;
     private final PackageReferenceFactory packageReferenceFactory;
-    private final Collection<ExtendedProperty> properties;
-    private final PropertyExtractor extractor;
+    private final Collection<Property> properties;
+    private final ExtendedPropertyExtractor extractor;
     private final ExtendedTypeMirrorFactory factory;
 
     AbstractTypeElementDecorator(final TypeElement delegate,
                                  final ElementUtils utils,
                                  final OptionalFactory optionalFactory,
                                  final PackageReferenceFactory packageFactory,
-                                 final Collection<ExtendedProperty> properties,
-                                 final PropertyExtractor extractor,
+                                 final Collection<Property> properties,
+                                 final ExtendedPropertyExtractor extractor,
                                  final ExtendedTypeMirrorFactory factory) {
         this.delegate = delegate;
         this.utils = utils;
@@ -78,8 +76,6 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
         this.extractor = extractor;
         this.factory = factory;
     }
-
-
 
     final OptionalFactory optionalFactory() {
         return this.optionalFactory;
@@ -97,6 +93,11 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     }
 
     @Override
+    public boolean isConvention() {
+        return this.utils.isConventionElement(this);
+    }
+
+    @Override
     public PackageReference packageInfo() {
         // TODO cache this
         Element enclosingElement = getEnclosingElement();
@@ -107,7 +108,7 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     }
 
     @Override
-    public Collection<ExtendedProperty> properties() {
+    public Collection<Property> properties() {
         //noinspection AssignmentOrReturnOfFieldWithMutableType as already immutable
         return this.properties;
     }
@@ -128,10 +129,10 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     }
 
     private ExtendedTypeElement createParent(final TypeElement element) {
-        final Collection<ExtendedProperty> properties = this.extractor.fromType(element)
+        final Collection<Property> properties = this.extractor.fromType(element)
                 .collect(Collectors.toList());
         return new ParentTypeElementDecorator(element, this, this.utils,
-                this.optionalFactory, this.packageReferenceFactory, properties, this.extractor, factory);
+                this.optionalFactory, this.packageReferenceFactory, properties, this.extractor, this.factory);
     }
 
     @Override
@@ -255,6 +256,19 @@ abstract class AbstractTypeElementDecorator implements ExtendedTypeElement {
     @Override
     public <A extends Annotation> A[] getAnnotationsByType(final Class<A> annotationType) {
         return this.delegate.getAnnotationsByType(annotationType);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if ((o == null) || (getClass() != o.getClass())) return false;
+        final AbstractTypeElementDecorator otherElement = (AbstractTypeElementDecorator) o;
+        return com.google.common.base.Objects.equal(this.delegate, otherElement.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(this.delegate);
     }
 
     @Override

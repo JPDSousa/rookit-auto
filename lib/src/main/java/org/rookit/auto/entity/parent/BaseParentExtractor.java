@@ -26,7 +26,8 @@ import com.google.inject.Provider;
 import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public final class BaseParentExtractor implements ParentExtractor {
 

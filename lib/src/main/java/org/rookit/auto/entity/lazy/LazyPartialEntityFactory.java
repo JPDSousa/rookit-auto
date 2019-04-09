@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public final class LazyPartialEntityFactory implements PartialEntityFactory {
 

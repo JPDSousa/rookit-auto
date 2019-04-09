@@ -21,6 +21,9 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.auto.javax.type.ExtendedTypeMirror;
+import org.rookit.auto.javax.type.ExtendedTypeMirrorFactory;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;

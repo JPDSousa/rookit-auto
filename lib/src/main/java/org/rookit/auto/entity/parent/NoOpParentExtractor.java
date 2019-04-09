@@ -24,7 +24,8 @@ package org.rookit.auto.entity.parent;
 import com.google.inject.Inject;
 import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.PartialEntity;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public final class NoOpParentExtractor implements ParentExtractor {
 

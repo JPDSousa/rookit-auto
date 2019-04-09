@@ -21,9 +21,10 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.element.ElementUtils;
-import org.rookit.auto.javax.element.ExtendedTypeElementFactory;
+import org.rookit.auto.javax.type.ElementUtils;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
+import org.rookit.auto.javax.type.ExtendedTypeMirror;
 import org.rookit.utils.repetition.Repetition;
 
 final class BaseExtendedProperty extends AbstractExtendedProperty {

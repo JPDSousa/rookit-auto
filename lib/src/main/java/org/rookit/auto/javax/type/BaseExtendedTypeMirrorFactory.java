@@ -19,11 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax;
+package org.rookit.auto.javax.type;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import org.rookit.auto.javax.element.TypeParameterExtractor;
 import org.rookit.utils.optional.OptionalFactory;
 import org.rookit.utils.reflect.ClassVisitor;
 import org.rookit.utils.reflect.ExtendedClass;
@@ -80,6 +79,11 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
 
     @Override
     public ExtendedTypeMirror create(final TypeMirror typeMirror) {
+        if (typeMirror.getKind() == TypeKind.ERROR) {
+            final String errMsg = format("Type mirror is invalid: %s", typeMirror);
+            this.messager.printMessage(Diagnostic.Kind.ERROR, errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
         if (typeMirror instanceof ExtendedTypeMirror) {
             final String errMsg = format("%s is already a %s. Bypassing creation.", typeMirror,
                     ExtendedTypeMirror.class.getName());

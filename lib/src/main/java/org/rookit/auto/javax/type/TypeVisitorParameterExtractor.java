@@ -19,13 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
 import org.rookit.failsafe.Failsafe;
 import org.rookit.utils.primitive.VoidUtils;
 import org.slf4j.Logger;

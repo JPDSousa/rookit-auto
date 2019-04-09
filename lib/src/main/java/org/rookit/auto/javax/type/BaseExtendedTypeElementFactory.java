@@ -19,12 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.rookit.auto.javax.element;
+package org.rookit.auto.javax.type;
 
 import com.google.inject.Inject;
-import org.rookit.auto.javax.ExtendedTypeMirrorFactory;
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.javax.property.ExtendedPropertyExtractor;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.utils.optional.OptionalFactory;
 
@@ -40,7 +39,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
 
     public static ExtendedTypeElementFactory create(final PackageReferenceFactory packageFactory,
                                                     final OptionalFactory optionalFactory,
-                                                    final PropertyExtractor extractor,
+                                                    final ExtendedPropertyExtractor extractor,
                                                     final ElementUtils utils,
                                                     final Messager messager,
                                                     final ExtendedTypeMirrorFactory mirrorFactory) {
@@ -50,7 +49,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
 
     private final PackageReferenceFactory packageFactory;
     private final OptionalFactory optionalFactory;
-    private final PropertyExtractor extractor;
+    private final ExtendedPropertyExtractor extractor;
     private final ElementUtils utils;
     private final Messager messager;
     private final ExtendedTypeMirrorFactory mirrorFactory;
@@ -58,7 +57,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
     @Inject
     private BaseExtendedTypeElementFactory(final PackageReferenceFactory packageFactory,
                                            final OptionalFactory optionalFactory,
-                                           final PropertyExtractor extractor,
+                                           final ExtendedPropertyExtractor extractor,
                                            final ElementUtils utils,
                                            final Messager messager,
                                            final ExtendedTypeMirrorFactory mirrorFactory) {
@@ -79,7 +78,7 @@ public final class BaseExtendedTypeElementFactory implements ExtendedTypeElement
             return (ExtendedTypeElement) baseElement;
         }
 
-        final Collection<ExtendedProperty> properties = this.extractor.fromType(baseElement)
+        final Collection<Property> properties = this.extractor.fromType(baseElement)
                 .collect(Collectors.toList());
         return new TypeElementDecoratorImpl(baseElement, this.utils,
                 this.optionalFactory, this.packageFactory, properties, this.extractor, this.mirrorFactory);

@@ -22,9 +22,9 @@
 package org.rookit.auto.javax.property;
 
 import com.google.inject.Inject;
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.JavaxRepetition;
-import org.rookit.auto.javax.JavaxRepetitionFactory;
+import org.rookit.auto.javax.type.ExtendedTypeMirror;
+import org.rookit.auto.javax.repetition.JavaxRepetition;
+import org.rookit.auto.javax.repetition.JavaxRepetitionFactory;
 
 public final class UnwrapperPropertyFactory implements ExtendedPropertyFactory {
 

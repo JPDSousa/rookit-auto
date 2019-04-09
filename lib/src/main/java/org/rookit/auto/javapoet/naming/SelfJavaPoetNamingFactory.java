@@ -22,7 +22,7 @@
 package org.rookit.auto.javapoet.naming;
 
 import com.google.common.base.MoreObjects;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.PackageReference;
 import org.rookit.auto.naming.PackageReferenceFactory;
 

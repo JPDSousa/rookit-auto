@@ -21,8 +21,8 @@
  ******************************************************************************/
 package org.rookit.auto.identifier;
 
-import org.rookit.auto.javax.element.ExtendedTypeElement;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.NamingFactory;
 import org.rookit.auto.naming.PackageReference;
 

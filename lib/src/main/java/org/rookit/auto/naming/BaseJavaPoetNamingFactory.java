@@ -22,7 +22,7 @@
 package org.rookit.auto.naming;
 
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.text.WordUtils.capitalize;

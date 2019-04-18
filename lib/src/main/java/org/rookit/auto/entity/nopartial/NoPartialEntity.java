@@ -30,7 +30,6 @@ import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -62,7 +61,7 @@ final class NoPartialEntity implements Entity {
     }
 
     @Override
-    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+    public CompletableFuture<Void> writeTo(final Filer filer) {
         return this.source.writeTo(filer);
     }
 

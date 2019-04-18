@@ -29,39 +29,38 @@ import org.rookit.auto.javapoet.naming.JavaPoetParameterResolver;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
-import org.rookit.utils.primitive.VoidUtils;
 
 import javax.lang.model.element.Modifier;
+import java.util.concurrent.Executor;
 
 public final class EmptyInterfaceTypeSourceFactory implements SingleTypeSourceFactory {
 
     public static SingleTypeSourceFactory create(final JavaPoetParameterResolver parameterResolver,
                                                  final JavaPoetNamingFactory namingFactory,
-                                                 final VoidUtils voidUtils) {
-        return new EmptyInterfaceTypeSourceFactory(parameterResolver, namingFactory, voidUtils);
+                                                 final Executor executor) {
+        return new EmptyInterfaceTypeSourceFactory(parameterResolver, namingFactory, executor);
     }
 
     private final JavaPoetParameterResolver parameterResolver;
     private final JavaPoetNamingFactory namingFactory;
-    private final VoidUtils voidUtils;
+    private final Executor executor;
 
     @Inject
     private EmptyInterfaceTypeSourceFactory(final JavaPoetParameterResolver parameterResolver,
                                             final JavaPoetNamingFactory namingFactory,
-                                            final VoidUtils voidUtils) {
+                                            final Executor executor) {
         this.parameterResolver = parameterResolver;
         this.namingFactory = namingFactory;
-        this.voidUtils = voidUtils;
+        this.executor = executor;
     }
 
     @Override
     public TypeSource create(final Identifier identifier,
                              final ExtendedTypeElement element) {
-        final TypeSpec spec = TypeSpec.interfaceBuilder(this.namingFactory.classNameFor(element))
+        final TypeSpec.Builder spec = TypeSpec.interfaceBuilder(this.namingFactory.classNameFor(element))
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(this.parameterResolver.resolveParameters(element))
-                .build();
-        return new BaseTypeSource(identifier, spec, this.voidUtils);
+                .addSuperinterface(this.parameterResolver.resolveParameters(element));
+        return new BaseTypeSource(identifier, spec, this.executor);
     }
 
     @Override
@@ -69,7 +68,7 @@ public final class EmptyInterfaceTypeSourceFactory implements SingleTypeSourceFa
         return "EmptyInterfaceTypeSourceFactory{" +
                 "parameterResolver=" + this.parameterResolver +
                 ", namingFactory=" + this.namingFactory +
-                ", voidUtils=" + this.voidUtils +
+                ", executor=" + this.executor +
                 "}";
     }
 }

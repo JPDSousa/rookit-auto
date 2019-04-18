@@ -22,6 +22,7 @@
 package org.rookit.auto;
 
 import javax.lang.model.element.TypeElement;
+import java.io.IOException;
 
 public interface EntityHandler {
 
@@ -31,6 +32,6 @@ public interface EntityHandler {
         entities.forEach(this::process);
     }
 
-    void postProcess();
+    void postProcess() throws IOException;
 
 }

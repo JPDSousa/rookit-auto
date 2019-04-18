@@ -48,7 +48,7 @@ public final class NoGenericPropertyPartialEntityFactory implements PropertyPart
     }
 
     @Override
-    public PartialEntity create(final ExtendedProperty property) {
+    public PartialEntity create(final Property property) {
         final Collection<PartialEntity> partialEntities = this.parentExtractor.extractAsIterable(property);
         final CodeSourceContainer<PartialEntity> container = this.containerFactory.create(partialEntities);
 

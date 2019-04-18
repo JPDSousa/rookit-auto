@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto;
 
-import com.google.common.io.Closer;
 import com.google.inject.Injector;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -48,20 +47,11 @@ abstract class AbstractInjectorEntityProcessor extends AbstractProcessor impleme
             }
             handler.postProcess();
             return false;
-        } catch (final RuntimeException e) {
+        } catch (final RuntimeException | IOException e) {
             final String stackTrace = ExceptionUtils.getStackTrace(e);
             messager.printMessage(Diagnostic.Kind.ERROR, stackTrace);
             throw new RuntimeException(e);
-        } finally {
-            closeInjector(injector);
         }
     }
 
-    private void closeInjector(final Injector injector) {
-        try {
-            injector.getInstance(Closer.class).close();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

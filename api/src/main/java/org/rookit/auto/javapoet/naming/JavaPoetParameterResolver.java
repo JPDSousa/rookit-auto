@@ -23,7 +23,7 @@ package org.rookit.auto.javapoet.naming;
 
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public interface JavaPoetParameterResolver {
 

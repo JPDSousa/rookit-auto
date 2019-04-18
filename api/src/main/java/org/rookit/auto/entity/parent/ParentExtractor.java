@@ -23,8 +23,8 @@ package org.rookit.auto.entity.parent;
 
 import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.PartialEntity;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 import java.util.Collection;
 
@@ -32,17 +32,13 @@ public interface ParentExtractor {
 
     StreamEx<PartialEntity> extractFrom(ExtendedTypeElement element);
 
-    default StreamEx<PartialEntity> extractFrom(final ExtendedProperty property) {
-        return property.typeAsElement()
-                .map(this::extractFrom)
-                .orElse(StreamEx.empty());
-    }
+    StreamEx<PartialEntity> extractFrom(final Property property);
 
     default Collection<PartialEntity> extractAsIterable(final ExtendedTypeElement element) {
         return extractFrom(element).toImmutableSet();
     }
 
-    default Collection<PartialEntity> extractAsIterable(final ExtendedProperty property) {
+    default Collection<PartialEntity> extractAsIterable(final Property property) {
         return extractFrom(property).toImmutableSet();
     }
 

@@ -24,7 +24,6 @@ package org.rookit.auto.entity;
 import org.rookit.auto.identifier.Identifier;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,11 +46,11 @@ public abstract class AbstractEntity implements Entity {
     }
 
     @Override
-    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+    public CompletableFuture<Void> writeTo(final Filer filer) {
         return CompletableFuture.allOf(this.genericReference.writeTo(filer), writeEntityTo(filer));
     }
 
-    protected abstract CompletableFuture<Void> writeEntityTo(final Filer filer) throws IOException;
+    protected abstract CompletableFuture<Void> writeEntityTo(final Filer filer);
 
     @Override
     public String toString() {

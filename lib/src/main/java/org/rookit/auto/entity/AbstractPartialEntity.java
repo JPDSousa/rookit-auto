@@ -21,27 +21,25 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import com.google.common.collect.ImmutableSet;
 import org.rookit.auto.identifier.Identifier;
+import org.rookit.auto.source.CodeSourceContainer;
 import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPartialEntity implements PartialEntity {
 
     private final Identifier genericIdentifier;
-    private final Collection<PartialEntity> parents;
+    private final CodeSourceContainer<PartialEntity> parents;
     private final OptionalFactory optionalFactory;
 
     protected AbstractPartialEntity(final Identifier genericIdentifier,
-                                    final Collection<? extends PartialEntity> parents,
+                                    final CodeSourceContainer<PartialEntity> parents,
                                     final OptionalFactory optionalFactory) {
         this.genericIdentifier = genericIdentifier;
-        this.parents = ImmutableSet.copyOf(parents);
+        this.parents = parents;
         this.optionalFactory = optionalFactory;
     }
 
@@ -52,18 +50,15 @@ public abstract class AbstractPartialEntity implements PartialEntity {
 
     @Override
     public Collection<PartialEntity> parents() {
-        return Collections.unmodifiableCollection(this.parents);
+        return this.parents.asCollection();
     }
 
     @Override
-    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
-        for (final PartialEntity parent : parents()) {
-            parent.writeTo(filer);
-        }
-        return writePartialEntityTo(filer);
+    public CompletableFuture<Void> writeTo(final Filer filer) {
+        return CompletableFuture.allOf(this.parents.writeTo(filer), writePartialEntityTo(filer));
     }
 
-    protected abstract CompletableFuture<Void> writePartialEntityTo(Filer filer) throws IOException;
+    protected abstract CompletableFuture<Void> writePartialEntityTo(Filer filer);
 
     @Override
     public String toString() {

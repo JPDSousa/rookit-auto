@@ -21,13 +21,13 @@
  ******************************************************************************/
 package org.rookit.auto.source;
 
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public interface PropertyTypeSourceFactory {
 
-    TypeSource create(ExtendedTypeElement parent, ExtendedProperty property);
+    TypeSource create(ExtendedTypeElement parent, Property property);
 
-    TypeSource create(ExtendedProperty property);
+    TypeSource create(Property property);
 
 }

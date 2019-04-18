@@ -25,8 +25,8 @@ import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.source.TypeSource;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 final class EntityImpl extends AbstractEntity {
 
@@ -47,7 +47,7 @@ final class EntityImpl extends AbstractEntity {
     }
 
     @Override
-    protected CompletableFuture<Void> writeEntityTo(final Filer filer) throws IOException {
+    protected CompletableFuture<Void> writeEntityTo(final Filer filer) {
         return this.source.writeTo(filer);
     }
 

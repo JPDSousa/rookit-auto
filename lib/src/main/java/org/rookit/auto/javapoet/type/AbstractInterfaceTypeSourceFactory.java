@@ -40,10 +40,10 @@ import java.util.stream.Collectors;
 public abstract class AbstractInterfaceTypeSourceFactory implements SingleTypeSourceFactory {
 
     private final JavaPoetParameterResolver parameterResolver;
-    private final TypeSourceAdapter adapter;
+    private final TypeSourceFactory adapter;
 
     protected AbstractInterfaceTypeSourceFactory(final JavaPoetParameterResolver parameterResolver,
-                                                 final TypeSourceAdapter adapter) {
+                                                 final TypeSourceFactory adapter) {
         this.parameterResolver = parameterResolver;
         this.adapter = adapter;
     }
@@ -53,12 +53,11 @@ public abstract class AbstractInterfaceTypeSourceFactory implements SingleTypeSo
                              final ExtendedTypeElement element) {
         final ClassName className = ClassName.get(identifier.packageName().fullName(), identifier.name());
 
-        final TypeSpec spec = TypeSpec.interfaceBuilder(className)
+        final TypeSpec.Builder spec = TypeSpec.interfaceBuilder(className)
                 .addTypeVariables(this.parameterResolver.createParameters(element))
                 .addMethods(methodsFor(element))
                 .addSuperinterfaces(parentNamesOf(element))
-                .addModifiers(Modifier.PUBLIC)
-                .build();
+                .addModifiers(Modifier.PUBLIC);
         return this.adapter.fromTypeSpec(identifier, spec);
     }
 

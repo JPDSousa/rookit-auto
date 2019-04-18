@@ -63,7 +63,7 @@ public final class BasePackageReferenceFactory implements PackageReferenceFactor
         final int length = packages.length;
 
         // TODO check if not empty
-        PackageReference pkg = new ImmutablePackageReference(packages[0], JOINER, SPLITTER);
+        PackageReference pkg = new ImmutablePackageReference(packages[0], JOINER, SPLITTER, this.optionalFactory);
         for (int i = 1; i < length; i++) {
             pkg = pkg.resolve(packages[i]);
         }

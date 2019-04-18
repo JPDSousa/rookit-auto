@@ -22,7 +22,7 @@
 package org.rookit.auto.javapoet.type;
 
 import com.squareup.javapoet.TypeVariableName;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public interface TypeVariableNameResolver {
 

@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.entity.property;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import org.rookit.auto.entity.Entity;
@@ -30,8 +29,9 @@ import org.rookit.auto.entity.PropertyEntityFactory;
 import org.rookit.auto.entity.PropertyPartialEntityFactory;
 import org.rookit.auto.identifier.PropertyIdentifierFactory;
 import org.rookit.auto.javax.property.Property;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.PropertyFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.auto.source.PropertyTypeSourceFactory;
 
 import java.util.Collection;
@@ -41,41 +41,60 @@ public final class BasePropertyEntityFactory implements PropertyEntityFactory {
     public static PropertyEntityFactory create(final PropertyIdentifierFactory identifierFactory,
                                                final PropertyTypeSourceFactory typeSourceFactory,
                                                final Provider<EntityFactory> entityFactory,
-                                               final PropertyPartialEntityFactory partialEntityFactory) {
-        return new BasePropertyEntityFactory(identifierFactory, typeSourceFactory, entityFactory, partialEntityFactory);
+                                               final PropertyPartialEntityFactory partialEntityFactory,
+                                               final CodeSourceContainerFactory containerFactory,
+                                               final PropertyFactory propertyFactory) {
+        return new BasePropertyEntityFactory(identifierFactory, typeSourceFactory, entityFactory,
+                partialEntityFactory, containerFactory, propertyFactory);
     }
 
     private final PropertyIdentifierFactory identifierFactory;
     private final PropertyTypeSourceFactory typeSourceFactory;
     private final Provider<EntityFactory> entityFactoryProvider;
     private final PropertyPartialEntityFactory partialEntityFactory;
+    private final CodeSourceContainerFactory containerFactory;
+    private final PropertyFactory propertyFactory;
 
     @Inject
     private BasePropertyEntityFactory(final PropertyIdentifierFactory identifierFactory,
                                       final PropertyTypeSourceFactory typeSourceFactory,
                                       final Provider<EntityFactory> entityFactory,
-                                      final PropertyPartialEntityFactory partialEntityFactory) {
+                                      final PropertyPartialEntityFactory partialEntityFactory,
+                                      final CodeSourceContainerFactory containerFactory,
+                                      final PropertyFactory propertyFactory) {
         this.identifierFactory = identifierFactory;
         this.typeSourceFactory = typeSourceFactory;
         this.entityFactoryProvider = entityFactory;
         this.partialEntityFactory = partialEntityFactory;
+        this.containerFactory = containerFactory;
+        this.propertyFactory = propertyFactory;
     }
 
     @Override
-    public Entity create(final ExtendedProperty property) {
+    public Entity create(final Property property) {
         final EntityFactory entityFactory = this.entityFactoryProvider.get();
 
-        final Collection<Entity> children = property.typeAsElement()
+        final Collection<Entity> children = this.propertyFactory.extend(property).typeAsElement()
                 .filter(ExtendedTypeElement::isPropertyContainer)
                 .map(entityFactory::create)
-                .map(ImmutableList::of)
-                .orElse(ImmutableList.of());
+                .toImmutableSet();
 
         return new PropertyFlatEntity(
                 this.identifierFactory.create(property),
-                children,
+                this.containerFactory.create(children),
                 this.typeSourceFactory.create(property),
                 this.partialEntityFactory.create(property));
     }
 
+    @Override
+    public String toString() {
+        return "BasePropertyEntityFactory{" +
+                "identifierFactory=" + this.identifierFactory +
+                ", typeSourceFactory=" + this.typeSourceFactory +
+                ", entityFactoryProvider=" + this.entityFactoryProvider +
+                ", partialEntityFactory=" + this.partialEntityFactory +
+                ", containerFactory=" + this.containerFactory +
+                ", propertyFactory=" + this.propertyFactory +
+                "}";
+    }
 }

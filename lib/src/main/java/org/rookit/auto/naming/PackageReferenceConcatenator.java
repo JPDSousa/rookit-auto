@@ -22,7 +22,10 @@
 package org.rookit.auto.naming;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import org.rookit.utils.optional.OptionalFactory;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 final class PackageReferenceConcatenator extends AbstractPackageReference {
@@ -32,15 +35,26 @@ final class PackageReferenceConcatenator extends AbstractPackageReference {
     private final Pattern splitter;
     private final PackageReference current;
     private final PackageReference parent;
+    @SuppressWarnings("FieldNotUsedInToString")
+    private final List<String> fullName;
+    private final int length;
+    private final OptionalFactory optionalFactory;
 
     PackageReferenceConcatenator(final Joiner joiner,
                                  final Pattern splitter,
                                  final PackageReference current,
-                                 final PackageReference parent) {
+                                 final PackageReference parent,
+                                 final OptionalFactory optionalFactory) {
         this.joiner = joiner;
         this.splitter = splitter;
         this.current = current;
         this.parent = parent;
+        this.optionalFactory = optionalFactory;
+        this.fullName = ImmutableList.<String>builder()
+                .addAll(this.parent.fullNameAsList())
+                .addAll(this.current.fullNameAsList())
+                .build();
+        this.length = this.parent.length() + this.current.length();
     }
 
     @Override
@@ -50,7 +64,38 @@ final class PackageReferenceConcatenator extends AbstractPackageReference {
 
     @Override
     public String fullName() {
-        return this.joiner.join(this.parent.fullName(), this.current.fullName());
+        return this.joiner.join(this.fullName);
+    }
+
+    @Override
+    public boolean isSubPackageOf(final PackageReference packageReference) {
+        // TODO improve this poor implementation
+        return packageReference.fullName().startsWith(this.fullName());
+    }
+
+    @Override
+    public PackageReference root() {
+        return this.parent.root();
+    }
+
+    @Override
+    public int length() {
+        return this.length;
+    }
+
+    @Override
+    public PackageReference nameAtIndex(final int index) {
+        final int parentLength = this.parent.length();
+        if (index < parentLength) {
+            return this.parent.nameAtIndex(index);
+        }
+        return this.current.nameAtIndex(index - parentLength);
+    }
+
+    @Override
+    public List<String> fullNameAsList() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType already immutable
+        return this.fullName;
     }
 
     @Override
@@ -64,11 +109,17 @@ final class PackageReferenceConcatenator extends AbstractPackageReference {
     }
 
     @Override
+    OptionalFactory optionalFactory() {
+        return this.optionalFactory;
+    }
+
+    @Override
     public String toString() {
         return "PackageReferenceConcatenator{" +
                 ", splitter=" + this.splitter +
                 ", current=" + this.current +
                 ", parent=" + this.parent +
-                "} " + super.toString();
+                ", length=" + this.length +
+                "} ";
     }
 }

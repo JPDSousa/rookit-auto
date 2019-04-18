@@ -34,15 +34,15 @@ import javax.lang.model.element.Modifier;
 
 public final class EmptyLeafTypeSourceFactory implements SingleTypeSourceFactory {
 
-    public static SingleTypeSourceFactory create(final TypeSourceAdapter adapter,
+    public static SingleTypeSourceFactory create(final TypeSourceFactory adapter,
                                                  final JavaPoetParameterResolver parameterResolver) {
         return new EmptyLeafTypeSourceFactory(adapter, parameterResolver);
     }
 
-    private final TypeSourceAdapter adapter;
+    private final TypeSourceFactory adapter;
     private final JavaPoetParameterResolver parameterResolver;
 
-    private EmptyLeafTypeSourceFactory(final TypeSourceAdapter adapter,
+    private EmptyLeafTypeSourceFactory(final TypeSourceFactory adapter,
                                        final JavaPoetParameterResolver parameterResolver) {
         this.adapter = adapter;
         this.parameterResolver = parameterResolver;
@@ -52,10 +52,9 @@ public final class EmptyLeafTypeSourceFactory implements SingleTypeSourceFactory
     public TypeSource create(final Identifier identifier, final ExtendedTypeElement element) {
         final ClassName className = ClassName.get(identifier.packageName().fullName(), identifier.name());
 
-        final TypeSpec spec = TypeSpec.interfaceBuilder(className)
+        final TypeSpec.Builder spec = TypeSpec.interfaceBuilder(className)
                 .addSuperinterface(this.parameterResolver.resolveParameters(element))
-                .addModifiers(Modifier.PUBLIC)
-                .build();
+                .addModifiers(Modifier.PUBLIC);
         return this.adapter.fromTypeSpec(identifier, spec);
     }
 

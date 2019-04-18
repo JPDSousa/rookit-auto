@@ -24,17 +24,17 @@ package org.rookit.auto.javax;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-import com.google.inject.multibindings.Multibinder;
-import org.rookit.auto.guice.Collection;
-import org.rookit.auto.guice.Map;
-import org.rookit.auto.guice.Optional;
+import com.google.inject.util.Modules;
+import org.rookit.auto.javax.property.PropertyModule;
+import org.rookit.auto.javax.repetition.RepetitionModule;
 
-import static com.google.inject.multibindings.Multibinder.newSetBinder;
-
-// TODO in order to solve over copulation, break this module per repetition type
 public final class JavaxUtilsModule extends AbstractModule {
 
-    private static final Module MODULE = new JavaxUtilsModule();
+    private static final Module MODULE = Modules.combine(
+            new JavaxUtilsModule(),
+            RepetitionModule.getModule(),
+            PropertyModule.getModule()
+    );
 
     public static Module getModule() {
         return MODULE;
@@ -44,38 +44,6 @@ public final class JavaxUtilsModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bindOptional();
-        bindCollection();
-        bindMap();
-
-        bind(ExtendedTypeMirrorFactory.class).to(BaseExtendedTypeMirrorFactory.class).in(Singleton.class);
         bind(ExtendedExecutableElementFactory.class).to(BaseExtendedExecutableElementFactory.class).in(Singleton.class);
-    }
-
-    private void bindMap() {
-        final Multibinder<KeyedRepetitiveTypeMirror> map = newSetBinder(binder(),
-                KeyedRepetitiveTypeMirror.class, Map.class);
-        map.addBinding().toProvider(JavaMapProvider.class).in(Singleton.class);
-        map.addBinding().toProvider(FastUtilInt2ObjectMapProvider.class).in(Singleton.class);
-        // TODO missing other types of maps
-    }
-
-    private void bindCollection() {
-        final Multibinder<RepetitiveTypeMirror> collection = newSetBinder(binder(),
-                RepetitiveTypeMirror.class, Collection.class);
-        collection.addBinding().toProvider(JavaCollectionProvider.class).in(Singleton.class);
-        collection.addBinding().toProvider(JavaListProvider.class).in(Singleton.class);
-        collection.addBinding().toProvider(JavaSetProvider.class).in(Singleton.class);
-        collection.addBinding().toProvider(JavaQueueProvider.class).in(Singleton.class);
-        collection.addBinding().toProvider(ApacheBagProvider.class).in(Singleton.class);
-        // TODO missing other types of collections
-    }
-
-    private void bindOptional() {
-        final Multibinder<RepetitiveTypeMirror> optional = newSetBinder(binder(),
-                RepetitiveTypeMirror.class, Optional.class);
-        optional.addBinding().toProvider(JavaOptionalProvider.class).in(Singleton.class);
-        optional.addBinding().toProvider(GuavaOptionalProvider.class).in(Singleton.class);
-        optional.addBinding().toProvider(RookitOptionalProvider.class).in(Singleton.class);
     }
 }

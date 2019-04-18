@@ -21,10 +21,12 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.naming;
 
-import com.google.common.base.MoreObjects;
+import com.google.inject.Inject;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.PackageReference;
 import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.utils.guice.Self;
+import org.rookit.utils.string.template.Template1;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -34,19 +36,29 @@ import static org.apache.commons.text.WordUtils.capitalize;
 
 public final class SelfJavaPoetNamingFactory implements JavaPoetNamingFactory {
 
-    public static JavaPoetNamingFactory create(final PackageReferenceFactory referenceFactory) {
-        return new SelfJavaPoetNamingFactory(referenceFactory);
+    public static JavaPoetNamingFactory create(final PackageReferenceFactory referenceFactory,
+                                               final Template1 noopTemplate) {
+        return new SelfJavaPoetNamingFactory(referenceFactory, noopTemplate);
     }
 
     private final PackageReferenceFactory referenceFactory;
+    private final Template1 noopTemplate;
 
-    private SelfJavaPoetNamingFactory(final PackageReferenceFactory referenceFactory) {
+    @Inject
+    private SelfJavaPoetNamingFactory(final PackageReferenceFactory referenceFactory,
+                                      @Self final Template1 noopTemplate) {
         this.referenceFactory = referenceFactory;
+        this.noopTemplate = noopTemplate;
     }
 
     @Override
     public PackageReference packageName(final ExtendedTypeElement element) {
         return packageOf(element);
+    }
+
+    @Override
+    public PackageReference packageName(final PackageReference packageReference) {
+        return packageReference;
     }
 
     private PackageReference packageOf(final Element element) {
@@ -66,14 +78,25 @@ public final class SelfJavaPoetNamingFactory implements JavaPoetNamingFactory {
     }
 
     @Override
-    public String method(final String propertyName, final String prefix, final String suffix) {
-        return capitalize(prefix) + capitalize(propertyName) + capitalize(suffix);
+    public String type(final PackageReference packageReference) {
+        return capitalize(packageReference.name());
+    }
+
+    @Override
+    public String method(final String propertyName) {
+        return method(propertyName, this.noopTemplate);
+    }
+
+    @Override
+    public String method(final String propertyName, final Template1 template1) {
+        return template1.build(propertyName);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("referenceFactory", this.referenceFactory)
-                .toString();
+        return "SelfJavaPoetNamingFactory{" +
+                "referenceFactory=" + this.referenceFactory +
+                ", noopTemplate=" + this.noopTemplate +
+                "}";
     }
 }

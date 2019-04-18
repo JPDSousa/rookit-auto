@@ -22,12 +22,12 @@
 package org.rookit.auto.javapoet.naming;
 
 import com.squareup.javapoet.TypeName;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 @FunctionalInterface
 public interface JavaPoetPropertyNamingFactory {
 
-    TypeName typeNameFor(ExtendedTypeElement owner, ExtendedProperty property);
+    TypeName typeNameFor(ExtendedTypeElement owner, Property property);
 
 }

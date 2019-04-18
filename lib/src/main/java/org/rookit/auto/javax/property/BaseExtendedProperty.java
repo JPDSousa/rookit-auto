@@ -25,56 +25,63 @@ import org.rookit.auto.javax.type.ElementUtils;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
+import org.rookit.utils.optional.Optional;
 import org.rookit.utils.repetition.Repetition;
 
-final class BaseExtendedProperty extends AbstractExtendedProperty {
+import javax.lang.model.element.TypeElement;
 
-    private final String name;
-    private final ExtendedTypeMirror type;
-    private final boolean isFinal;
-    private final Repetition repetition;
+final class BaseExtendedProperty extends AbstractProperty implements ExtendedProperty {
 
-    BaseExtendedProperty(final String name,
-                         final ExtendedTypeMirror type,
-                         final Repetition repetition,
+    private final Property source;
+    private final ElementUtils utils;
+    @SuppressWarnings("FieldNotUsedInToString") // to avoid stack overflow
+    private final ExtendedTypeElementFactory elementFactory;
+
+    BaseExtendedProperty(final Property source,
                          final ElementUtils utils,
-                         final boolean isFinal,
                          final ExtendedTypeElementFactory elementFactory) {
-        super(utils, elementFactory);
-        this.name = name;
-        this.repetition = repetition;
-        this.type = type;
-        this.isFinal = isFinal;
+        this.source = source;
+        this.utils = utils;
+        this.elementFactory = elementFactory;
     }
-
 
     @Override
     public String name() {
-        return this.name;
+        return this.source.name();
     }
 
     @Override
     public ExtendedTypeMirror type() {
-        return this.type;
+        return this.source.type();
     }
 
     @Override
     public boolean isFinal() {
-        return this.isFinal;
+        return this.source.isFinal();
     }
 
     @Override
     public Repetition repetition() {
-        return this.repetition;
+        return this.source.repetition();
+    }
+
+    @Override
+    public Optional<ExtendedTypeElement> typeAsElement() {
+        return type().toElement()
+                .map(element -> (TypeElement) element)
+                .map(this.elementFactory::extend);
+    }
+
+    @Override
+    public boolean isContainer() {
+        return this.source.isContainer();
     }
 
     @Override
     public String toString() {
         return "BaseExtendedProperty{" +
-                "name='" + this.name + '\'' +
-                ", type=" + this.type +
-                ", isSettable=" + this.isFinal +
-                ", repetition=" + this.repetition +
-                "} " + super.toString();
+                "source=" + this.source +
+                ", utils=" + this.utils +
+                "} ";
     }
 }

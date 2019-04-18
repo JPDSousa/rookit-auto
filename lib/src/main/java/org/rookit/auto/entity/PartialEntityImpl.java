@@ -23,12 +23,11 @@ package org.rookit.auto.entity;
 
 import com.google.common.base.MoreObjects;
 import org.rookit.auto.identifier.Identifier;
+import org.rookit.auto.source.CodeSourceContainer;
 import org.rookit.auto.source.TypeSource;
 import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 final class PartialEntityImpl extends AbstractPartialEntity {
@@ -36,7 +35,7 @@ final class PartialEntityImpl extends AbstractPartialEntity {
     private final TypeSource source;
 
     PartialEntityImpl(final Identifier genericIdentifier,
-                      final Collection<? extends PartialEntity> parents,
+                      final CodeSourceContainer<PartialEntity> parents,
                       final TypeSource source,
                       final OptionalFactory optionalFactory) {
         super(genericIdentifier, parents, optionalFactory);
@@ -44,7 +43,7 @@ final class PartialEntityImpl extends AbstractPartialEntity {
     }
 
     @Override
-    protected CompletableFuture<Void> writePartialEntityTo(final Filer filer) throws IOException {
+    protected CompletableFuture<Void> writePartialEntityTo(final Filer filer) {
         return this.source.writeTo(filer);
     }
 

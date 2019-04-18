@@ -26,29 +26,41 @@ import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.property.PropertyFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public final class MultiFactoryParentExtractor implements ParentExtractor {
 
     public static ParentExtractor create(final PartialEntityFactory elementFactory,
-                                         final PartialEntityFactory childFactory) {
-        return new MultiFactoryParentExtractor(elementFactory, childFactory);
+                                         final PartialEntityFactory childFactory,
+                                         final PropertyFactory propertyFactory) {
+        return new MultiFactoryParentExtractor(elementFactory, childFactory, propertyFactory);
     }
 
     private final PartialEntityFactory elementFactory;
     private final PartialEntityFactory childFactory;
+    private final PropertyFactory propertyFactory;
 
     @Inject
     private MultiFactoryParentExtractor(final PartialEntityFactory elementFactory,
-                                        final PartialEntityFactory childFactory) {
+                                        final PartialEntityFactory childFactory,
+                                        final PropertyFactory propertyFactory) {
         this.elementFactory = elementFactory;
         this.childFactory = childFactory;
+        this.propertyFactory = propertyFactory;
     }
 
     @Override
     public StreamEx<PartialEntity> extractFrom(final ExtendedTypeElement element) {
         return element.conventionInterfaces()
                 .flatMap(this::entitiesFor);
+    }
+
+    @Override
+    public StreamEx<PartialEntity> extractFrom(final Property property) {
+        return this.propertyFactory.extend(property).typeAsElement()
+                .map(this::extractFrom)
+                .orElse(StreamEx.empty());
     }
 
     private StreamEx<PartialEntity> entitiesFor(final ExtendedTypeElement parent) {
@@ -62,6 +74,7 @@ public final class MultiFactoryParentExtractor implements ParentExtractor {
         return "MultiFactoryParentExtractor{" +
                 "elementFactory=" + this.elementFactory +
                 ", childFactory=" + this.childFactory +
+                ", propertyFactory=" + this.propertyFactory +
                 "}";
     }
 }

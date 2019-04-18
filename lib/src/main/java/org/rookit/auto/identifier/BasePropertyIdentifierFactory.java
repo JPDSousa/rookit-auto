@@ -44,21 +44,17 @@ public final class BasePropertyIdentifierFactory implements PropertyIdentifierFa
     }
 
     @Override
-    public Identifier create(final ExtendedTypeElement element, final ExtendedProperty property) {
+    public Identifier create(final ExtendedTypeElement element, final Property property) {
         return create(this.namingFactory.packageName(element), property);
     }
 
     @Override
-    public Identifier create(final ExtendedProperty property) {
+    public Identifier create(final Property property) {
         return create(this.defaultPackage, property);
     }
 
-    private Identifier create(final PackageReference pack, final ExtendedProperty property) {
-        return new EntityIdentifier(
-                pack,
-                capitalize(this.namingFactory.method(property.name())),
-                property.name()
-        );
+    private Identifier create(final PackageReference pack, final Property property) {
+        return new EntityIdentifier(pack, capitalize(this.namingFactory.method(property.name())));
     }
 
     @Override

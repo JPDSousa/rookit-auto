@@ -22,12 +22,17 @@
 package org.rookit.auto.javapoet.naming;
 
 import com.squareup.javapoet.ClassName;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.NamingFactory;
+import org.rookit.auto.naming.PackageReference;
 
 public interface JavaPoetNamingFactory extends NamingFactory {
 
     default ClassName classNameFor(final ExtendedTypeElement element) {
         return ClassName.get(packageName(element).fullName(), type(element));
+    }
+
+    default ClassName classNameFor(final PackageReference packageReference) {
+        return ClassName.get(packageName(packageReference).fullName(), type(packageReference));
     }
 }

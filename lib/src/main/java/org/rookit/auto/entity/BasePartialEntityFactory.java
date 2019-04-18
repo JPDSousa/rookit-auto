@@ -24,9 +24,10 @@ package org.rookit.auto.entity;
 import com.google.inject.Inject;
 import org.rookit.auto.entity.cache.AbstractCachePartialEntityFactory;
 import org.rookit.auto.entity.parent.ParentExtractor;
-import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.IdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 import org.rookit.utils.optional.OptionalFactory;
@@ -35,27 +36,32 @@ import java.util.Collection;
 
 public final class BasePartialEntityFactory extends AbstractCachePartialEntityFactory {
 
-    public static PartialEntityFactory create(final EntityIdentifierFactory identifierFactory,
+    public static PartialEntityFactory create(final IdentifierFactory identifierFactory,
                                               final SingleTypeSourceFactory typeSourceFactory,
                                               final OptionalFactory optionalFactory,
-                                              final ParentExtractor parentExtractor) {
-        return new BasePartialEntityFactory(identifierFactory, typeSourceFactory, optionalFactory, parentExtractor);
+                                              final ParentExtractor parentExtractor,
+                                              final CodeSourceContainerFactory containerFactory) {
+        return new BasePartialEntityFactory(identifierFactory, typeSourceFactory, optionalFactory,
+                parentExtractor, containerFactory);
     }
 
-    private final EntityIdentifierFactory identifierFactory;
+    private final IdentifierFactory identifierFactory;
     private final SingleTypeSourceFactory typeSourceFactory;
     private final OptionalFactory optionalFactory;
     private final ParentExtractor parentExtractor;
+    private final CodeSourceContainerFactory containerFactory;
 
     @Inject
-    private BasePartialEntityFactory(final EntityIdentifierFactory identifierFactory,
+    private BasePartialEntityFactory(final IdentifierFactory identifierFactory,
                                      final SingleTypeSourceFactory typeSourceFactory,
                                      final OptionalFactory optionalFactory,
-                                     final ParentExtractor parentExtractor) {
+                                     final ParentExtractor parentExtractor,
+                                     final CodeSourceContainerFactory containerFactory) {
         this.identifierFactory = identifierFactory;
         this.typeSourceFactory = typeSourceFactory;
         this.optionalFactory = optionalFactory;
         this.parentExtractor = parentExtractor;
+        this.containerFactory = containerFactory;
     }
 
     @Override
@@ -64,7 +70,7 @@ public final class BasePartialEntityFactory extends AbstractCachePartialEntityFa
         final Collection<PartialEntity> parents = this.parentExtractor.extractAsIterable(element);
         final TypeSource source = this.typeSourceFactory.create(identifier, element);
 
-        return new PartialEntityImpl(identifier, parents, source, this.optionalFactory);
+        return new PartialEntityImpl(identifier, this.containerFactory.create(parents), source, this.optionalFactory);
     }
 
     @Override
@@ -74,6 +80,7 @@ public final class BasePartialEntityFactory extends AbstractCachePartialEntityFa
                 ", typeSourceFactory=" + this.typeSourceFactory +
                 ", optionalFactory=" + this.optionalFactory +
                 ", parentExtractor=" + this.parentExtractor +
+                ", containerFactory=" + this.containerFactory +
                 "} " + super.toString();
     }
 }

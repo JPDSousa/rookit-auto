@@ -22,21 +22,32 @@
 package org.rookit.auto.naming;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import org.rookit.utils.optional.OptionalFactory;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 class ImmutablePackageReference extends AbstractPackageReference {
 
     private final String name;
+    @SuppressWarnings("FieldNotUsedInToString") // performance optimization -> does not add value to toString
+    private final List<String> fullName;
 
     @SuppressWarnings("FieldNotUsedInToString") // not useful
     private final Joiner joiner;
     private final Pattern splitter;
+    private final OptionalFactory optionalFactory;
 
-    ImmutablePackageReference(final String name, final Joiner joiner, final Pattern splitter) {
+    ImmutablePackageReference(final String name,
+                              final Joiner joiner,
+                              final Pattern splitter,
+                              final OptionalFactory optionalFactory) {
         this.name = name;
         this.joiner = joiner;
         this.splitter = splitter;
+        this.fullName = ImmutableList.of(name);
+        this.optionalFactory = optionalFactory;
     }
 
     Joiner joiner() {
@@ -46,6 +57,11 @@ class ImmutablePackageReference extends AbstractPackageReference {
     @Override
     Pattern splitter() {
         return this.splitter;
+    }
+
+    @Override
+    OptionalFactory optionalFactory() {
+        return this.optionalFactory;
     }
 
     @Override
@@ -59,10 +75,42 @@ class ImmutablePackageReference extends AbstractPackageReference {
     }
 
     @Override
+    public boolean isSubPackageOf(final PackageReference packageReference) {
+        return equals(packageReference.nameAtIndex(0));
+    }
+
+    @Override
+    public PackageReference root() {
+        return this;
+    }
+
+    @Override
+    public int length() {
+        return 1;
+    }
+
+    @Override
+    public List<String> fullNameAsList() {
+        //noinspection AssignmentOrReturnOfFieldWithMutableType already immutable
+        return this.fullName;
+    }
+
+    @Override
+    public PackageReference nameAtIndex(final int index) {
+        if (index == 0) {
+            return this;
+        }
+        //noinspection AutoBoxing no way around it.
+        final String errMsg = String.format("Invalid index %d. Package has length %d.", index, length());
+        throw new IndexOutOfBoundsException(errMsg);
+    }
+
+    @Override
     public String toString() {
         return "ImmutablePackageReference{" +
                 "name='" + this.name + '\'' +
                 ", splitter=" + this.splitter +
-                "} " + super.toString();
+                ", optionalFactory=" + this.optionalFactory +
+                "} ";
     }
 }

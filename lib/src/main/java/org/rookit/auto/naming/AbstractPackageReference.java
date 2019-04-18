@@ -22,6 +22,9 @@
 package org.rookit.auto.naming;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import org.rookit.utils.optional.Optional;
+import org.rookit.utils.optional.OptionalFactory;
 
 import java.util.regex.Pattern;
 
@@ -31,11 +34,14 @@ abstract class AbstractPackageReference implements PackageReference {
 
     abstract Pattern splitter();
 
+    abstract OptionalFactory optionalFactory();
+
     @Override
     public PackageReference resolve(final String name) {
         final String[] tokens = splitter().split(name);
         final int length = tokens.length;
-        PackageReference pkg = new ImmutableParentPackageReference(tokens[0], this, joiner(), splitter());
+        PackageReference pkg = new ImmutableParentPackageReference(tokens[0], this, joiner(), splitter(),
+                optionalFactory());
 
         for (int i = 1; i < length; i++) {
             pkg = pkg.resolve(tokens[i]);
@@ -45,7 +51,62 @@ abstract class AbstractPackageReference implements PackageReference {
 
     @Override
     public PackageReference resolve(final PackageReference packageReference) {
-        return new PackageReferenceConcatenator(joiner(), splitter(), packageReference, this);
+        return new PackageReferenceConcatenator(joiner(), splitter(), packageReference, this, optionalFactory());
     }
 
+    @Override
+    public Optional<PackageReference> relativize(final PackageReference other) {
+        if (this.equals(other)) {
+            return this.optionalFactory().empty();
+        }
+
+        final PackageReference thisRoot = this.root();
+        final PackageReference otherRoot = other.root();
+        if (!thisRoot.equals(otherRoot)) {
+            return this.optionalFactory().empty();
+        }
+
+        final int thisLength = this.length();
+        final int thatLength = other.length();
+        final int minLength = Math.min(thisLength, thatLength);
+        final PackageReference longestPackage = (thisLength > thatLength) ? this : other;
+
+        int cursor = 0;
+        while ((cursor < minLength) && this.nameAtIndex(cursor).equals(other.nameAtIndex(cursor))) {
+            cursor++;
+        }
+
+        return this.optionalFactory().of(subPackage(longestPackage, cursor));
+    }
+
+    private PackageReference subPackage(final PackageReference packageReference, final int beginIndex) {
+        int cursor = beginIndex;
+        PackageReference relativized = packageReference.nameAtIndex(cursor);
+        cursor++;
+
+        while(cursor < packageReference.length()) {
+            relativized = relativized.resolve(packageReference.nameAtIndex(cursor));
+            cursor++;
+        }
+
+        return relativized;
+    }
+
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+
+        if(!(o instanceof PackageReference)) {
+            return false;
+        }
+
+        return Objects.equal(fullName(), ((PackageReference) o).fullName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(fullName());
+    }
 }

@@ -21,10 +21,10 @@
  ******************************************************************************/
 package org.rookit.auto.entity;
 
-import org.rookit.auto.javax.property.ExtendedProperty;
+import org.rookit.auto.javax.property.Property;
 
 @FunctionalInterface
 public interface PropertyEntityFactory {
 
-    Entity create(ExtendedProperty property);
+    Entity create(Property property);
 }

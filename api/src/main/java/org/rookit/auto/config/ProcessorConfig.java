@@ -21,8 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.config;
 
-// TODO the implementations for this interface seem a bit shotgun surgerish, as they hardcode the dependencies of each
-// TODO processor
 public interface ProcessorConfig {
 
     String name();

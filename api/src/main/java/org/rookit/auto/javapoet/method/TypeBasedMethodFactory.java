@@ -21,15 +21,12 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.method;
 
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import com.squareup.javapoet.MethodSpec;
+import org.rookit.auto.javapoet.JavaPoetFactory;
+import org.rookit.auto.javax.type.ExtendedTypeMirror;
 
-public interface TypeBasedMethodFactory extends MethodFactory {
+public interface TypeBasedMethodFactory extends JavaPoetFactory<MethodSpec> {
 
     ExtendedTypeMirror type();
 
-    @Override
-    default boolean isCompatible(final ExtendedProperty property) {
-        return type().isSameType(property.type());
-    }
 }

@@ -21,6 +21,10 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
+import org.rookit.utils.optional.Optional;
+
+import java.util.List;
+
 public interface PackageReference {
 
     String name();
@@ -30,5 +34,18 @@ public interface PackageReference {
     PackageReference resolve(String name);
 
     PackageReference resolve(PackageReference packageReference);
+
+    boolean isSubPackageOf(PackageReference packageReference);
+
+    Optional<PackageReference> relativize(PackageReference other);
+
+    PackageReference root();
+
+    int length();
+
+    PackageReference nameAtIndex(int index);
+
+    // TODO improve the naming here.
+    List<String> fullNameAsList();
 
 }

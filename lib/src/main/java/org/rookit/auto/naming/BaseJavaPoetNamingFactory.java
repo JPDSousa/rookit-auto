@@ -23,62 +23,64 @@ package org.rookit.auto.naming;
 
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.utils.string.template.Template1;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.text.WordUtils.capitalize;
-
-public final class BaseJavaPoetNamingFactory implements JavaPoetNamingFactory {
+public final class BaseJavaPoetNamingFactory  implements JavaPoetNamingFactory {
 
     public static JavaPoetNamingFactory create(final PackageReference packageReference,
-                                               final String entitySuffix,
-                                               final String entityPrefix,
-                                               final String methodPrefix) {
-        return new BaseJavaPoetNamingFactory(packageReference, entitySuffix, entityPrefix, methodPrefix);
+                                               final Template1 typeTemplate,
+                                               final Template1 methodTemplate) {
+        return new BaseJavaPoetNamingFactory(packageReference, typeTemplate, methodTemplate);
     }
 
     private final PackageReference packageReference;
-    private final String entitySuffix;
-    private final String entityPrefix;
-    private final String methodPrefix;
+    private final Template1 typeTemplate;
+    private final Template1 methodTemplate;
 
     private BaseJavaPoetNamingFactory(final PackageReference packageReference,
-                                      final String entitySuffix,
-                                      final String entityPrefix,
-                                      final String methodPrefix) {
+                                      final Template1 typeTemplate,
+                                      final Template1 methodTemplate) {
         this.packageReference = packageReference;
-        this.entitySuffix = entitySuffix;
-        this.entityPrefix = entityPrefix;
-        this.methodPrefix = methodPrefix;
+        this.typeTemplate = typeTemplate;
+        this.methodTemplate = methodTemplate;
     }
 
     @Override
     public PackageReference packageName(final ExtendedTypeElement element) {
-        return element.packageInfo().resolve(this.packageReference);
+        return packageName(element.packageInfo());
+    }
+
+    @Override
+    public PackageReference packageName(final PackageReference packageReference) {
+        return packageReference.resolve(this.packageReference);
     }
 
     @Override
     public String type(final ExtendedTypeElement element) {
-        final String prefix = element.isEntity() ? this.entityPrefix : EMPTY;
-        return prefix + element.getSimpleName() + this.entitySuffix;
+        return this.typeTemplate.build(element.getSimpleName());
     }
 
     @Override
-    public String method(final String propertyName, final String prefix, final String suffix) {
-        final String fullPrefix = this.methodPrefix.isEmpty() ? prefix
-                : (this.methodPrefix + capitalize(prefix));
-        if (fullPrefix.isEmpty()) {
-            return propertyName + capitalize(suffix);
-        }
-        return fullPrefix + capitalize(propertyName) + capitalize(suffix);
+    public String type(final PackageReference packageReference) {
+        return this.typeTemplate.build(packageReference.name());
+    }
+
+    @Override
+    public String method(final String propertyName) {
+        return method(propertyName, this.methodTemplate);
+    }
+
+    @Override
+    public String method(final String propertyName, final Template1 template) {
+        return template.build(propertyName);
     }
 
     @Override
     public String toString() {
         return "BaseJavaPoetNamingFactory{" +
                 "packageReference=" + this.packageReference +
-                ", entitySuffix='" + this.entitySuffix + '\'' +
-                ", entityPrefix='" + this.entityPrefix + '\'' +
-                ", methodPrefix='" + this.methodPrefix + '\'' +
+                ", typeTemplate=" + this.typeTemplate +
+                ", methodTemplate=" + this.methodTemplate +
                 "}";
     }
 }

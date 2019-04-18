@@ -21,73 +21,46 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.method.annotation;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.squareup.javapoet.MethodSpec;
-import org.rookit.auto.javapoet.method.AnnotationBasedMethodFactory;
-import org.rookit.auto.javax.property.ExtendedProperty;
+import one.util.streamex.StreamEx;
+import org.rookit.auto.javapoet.JavaPoetFactory;
+import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.stream.Stream;
+public final class BaseAnnotationBasedMethodFactory implements JavaPoetFactory<MethodSpec> {
 
-import static java.lang.String.format;
-
-public final class BaseAnnotationBasedMethodFactory implements AnnotationBasedMethodFactory {
-
-    public static AnnotationBasedMethodFactory create(final AnnotationBasedMethodFactory entityFactory,
-                                                      final AnnotationBasedMethodFactory propertyFactory,
-                                                      final Messager messager) {
-        return new BaseAnnotationBasedMethodFactory(entityFactory, propertyFactory, messager);
+    public static JavaPoetFactory<MethodSpec> create(final JavaPoetFactory<MethodSpec> entityFactory,
+                                                     final JavaPoetFactory<MethodSpec> propertyFactory) {
+        return new BaseAnnotationBasedMethodFactory(entityFactory, propertyFactory);
     }
 
-    private final AnnotationBasedMethodFactory entityMethodFactory;
-    private final AnnotationBasedMethodFactory propertyMethodFactory;
-    private final Messager messager;
+    private final JavaPoetFactory<MethodSpec> entityMethodFactory;
+    private final JavaPoetFactory<MethodSpec> propertyMethodFactory;
 
-    @SuppressWarnings({"MethodParameterOfConcreteClass", "TypeMayBeWeakened"}) //due to guice
-    private BaseAnnotationBasedMethodFactory(final AnnotationBasedMethodFactory entityFactory,
-                                             final AnnotationBasedMethodFactory propertyFactory,
-                                             final Messager messager) {
+    @Inject
+    private BaseAnnotationBasedMethodFactory(final JavaPoetFactory<MethodSpec> entityFactory,
+                                             final JavaPoetFactory<MethodSpec> propertyFactory) {
         this.entityMethodFactory = entityFactory;
         this.propertyMethodFactory = propertyFactory;
-        this.messager = messager;
     }
 
     @Override
-    public Collection<Class<? extends Annotation>> supportedAnnotations() {
-        return ImmutableList.<Class<? extends Annotation>>builder()
-                .addAll(this.entityMethodFactory.supportedAnnotations())
-                .addAll(this.propertyMethodFactory.supportedAnnotations())
-                .build();
+    public StreamEx<MethodSpec> create(final ExtendedTypeElement owner) {
+        return this.entityMethodFactory.create(owner)
+                .ifEmpty(this.propertyMethodFactory.create(owner));
     }
 
     @Override
-    public Stream<MethodSpec> create(final ExtendedTypeElement owner, final ExtendedProperty property) {
-        if (this.entityMethodFactory.isCompatible(property)) {
-            final String message = format("Using entity factory for %s", property.name());
-            this.messager.printMessage(Diagnostic.Kind.NOTE, message);
-            return this.entityMethodFactory.create(owner, property);
-        }
-        final String message = format("Using property factory for %s", property.name());
-        this.messager.printMessage(Diagnostic.Kind.NOTE, message);
-        return this.propertyMethodFactory.create(owner, property);
-    }
-
-    @Override
-    public boolean isCompatible(final ExtendedProperty property) {
-        return this.entityMethodFactory.isCompatible(property) || this.propertyMethodFactory.isCompatible(property);
+    public StreamEx<MethodSpec> create(final ExtendedTypeElement owner, final Property property) {
+        return StreamEx.empty();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("entityMethodFactory", this.entityMethodFactory)
-                .add("propertyMethodFactory", this.propertyMethodFactory)
-                .add("messager", this.messager)
-                .toString();
+        return "BaseAnnotationBasedMethodFactory{" +
+                "entityMethodFactory=" + this.entityMethodFactory +
+                ", propertyMethodFactory=" + this.propertyMethodFactory +
+                "}";
     }
 }

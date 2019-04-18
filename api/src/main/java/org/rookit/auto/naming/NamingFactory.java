@@ -21,19 +21,21 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
-import org.apache.commons.lang3.StringUtils;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.utils.string.template.Template1;
 
 public interface NamingFactory {
 
     PackageReference packageName(ExtendedTypeElement element);
 
+    PackageReference packageName(PackageReference packageReference);
+
     String type(ExtendedTypeElement element);
 
-    default String method(final String propertyName) {
-        return method(propertyName, StringUtils.EMPTY, StringUtils.EMPTY);
-    }
+    String type(PackageReference packageReference);
 
-    String method(String propertyName, String prefix, String suffix);
+    String method(final String propertyName);
+
+    String method(String propertyName, Template1 template1);
 
 }

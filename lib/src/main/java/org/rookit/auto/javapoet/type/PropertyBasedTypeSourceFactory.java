@@ -23,9 +23,9 @@ package org.rookit.auto.javapoet.type;
 
 import com.google.common.base.MoreObjects;
 import com.squareup.javapoet.MethodSpec;
-import org.rookit.auto.javapoet.method.MethodFactory;
+import org.rookit.auto.javapoet.JavaPoetFactory;
 import org.rookit.auto.javapoet.naming.JavaPoetParameterResolver;
-import org.rookit.auto.javax.property.PropertyExtractor;
+import org.rookit.auto.javax.property.ExtendedPropertyExtractor;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 
@@ -35,29 +35,28 @@ import java.util.stream.Collectors;
 public final class PropertyBasedTypeSourceFactory extends AbstractInterfaceTypeSourceFactory {
 
     public static SingleTypeSourceFactory create(final JavaPoetParameterResolver parameterResolver,
-                                                 final MethodFactory methodFactory,
-                                                 final TypeSourceAdapter adapter,
-                                                 final PropertyExtractor extractor) {
-        return new PropertyBasedTypeSourceFactory(parameterResolver, adapter, extractor, methodFactory);
+                                                 final JavaPoetFactory<MethodSpec> javaPoetFactory,
+                                                 final TypeSourceFactory adapter,
+                                                 final ExtendedPropertyExtractor extractor) {
+        return new PropertyBasedTypeSourceFactory(parameterResolver, adapter, extractor, javaPoetFactory);
     }
 
-    private final PropertyExtractor extractor;
-    private final MethodFactory methodFactory;
+    private final ExtendedPropertyExtractor extractor;
+    private final JavaPoetFactory<MethodSpec> javaPoetFactory;
 
     private PropertyBasedTypeSourceFactory(final JavaPoetParameterResolver parameterResolver,
-                                           final TypeSourceAdapter adapter,
-                                           final PropertyExtractor extractor,
-                                           final MethodFactory methodFactory) {
+                                           final TypeSourceFactory adapter,
+                                           final ExtendedPropertyExtractor extractor,
+                                           final JavaPoetFactory<MethodSpec> javaPoetFactory) {
         super(parameterResolver, adapter);
         this.extractor = extractor;
-        this.methodFactory = methodFactory;
+        this.javaPoetFactory = javaPoetFactory;
     }
 
     @Override
     protected Collection<MethodSpec> methodsFor(final ExtendedTypeElement element) {
         return this.extractor.fromType(element)
-                .filter(this.methodFactory::isCompatible)
-                .flatMap(property -> this.methodFactory.create(element, property))
+                .flatMap(property -> this.javaPoetFactory.create(element, property))
                 .collect(Collectors.toSet());
     }
 
@@ -65,7 +64,7 @@ public final class PropertyBasedTypeSourceFactory extends AbstractInterfaceTypeS
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("extractor", this.extractor)
-                .add("methodFactory", this.methodFactory)
+                .add("methodFactory", this.javaPoetFactory)
                 .toString();
     }
 }

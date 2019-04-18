@@ -22,16 +22,16 @@
 package org.rookit.auto.identifier;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import org.rookit.auto.javapoet.identifier.JavaPoetIdentifier;
 import org.rookit.auto.naming.PackageReference;
 
-final class EntityIdentifier implements Identifier {
+final class EntityIdentifier implements JavaPoetIdentifier {
 
     private final PackageReference packageReference;
     private final String name;
-    private final String original;
 
-    EntityIdentifier(final PackageReference packageReference, final String name, final String original) {
-        this.original = original;
+    EntityIdentifier(final PackageReference packageReference, final String name) {
         this.packageReference = packageReference;
         this.name = name;
     }
@@ -47,11 +47,24 @@ final class EntityIdentifier implements Identifier {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if ((o == null) || (getClass() != o.getClass())) return false;
+        final EntityIdentifier otherIdentifier = (EntityIdentifier) o;
+        return Objects.equal(this.packageReference, otherIdentifier.packageReference) &&
+                Objects.equal(this.name, otherIdentifier.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.packageReference, this.name);
+    }
+
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("packageReference", this.packageReference)
                 .add("name", this.name)
-                .add("original", this.original)
                 .toString();
     }
 }

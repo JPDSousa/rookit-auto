@@ -22,14 +22,14 @@
 package org.rookit.auto.identifier;
 
 import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.property.ExtendedProperty;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public interface PropertyIdentifierFactory {
 
-    Identifier create(ExtendedTypeElement element, ExtendedProperty property);
+    Identifier create(ExtendedTypeElement element, Property property);
 
-    Identifier create(ExtendedProperty property);
+    Identifier create(Property property);
 
     default StreamEx<Identifier> createAll(final ExtendedTypeElement element) {
         return StreamEx.of(element.properties())

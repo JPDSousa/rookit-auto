@@ -21,6 +21,8 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.auto.javax.type.ExtendedTypeMirror;
+
 import javax.lang.model.element.ExecutableElement;
 
 public interface ExtendedExecutableElement extends ExecutableElement {

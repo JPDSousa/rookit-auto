@@ -27,25 +27,37 @@ import one.util.streamex.StreamEx;
 import org.rookit.auto.entity.PartialEntity;
 import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.property.PropertyFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 public final class BaseParentExtractor implements ParentExtractor {
 
-    public static ParentExtractor create(final Provider<PartialEntityFactory> partialEntityFactory) {
-        return new BaseParentExtractor(partialEntityFactory);
+    public static ParentExtractor create(final Provider<PartialEntityFactory> partialEntityFactory,
+                                         final PropertyFactory propertyFactory) {
+        return new BaseParentExtractor(partialEntityFactory, propertyFactory);
     }
 
     private final Provider<PartialEntityFactory> partialEntityFactory;
+    private final PropertyFactory propertyFactory;
 
     @Inject
-    private BaseParentExtractor(final Provider<PartialEntityFactory> partialEntityFactory) {
+    private BaseParentExtractor(final Provider<PartialEntityFactory> partialEntityFactory,
+                                final PropertyFactory propertyFactory) {
         this.partialEntityFactory = partialEntityFactory;
+        this.propertyFactory = propertyFactory;
     }
 
     @Override
     public StreamEx<PartialEntity> extractFrom(final ExtendedTypeElement element) {
         return element.conventionInterfaces()
                 .flatMap(this::entitiesFor);
+    }
+
+    @Override
+    public StreamEx<PartialEntity> extractFrom(final Property property) {
+        return this.propertyFactory.extend(property).typeAsElement()
+                .map(this::extractFrom)
+                .orElse(StreamEx.empty());
     }
 
     private StreamEx<PartialEntity> entitiesFor(final ExtendedTypeElement parent) {
@@ -56,6 +68,7 @@ public final class BaseParentExtractor implements ParentExtractor {
     public String toString() {
         return "BaseParentExtractor{" +
                 "partialEntityFactory=" + this.partialEntityFactory +
+                ", propertyFactory=" + this.propertyFactory +
                 "}";
     }
 }

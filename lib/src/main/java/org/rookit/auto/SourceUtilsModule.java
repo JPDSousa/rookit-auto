@@ -21,6 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -34,7 +35,7 @@ import org.rookit.auto.entity.parent.ParentExtractor;
 import org.rookit.auto.entity.property.NoGenericPartialEntityFactory;
 import org.rookit.auto.entity.property.NoGenericPropertyPartialEntityFactory;
 import org.rookit.auto.guice.NoGeneric;
-import org.rookit.auto.guice.Self;
+import org.rookit.utils.guice.Self;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
 import org.rookit.auto.javapoet.type.BaseTypeSourceFactory;
@@ -52,9 +53,11 @@ import org.rookit.auto.naming.PackageReferenceFactory;
 import org.rookit.auto.source.BaseCodeSourceContainerFactory;
 import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.utils.guice.Dummy;
+import org.rookit.utils.string.template.Template1;
 
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
+import java.util.concurrent.Executor;
 
 // TODO break me down into pieces
 @SuppressWarnings({"MethodMayBeStatic", "FeatureEnvy"})
@@ -62,7 +65,8 @@ public final class SourceUtilsModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(new SourceUtilsModule(),
             ConfigurationModule.getModule(),
-            ElementModule.getModule(),
+            ExtendedTypeModule.getModule(),
+            NamingModule.getModule(),
             JavaxUtilsModule.getModule());
 
     public static Module getModule() {
@@ -74,29 +78,28 @@ public final class SourceUtilsModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Filer.class).to(IdempotentFiler.class).in(Singleton.class);
-        bind(PackageReferenceFactory.class).to(BasePackageReferenceFactory.class).in(Singleton.class);
         bind(JavaFileObject.class).annotatedWith(Dummy.class).to(DummyJavaFileObject.class).in(Singleton.class);
 
         bind(ParentExtractor.class).to(BaseParentExtractor.class).in(Singleton.class);
         bind(ExtendedTypeElementFactory.class).to(BaseExtendedTypeElementFactory.class).in(Singleton.class);
-        bind(ExtendedPropertyFactory.class).to(BaseExtendedPropertyFactory.class).in(Singleton.class);
-        bind(PropertyAdapter.class).to(BasePropertyAdapter.class).in(Singleton.class);
+        bind(PropertyFactory.class).to(BasePropertyFactory.class).in(Singleton.class);
         bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
-        bind(JavaxRepetitionFactory.class).to(BaseJavaxRepetitionFactory.class).in(Singleton.class);
-        bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
-        bind(PropertyExtractor.class).to(BasePropertyExtractor.class).in(Singleton.class);
-        bind(TypeSourceAdapter.class).to(BaseTypeSourceAdapter.class).in(Singleton.class);
+        bind(ExtendedPropertyExtractor.class).to(BaseExtendedPropertyExtractor.class).in(Singleton.class);
+        bind(TypeSourceFactory.class).to(BaseTypeSourceFactory.class).in(Singleton.class);
         bind(PropertyPartialEntityFactory.class).to(NoGenericPropertyPartialEntityFactory.class).in(Singleton.class);
         bind(PartialEntityFactory.class).annotatedWith(NoGeneric.class)
                 .to(NoGenericPartialEntityFactory.class).in(Singleton.class);
         bind(CodeSourceContainerFactory.class).to(BaseCodeSourceContainerFactory.class).in(Singleton.class);
+
+        bind(Executor.class).toInstance(MoreExecutors.directExecutor());
     }
 
     @Singleton
     @Provides
     @Self
-    JavaPoetNamingFactory selfQueryNamingFactory(final PackageReferenceFactory packageFactory) {
-        return SelfJavaPoetNamingFactory.create(packageFactory);
+    JavaPoetNamingFactory selfQueryNamingFactory(final PackageReferenceFactory packageFactory,
+                                                 @Self final Template1 noopTemplate) {
+        return SelfJavaPoetNamingFactory.create(packageFactory, noopTemplate);
     }
 
 }

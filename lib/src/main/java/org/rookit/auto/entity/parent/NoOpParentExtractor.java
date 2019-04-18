@@ -40,4 +40,9 @@ public final class NoOpParentExtractor implements ParentExtractor {
     public StreamEx<PartialEntity> extractFrom(final ExtendedTypeElement element) {
         return StreamEx.empty();
     }
+
+    @Override
+    public StreamEx<PartialEntity> extractFrom(final Property property) {
+        return StreamEx.empty();
+    }
 }

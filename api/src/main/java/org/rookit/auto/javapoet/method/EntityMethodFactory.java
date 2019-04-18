@@ -23,7 +23,7 @@ package org.rookit.auto.javapoet.method;
 
 import com.squareup.javapoet.MethodSpec;
 import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 
 @FunctionalInterface
 public interface EntityMethodFactory {

@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.entity.Entity;
 import org.rookit.auto.entity.EntityFactory;
-import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.IdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
@@ -34,18 +34,18 @@ import org.rookit.utils.optional.OptionalFactory;
 
 public final class NoPartialEntityFactory extends AbstractCacheEntityFactory {
 
-    public static EntityFactory create(final EntityIdentifierFactory identifierFactory,
+    public static EntityFactory create(final IdentifierFactory identifierFactory,
                                        final SingleTypeSourceFactory typeSourceFactory,
                                        final OptionalFactory optionalFactory) {
         return new NoPartialEntityFactory(identifierFactory, typeSourceFactory, optionalFactory);
     }
 
-    private final EntityIdentifierFactory identifierFactory;
+    private final IdentifierFactory identifierFactory;
     private final SingleTypeSourceFactory typeSourceFactory;
     private final OptionalFactory optionalFactory;
 
     @Inject
-    private NoPartialEntityFactory(final EntityIdentifierFactory identifierFactory,
+    private NoPartialEntityFactory(final IdentifierFactory identifierFactory,
                                    final SingleTypeSourceFactory typeSourceFactory,
                                    final OptionalFactory optionalFactory) {
         this.identifierFactory = identifierFactory;

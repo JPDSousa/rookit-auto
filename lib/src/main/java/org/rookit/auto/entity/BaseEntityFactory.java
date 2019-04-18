@@ -23,7 +23,7 @@ package org.rookit.auto.entity;
 
 import com.google.inject.Inject;
 import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
-import org.rookit.auto.identifier.EntityIdentifierFactory;
+import org.rookit.auto.identifier.IdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.source.SingleTypeSourceFactory;
@@ -32,18 +32,18 @@ import org.rookit.auto.source.TypeSource;
 public final class BaseEntityFactory extends AbstractCacheEntityFactory {
 
     public static EntityFactory create(final PartialEntityFactory partialEntityFactory,
-                                       final EntityIdentifierFactory identifierFactory,
+                                       final IdentifierFactory identifierFactory,
                                        final SingleTypeSourceFactory typeSpecFactory) {
         return new BaseEntityFactory(partialEntityFactory, identifierFactory, typeSpecFactory);
     }
 
     private final PartialEntityFactory partialEntityFactory;
-    private final EntityIdentifierFactory identifierFactory;
+    private final IdentifierFactory identifierFactory;
     private final SingleTypeSourceFactory typeSpecFactory;
 
     @Inject
     private BaseEntityFactory(final PartialEntityFactory partialEntityFactory,
-                              final EntityIdentifierFactory identifierFactory,
+                              final IdentifierFactory identifierFactory,
                               final SingleTypeSourceFactory typeSpecFactory) {
         this.partialEntityFactory = partialEntityFactory;
         this.identifierFactory = identifierFactory;

@@ -22,12 +22,11 @@
 package org.rookit.auto.source;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @FunctionalInterface
 public interface CodeSource {
 
-    CompletableFuture<Void> writeTo(Filer filer) throws IOException;
+    CompletableFuture<Void> writeTo(Filer filer);
 
 }

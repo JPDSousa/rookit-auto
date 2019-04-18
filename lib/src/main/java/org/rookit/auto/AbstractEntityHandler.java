@@ -29,7 +29,6 @@ import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.TypeElement;
-import java.io.IOException;
 
 public abstract class AbstractEntityHandler extends AbstractConfigAwareEntityHandler {
 
@@ -50,12 +49,8 @@ public abstract class AbstractEntityHandler extends AbstractConfigAwareEntityHan
 
     @Override
     protected void doProcessEntity(final TypeElement element) {
-        try {
-            final Entity entity = this.entityFactory.create(this.elementFactory.extend(element));
-            entity.writeTo(this.filer);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+        final Entity entity = this.entityFactory.create(this.elementFactory.extend(element));
+        entity.writeTo(this.filer);
     }
 
     @Override

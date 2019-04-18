@@ -29,11 +29,12 @@ import org.rookit.auto.entity.PartialEntityFactory;
 import org.rookit.auto.entity.PropertyEntityFactory;
 import org.rookit.auto.entity.cache.AbstractCacheEntityFactory;
 import org.rookit.auto.guice.NoGeneric;
-import org.rookit.auto.identifier.EntityIdentifierFactory;
 import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.identifier.IdentifierFactory;
-import org.rookit.auto.javax.property.PropertyEvaluator;
+import org.rookit.auto.javax.property.ExtendedPropertyEvaluator;
+import org.rookit.auto.javax.property.PropertyFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
+import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.auto.source.SingleTypeSourceFactory;
 import org.rookit.auto.source.TypeSource;
 
@@ -41,36 +42,44 @@ import java.util.Collection;
 
 public final class PropertyFlatEntityFactory extends AbstractCacheEntityFactory {
 
-    public static EntityFactory create(final EntityIdentifierFactory identifierFactory,
+    public static EntityFactory create(final IdentifierFactory identifierFactory,
                                        final PartialEntityFactory partialEntityFactory,
                                        final SingleTypeSourceFactory typeSourceFactory,
                                        final PropertyEntityFactory propEntityFactory,
-                                       final PropertyEvaluator evaluator) {
+                                       final ExtendedPropertyEvaluator evaluator,
+                                       final CodeSourceContainerFactory containerFactory,
+                                       final PropertyFactory propertyFactory) {
         return new PropertyFlatEntityFactory(
                 identifierFactory,
                 partialEntityFactory,
                 typeSourceFactory,
                 propEntityFactory,
-                evaluator);
+                evaluator, containerFactory, propertyFactory);
     }
 
-    private final EntityIdentifierFactory identifierFactory;
+    private final IdentifierFactory identifierFactory;
     private final PartialEntityFactory partialEntityFactory;
     private final SingleTypeSourceFactory singleTypeSourceFactory;
     private final PropertyEntityFactory propertyEntityFactory;
-    private final PropertyEvaluator filter;
+    private final ExtendedPropertyEvaluator filter;
+    private final CodeSourceContainerFactory containerFactory;
+    private final PropertyFactory propertyFactory;
 
     @Inject
-    private PropertyFlatEntityFactory(final EntityIdentifierFactory identifierFactory,
+    private PropertyFlatEntityFactory(final IdentifierFactory identifierFactory,
                                       @NoGeneric final PartialEntityFactory partialEntityFactory,
                                       final SingleTypeSourceFactory typeSourceFactory,
                                       final PropertyEntityFactory propEntityFactory,
-                                      final PropertyEvaluator filter) {
+                                      final ExtendedPropertyEvaluator filter,
+                                      final CodeSourceContainerFactory containerFactory,
+                                      final PropertyFactory propertyFactory) {
         this.identifierFactory = identifierFactory;
         this.partialEntityFactory = partialEntityFactory;
         this.singleTypeSourceFactory = typeSourceFactory;
         this.propertyEntityFactory = propEntityFactory;
         this.filter = filter;
+        this.containerFactory = containerFactory;
+        this.propertyFactory = propertyFactory;
     }
 
     @Override
@@ -83,7 +92,8 @@ public final class PropertyFlatEntityFactory extends AbstractCacheEntityFactory 
                 .map(this.propertyEntityFactory::create)
                 .toImmutableSet();
 
-        return new PropertyFlatEntity(identifier, entities, source, this.partialEntityFactory.create(element));
+        return new PropertyFlatEntity(identifier, this.containerFactory.create(entities), source,
+                this.partialEntityFactory.create(element));
     }
 
     @Override
@@ -94,6 +104,8 @@ public final class PropertyFlatEntityFactory extends AbstractCacheEntityFactory 
                 ", singleTypeSourceFactory=" + this.singleTypeSourceFactory +
                 ", propertyEntityFactory=" + this.propertyEntityFactory +
                 ", filter=" + this.filter +
+                ", containerFactory=" + this.containerFactory +
+                ", propertyFactory=" + this.propertyFactory +
                 "} " + super.toString();
     }
 }

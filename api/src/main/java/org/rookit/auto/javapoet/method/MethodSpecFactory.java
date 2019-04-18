@@ -23,18 +23,15 @@ package org.rookit.auto.javapoet.method;
 
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import org.rookit.utils.string.template.Template1;
 
 public interface MethodSpecFactory {
 
-    default MethodSpec create(final String propertyName, final ParameterSpec... parameters) {
-        return create(propertyName, EMPTY, parameters);
-    }
+    MethodSpec create(final String propertyName, final ParameterSpec... parameters);
 
-    default MethodSpec create(final String propertyName, final String prefix, final ParameterSpec... parameters) {
-        return create(propertyName, prefix, EMPTY, parameters);
-    }
 
-    MethodSpec create(String propertyName, String prefix, String suffix, ParameterSpec... parameters);
+    MethodSpec create(String propertyName, Template1 template, ParameterSpec... parameters);
+
+    MethodSpec create();
+
 }

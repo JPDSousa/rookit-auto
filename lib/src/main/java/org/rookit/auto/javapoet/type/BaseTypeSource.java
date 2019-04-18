@@ -21,27 +21,27 @@
  ******************************************************************************/
 package org.rookit.auto.javapoet.type;
 
-import com.google.common.base.MoreObjects;
-import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import org.rookit.auto.identifier.Identifier;
-import org.rookit.auto.source.TypeSource;
-import org.rookit.utils.primitive.VoidUtils;
 
-import javax.annotation.processing.Filer;
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import javax.lang.model.element.Modifier;
+import java.util.concurrent.Executor;
 
-final class BaseTypeSource implements TypeSource {
+final class BaseTypeSource extends AbstractJavaPoetTypeSource {
 
     private final Identifier identifier;
-    private final TypeSpec source;
-    private final VoidUtils voidUtils;
+    @SuppressWarnings("FieldNotUsedInToString")
+    private final TypeSpec.Builder source;
 
-    BaseTypeSource(final Identifier identifier, final TypeSpec source, final VoidUtils voidUtils) {
+    BaseTypeSource(final Identifier identifier,
+                   final TypeSpec.Builder source,
+                   final Executor executor) {
+        super(executor);
         this.source = source;
         this.identifier = identifier;
-        this.voidUtils = voidUtils;
     }
 
     @Override
@@ -50,19 +50,49 @@ final class BaseTypeSource implements TypeSource {
     }
 
     @Override
-    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
-        JavaFile.builder(identifier().packageName().fullName(), this.source)
-                .build()
-                .writeTo(filer);
-        return this.voidUtils.completeVoid();
+    public void addMethod(final MethodSpec method) {
+        this.source.addMethod(method);
+    }
+
+    @Override
+    public void addField(final FieldSpec field) {
+        this.source.addField(field);
+    }
+
+    @Override
+    protected TypeSpec typeSpec() {
+        final TypeSpec spec = this.source.build();
+        // TODO in the future please consider having different implementations for different kinds of specs.
+        if ((spec.kind != TypeSpec.Kind.INTERFACE) && (spec.kind != TypeSpec.Kind.ANNOTATION)) {
+            return createToString();
+        }
+        return spec;
+    }
+
+    private TypeSpec createToString() {
+        final TypeSpec original = this.source.build();
+        final CodeBlock.Builder codeBlock = CodeBlock.builder()
+                .add("return \"$L{\" +\n", original.name);
+        for (final FieldSpec field : original.fieldSpecs) {
+            codeBlock.add("\"$L=\" + this.$L +\n", field.name, field.name);
+        }
+        codeBlock.add("\"} \" + super.toString();\n");
+
+        final MethodSpec toString = MethodSpec.methodBuilder("toString")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(String.class)
+                .addCode(codeBlock.build())
+                .build();
+        return original.toBuilder()
+                .addMethod(toString)
+                .build();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("identifier", this.identifier)
-                .add("source", this.source)
-                .add("voidUtils", this.voidUtils)
-                .toString();
+        return "BaseTypeSource{" +
+                "identifier=" + this.identifier +
+                "} " + super.toString();
     }
 }

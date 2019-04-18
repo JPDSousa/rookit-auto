@@ -21,24 +21,11 @@
  ******************************************************************************/
 package org.rookit.auto.javax.property;
 
-import org.rookit.auto.javax.ExtendedTypeMirror;
-import org.rookit.auto.javax.element.ExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.utils.optional.Optional;
-import org.rookit.utils.repetition.Repetition;
 
-// TODO why is this called extended property, if it doesn't extend anything?
-public interface ExtendedProperty {
-
-    String name();
-
-    ExtendedTypeMirror type();
+public interface ExtendedProperty extends Property {
 
     Optional<ExtendedTypeElement> typeAsElement();
-
-    boolean isContainer();
-
-    boolean isFinal();
-
-    Repetition repetition();
 
 }

@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 import one.util.streamex.StreamEx;
 
 import javax.annotation.processing.Filer;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -51,7 +50,7 @@ final class BaseCodeSourceContainer<T extends CodeSource> implements CodeSourceC
     }
 
     @Override
-    public CompletableFuture<Void> writeTo(final Filer filer) throws IOException {
+    public CompletableFuture<Void> writeTo(final Filer filer) {
         final List<CompletableFuture<Void>> ops = Lists.newArrayListWithCapacity(this.collection.size());
         for (final T codeSource : this.collection) {
             ops.add(codeSource.writeTo(filer));

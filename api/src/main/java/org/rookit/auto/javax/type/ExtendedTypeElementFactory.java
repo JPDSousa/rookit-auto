@@ -23,6 +23,7 @@ package org.rookit.auto.javax.type;
 
 import javax.lang.model.element.TypeElement;
 
+@FunctionalInterface
 public interface ExtendedTypeElementFactory {
 
     ExtendedTypeElement extend(TypeElement baseElement);

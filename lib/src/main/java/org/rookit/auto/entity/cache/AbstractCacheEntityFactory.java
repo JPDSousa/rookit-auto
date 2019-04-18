@@ -39,8 +39,7 @@ public abstract class AbstractCacheEntityFactory implements EntityFactory {
 
     @Override
     public Entity create(final ExtendedTypeElement element) {
-        return this.entityCache.computeIfAbsent(element.getQualifiedName().toString(),
-                name -> createNew(element));
+        return this.entityCache.computeIfAbsent(element.getQualifiedName().toString(), name -> createNew(element));
     }
 
     protected abstract Entity createNew(ExtendedTypeElement element);

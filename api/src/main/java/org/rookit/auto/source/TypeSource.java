@@ -21,10 +21,15 @@
  ******************************************************************************/
 package org.rookit.auto.source;
 
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 import org.rookit.auto.identifier.Identifier;
 
 public interface TypeSource extends CodeSource {
 
     Identifier identifier();
 
+    void addMethod(MethodSpec method);
+
+    void addField(FieldSpec field);
 }

@@ -21,6 +21,10 @@
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>${rookit.group}.rookit-auto</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${rookit.group}.rookit-convention</groupId>
             <artifactId>api</artifactId>
         </dependency>
@@ -30,6 +34,11 @@
             <dependency>
                 <groupId>${rookit.group}.rookit-auto</groupId>
                 <artifactId>api</artifactId>
+                <version>${rookit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${rookit.group}.rookit-auto</groupId>
+                <artifactId>guice</artifactId>
                 <version>${rookit.version}</version>
             </dependency>
             <dependency>

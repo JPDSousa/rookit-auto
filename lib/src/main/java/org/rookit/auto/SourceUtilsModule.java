@@ -35,24 +35,15 @@ import org.rookit.auto.entity.parent.ParentExtractor;
 import org.rookit.auto.entity.property.NoGenericPartialEntityFactory;
 import org.rookit.auto.entity.property.NoGenericPropertyPartialEntityFactory;
 import org.rookit.auto.guice.NoGeneric;
-import org.rookit.utils.guice.Self;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
 import org.rookit.auto.javapoet.type.BaseTypeSourceFactory;
 import org.rookit.auto.javapoet.type.TypeSourceFactory;
-import org.rookit.auto.javax.JavaxUtilsModule;
-import org.rookit.auto.javax.property.BaseExtendedPropertyExtractor;
-import org.rookit.auto.javax.property.BasePropertyFactory;
-import org.rookit.auto.javax.property.ExtendedPropertyExtractor;
-import org.rookit.auto.javax.property.PropertyFactory;
-import org.rookit.auto.javax.type.BaseExtendedTypeElementFactory;
-import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
-import org.rookit.auto.javax.type.ExtendedTypeModule;
-import org.rookit.auto.naming.NamingModule;
-import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.auto.javax.pack.PackageReferenceFactory;
 import org.rookit.auto.source.BaseCodeSourceContainerFactory;
 import org.rookit.auto.source.CodeSourceContainerFactory;
 import org.rookit.utils.guice.Dummy;
+import org.rookit.utils.guice.Self;
 import org.rookit.utils.string.template.Template1;
 
 import javax.annotation.processing.Filer;
@@ -64,10 +55,7 @@ import java.util.concurrent.Executor;
 public final class SourceUtilsModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(new SourceUtilsModule(),
-            ConfigurationModule.getModule(),
-            ExtendedTypeModule.getModule(),
-            NamingModule.getModule(),
-            JavaxUtilsModule.getModule());
+            ConfigurationModule.getModule());
 
     public static Module getModule() {
         return MODULE;
@@ -81,10 +69,7 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(JavaFileObject.class).annotatedWith(Dummy.class).to(DummyJavaFileObject.class).in(Singleton.class);
 
         bind(ParentExtractor.class).to(BaseParentExtractor.class).in(Singleton.class);
-        bind(ExtendedTypeElementFactory.class).to(BaseExtendedTypeElementFactory.class).in(Singleton.class);
-        bind(PropertyFactory.class).to(BasePropertyFactory.class).in(Singleton.class);
         bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
-        bind(ExtendedPropertyExtractor.class).to(BaseExtendedPropertyExtractor.class).in(Singleton.class);
         bind(TypeSourceFactory.class).to(BaseTypeSourceFactory.class).in(Singleton.class);
         bind(PropertyPartialEntityFactory.class).to(NoGenericPropertyPartialEntityFactory.class).in(Singleton.class);
         bind(PartialEntityFactory.class).annotatedWith(NoGeneric.class)

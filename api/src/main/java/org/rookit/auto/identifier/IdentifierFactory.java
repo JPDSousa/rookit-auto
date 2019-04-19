@@ -22,7 +22,7 @@
 package org.rookit.auto.identifier;
 
 import org.rookit.auto.javax.type.ExtendedTypeElement;
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.pack.PackageReference;
 
 public interface IdentifierFactory {
 

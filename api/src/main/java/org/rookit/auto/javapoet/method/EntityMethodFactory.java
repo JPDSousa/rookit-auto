@@ -25,12 +25,10 @@ import com.squareup.javapoet.MethodSpec;
 import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 
+@Deprecated
 @FunctionalInterface
 public interface EntityMethodFactory {
 
     StreamEx<MethodSpec> create(ExtendedTypeElement element);
 
-    default Iterable<MethodSpec> createAsSet(final ExtendedTypeElement element) {
-        return create(element).toImmutableSet();
-    }
 }

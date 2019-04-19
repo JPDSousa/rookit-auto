@@ -27,7 +27,7 @@ import org.rookit.auto.javapoet.identifier.JavaPoetIdentifier;
 import org.rookit.auto.javapoet.identifier.JavaPoetIdentifierFactory;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.NamingFactory;
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.pack.PackageReference;
 
 import java.util.Map;
 

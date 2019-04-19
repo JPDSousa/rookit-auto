@@ -24,7 +24,7 @@ package org.rookit.auto.identifier;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.rookit.auto.javapoet.identifier.JavaPoetIdentifier;
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.pack.PackageReference;
 
 final class EntityIdentifier implements JavaPoetIdentifier {
 

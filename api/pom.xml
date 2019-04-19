@@ -25,12 +25,12 @@
             <artifactId>auto-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>${rookit.group}.rookit-utils</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>javapoet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${rookit.group}.rookit-auto</groupId>
+            <artifactId>javax-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -55,6 +55,11 @@
                 <groupId>com.squareup</groupId>
                 <artifactId>javapoet</artifactId>
                 <version>${javapoet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${rookit.group}.rookit-auto</groupId>
+                <artifactId>javax-api</artifactId>
+                <version>${rookit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

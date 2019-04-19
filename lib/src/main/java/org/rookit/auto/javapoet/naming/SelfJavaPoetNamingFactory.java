@@ -23,8 +23,8 @@ package org.rookit.auto.javapoet.naming;
 
 import com.google.inject.Inject;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
-import org.rookit.auto.naming.PackageReference;
-import org.rookit.auto.naming.PackageReferenceFactory;
+import org.rookit.auto.javax.pack.PackageReference;
+import org.rookit.auto.javax.pack.PackageReferenceFactory;
 import org.rookit.utils.guice.Self;
 import org.rookit.utils.string.template.Template1;
 

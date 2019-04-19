@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import one.util.streamex.StreamEx;
 import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
-import org.rookit.auto.javax.type.PropertyOverridingExtendedTypeElement;
+import org.rookit.auto.javax.type.ExtendedTypeElementFactory;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -34,20 +34,24 @@ public final class RoutingJavaPoetFactory<T> implements JavaPoetFactory<T> {
 
     public static <E> JavaPoetFactory<E> create(final JavaPoetFactory<E> primaryFactory,
                                                 final JavaPoetFactory<E> secondaryFactory,
-                                                final Predicate<Property> primaryFilter) {
-        return new RoutingJavaPoetFactory<>(primaryFactory, secondaryFactory, primaryFilter);
+                                                final Predicate<Property> primaryFilter,
+                                                final ExtendedTypeElementFactory elementFactory) {
+        return new RoutingJavaPoetFactory<>(primaryFactory, secondaryFactory, primaryFilter, elementFactory);
     }
 
     private final JavaPoetFactory<T> primaryFactory;
     private final JavaPoetFactory<T> secondaryFactory;
     private final Predicate<Property> primaryFilter;
+    private final ExtendedTypeElementFactory elementFactory;
 
     private RoutingJavaPoetFactory(final JavaPoetFactory<T> primaryFactory,
                                    final JavaPoetFactory<T> secondaryFactory,
-                                   final Predicate<Property> primaryFilter) {
+                                   final Predicate<Property> primaryFilter,
+                                   final ExtendedTypeElementFactory elementFactory) {
         this.primaryFactory = primaryFactory;
         this.secondaryFactory = secondaryFactory;
         this.primaryFilter = primaryFilter;
+        this.elementFactory = elementFactory;
     }
 
     @Override
@@ -65,10 +69,8 @@ public final class RoutingJavaPoetFactory<T> implements JavaPoetFactory<T> {
             }
         }
 
-        final ExtendedTypeElement primaryElement = PropertyOverridingExtendedTypeElement
-                .create(owner, primaryProperties);
-        final ExtendedTypeElement secondaryElement = PropertyOverridingExtendedTypeElement
-                .create(owner, secondaryProperties);
+        final ExtendedTypeElement primaryElement = this.elementFactory.changeProperties(owner, primaryProperties);
+        final ExtendedTypeElement secondaryElement = this.elementFactory.changeProperties(owner, secondaryProperties);
         return this.primaryFactory.create(primaryElement)
                 .append(this.secondaryFactory.create(secondaryElement));
     }
@@ -84,6 +86,7 @@ public final class RoutingJavaPoetFactory<T> implements JavaPoetFactory<T> {
                 "primaryFactory=" + this.primaryFactory +
                 ", secondaryFactory=" + this.secondaryFactory +
                 ", primaryFilter=" + this.primaryFilter +
+                ", elementFactory=" + this.elementFactory +
                 "}";
     }
 }

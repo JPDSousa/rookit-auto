@@ -24,7 +24,7 @@ package org.rookit.auto.javapoet.naming;
 import com.squareup.javapoet.ClassName;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.NamingFactory;
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.pack.PackageReference;
 
 public interface JavaPoetNamingFactory extends NamingFactory {
 

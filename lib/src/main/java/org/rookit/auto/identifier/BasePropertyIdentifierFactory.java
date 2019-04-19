@@ -24,7 +24,7 @@ package org.rookit.auto.identifier;
 import org.rookit.auto.javax.property.Property;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.auto.naming.NamingFactory;
-import org.rookit.auto.naming.PackageReference;
+import org.rookit.auto.javax.pack.PackageReference;
 
 import static org.apache.commons.text.WordUtils.capitalize;
 

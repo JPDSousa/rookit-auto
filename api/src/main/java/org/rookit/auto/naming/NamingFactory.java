@@ -21,6 +21,7 @@
  ******************************************************************************/
 package org.rookit.auto.naming;
 
+import org.rookit.auto.javax.pack.PackageReference;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
 import org.rookit.utils.string.template.Template1;
 

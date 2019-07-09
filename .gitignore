@@ -17,7 +17,7 @@ hs_err_pid*
 
 \.settings/
 
-rookit-auto-api/target/
+**/target/
 
 rookit-auto-lib/target/
 
@@ -28,3 +28,7 @@ test/target/
 lib/target/
 
 api/target/
+
+guice/target/
+
+javax/api/target/

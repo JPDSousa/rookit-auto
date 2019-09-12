@@ -23,34 +23,38 @@ package org.rookit.auto.javax.repetition.optional;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirrorFactory;
+import org.rookit.auto.javax.repetition.ImmutableTypeMirrorRepetitionConfig;
+import org.rookit.auto.javax.repetition.TypeMirrorRepetitionConfig;
+import org.rookit.auto.javax.ElementUtils;
 import org.rookit.utils.optional.Optional;
-import org.rookit.utils.reflect.ExtendedClass;
-import org.rookit.utils.reflect.ExtendedClassFactory;
+import org.rookit.utils.repetition.Repetition;
 
-final class RookitOptionalProvider implements Provider<RepetitiveTypeMirror> {
+final class RookitOptionalProvider implements Provider<TypeMirrorRepetitionConfig> {
 
-    private final RepetitiveTypeMirrorFactory factory;
-    private final ExtendedClassFactory classFactory;
+    private final ElementUtils elementUtils;
+    private final Repetition repetition;
 
     @Inject
-    private RookitOptionalProvider(final RepetitiveTypeMirrorFactory factory, final ExtendedClassFactory classFactory) {
-        this.factory = factory;
-        this.classFactory = classFactory;
+    private RookitOptionalProvider(final ElementUtils elementUtils,
+                                   @org.rookit.utils.guice.Optional final Repetition repetition) {
+        this.elementUtils = elementUtils;
+        this.repetition = repetition;
     }
 
     @Override
-    public RepetitiveTypeMirror get() {
-        final ExtendedClass<?> extendedClass = this.classFactory.create(Optional.class);
-        return this.factory.create(extendedClass, 0);
+    public TypeMirrorRepetitionConfig get() {
+        return ImmutableTypeMirrorRepetitionConfig.builder()
+                .typeMirror(this.elementUtils.fromClassErasured(Optional.class))
+                .repetition(this.repetition)
+                .valueIndex(0)
+                .build();
     }
 
     @Override
     public String toString() {
         return "RookitOptionalProvider{" +
-                "factory=" + this.factory +
-                ", classFactory=" + this.classFactory +
+                "elementUtils=" + this.elementUtils +
+                ", repetition=" + this.repetition +
                 "}";
     }
 }

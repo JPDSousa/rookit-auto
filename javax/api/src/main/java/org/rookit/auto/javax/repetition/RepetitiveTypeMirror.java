@@ -25,6 +25,6 @@ import org.rookit.auto.javax.type.ExtendedTypeMirror;
 
 public interface RepetitiveTypeMirror extends ExtendedTypeMirror {
 
-    ExtendedTypeMirror unwrap(ExtendedTypeMirror type);
+    ExtendedTypeMirror unwrapValue();
 
 }

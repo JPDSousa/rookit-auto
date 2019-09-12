@@ -28,34 +28,28 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
 import org.rookit.auto.config.ConfigurationModule;
-import org.rookit.auto.entity.PartialEntityFactory;
-import org.rookit.auto.entity.PropertyPartialEntityFactory;
-import org.rookit.auto.entity.parent.BaseParentExtractor;
-import org.rookit.auto.entity.parent.ParentExtractor;
-import org.rookit.auto.entity.property.NoGenericPartialEntityFactory;
-import org.rookit.auto.entity.property.NoGenericPropertyPartialEntityFactory;
-import org.rookit.auto.guice.NoGeneric;
+import org.rookit.auto.javapoet.JavaPoetModule;
+import org.rookit.auto.javapoet.naming.JavaPoetNamingFactories;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
-import org.rookit.auto.javapoet.naming.SelfJavaPoetNamingFactory;
-import org.rookit.auto.javapoet.type.BaseTypeSourceFactory;
-import org.rookit.auto.javapoet.type.TypeSourceFactory;
-import org.rookit.auto.javax.pack.PackageReferenceFactory;
+import org.rookit.auto.javapoet.type.BaseJavaPoetTypeSourceFactory;
+import org.rookit.auto.javapoet.type.JavaPoetTypeSourceFactory;
 import org.rookit.auto.source.BaseCodeSourceContainerFactory;
 import org.rookit.auto.source.CodeSourceContainerFactory;
+import org.rookit.auto.source.type.TypeSourceFactory;
 import org.rookit.utils.guice.Dummy;
 import org.rookit.utils.guice.Self;
-import org.rookit.utils.string.template.Template1;
 
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import java.util.concurrent.Executor;
 
-// TODO break me down into pieces
-@SuppressWarnings({"MethodMayBeStatic", "FeatureEnvy"})
+@SuppressWarnings("MethodMayBeStatic")
 public final class SourceUtilsModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(new SourceUtilsModule(),
-            ConfigurationModule.getModule());
+            ConfigurationModule.getModule(),
+            JavaPoetModule.getModule()
+    );
 
     public static Module getModule() {
         return MODULE;
@@ -68,12 +62,9 @@ public final class SourceUtilsModule extends AbstractModule {
         bind(Filer.class).to(IdempotentFiler.class).in(Singleton.class);
         bind(JavaFileObject.class).annotatedWith(Dummy.class).to(DummyJavaFileObject.class).in(Singleton.class);
 
-        bind(ParentExtractor.class).to(BaseParentExtractor.class).in(Singleton.class);
-        bind(EntityHandler.class).to(StatelessEntityHandler.class).in(Singleton.class);
-        bind(TypeSourceFactory.class).to(BaseTypeSourceFactory.class).in(Singleton.class);
-        bind(PropertyPartialEntityFactory.class).to(NoGenericPropertyPartialEntityFactory.class).in(Singleton.class);
-        bind(PartialEntityFactory.class).annotatedWith(NoGeneric.class)
-                .to(NoGenericPartialEntityFactory.class).in(Singleton.class);
+        bind(TypeProcessor.class).to(StatelessTypeProcessor.class).in(Singleton.class);
+        bind(TypeSourceFactory.class).to(JavaPoetTypeSourceFactory.class).in(Singleton.class);
+        bind(JavaPoetTypeSourceFactory.class).to(BaseJavaPoetTypeSourceFactory.class).in(Singleton.class);
         bind(CodeSourceContainerFactory.class).to(BaseCodeSourceContainerFactory.class).in(Singleton.class);
 
         bind(Executor.class).toInstance(MoreExecutors.directExecutor());
@@ -82,9 +73,8 @@ public final class SourceUtilsModule extends AbstractModule {
     @Singleton
     @Provides
     @Self
-    JavaPoetNamingFactory selfQueryNamingFactory(final PackageReferenceFactory packageFactory,
-                                                 @Self final Template1 noopTemplate) {
-        return SelfJavaPoetNamingFactory.create(packageFactory, noopTemplate);
+    JavaPoetNamingFactory selfNamingFactory(final JavaPoetNamingFactories factories) {
+        return factories.selfFactory();
     }
 
 }

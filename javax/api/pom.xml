@@ -15,20 +15,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>${rookit.group}.rookit-auto</groupId>
-            <artifactId>source-api</artifactId>
+            <groupId>${rookit.group}.rookit-utils</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${rookit.group}.rookit-auto</groupId>
-                <artifactId>source-api</artifactId>
-                <version>${rookit.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
 </project>

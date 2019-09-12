@@ -24,35 +24,39 @@ package org.rookit.auto.javax.type;
 import com.google.common.collect.ImmutableList;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
+import org.rookit.utils.repetition.Repetition;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
-import java.util.Collection;
+import java.util.List;
 
 final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
 
     private final TypeMirror delegate;
     private final Types types;
     private final ExtendedTypeMirrorFactory factory;
-    private final Collection<? extends ExtendedTypeMirror> typeParameters;
+    private final List<? extends ExtendedTypeMirror> typeParameters;
     private final OptionalFactory optionalFactory;
+    private final Repetition repetition;
 
     ExtendedTypeMirrorImpl(final TypeMirror delegate,
                            final Types types,
                            final ExtendedTypeMirrorFactory factory,
                            final TypeParameterExtractor extractor,
-                           final OptionalFactory optionalFactory) {
+                           final OptionalFactory optionalFactory,
+                           final Repetition repetition) {
         this.delegate = delegate;
         this.types = types;
         this.factory = factory;
         this.typeParameters = ImmutableList.copyOf(extractor.extract(this.delegate));
         this.optionalFactory = optionalFactory;
+        this.repetition = repetition;
     }
 
     @Override
-    public Collection<? extends ExtendedTypeMirror> typeParameters() {
+    public List<? extends ExtendedTypeMirror> typeParameters() {
         //noinspection AssignmentOrReturnOfFieldWithMutableType already immutable
         return this.typeParameters;
     }
@@ -60,6 +64,11 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
     @Override
     public TypeMirror original() {
         return this.delegate;
+    }
+
+    @Override
+    public Repetition repetition() {
+        return this.repetition;
     }
 
     @Override
@@ -98,7 +107,7 @@ final class ExtendedTypeMirrorImpl implements ExtendedTypeMirror {
                 ", factory=" + this.factory +
                 ", typeParameters=" + this.typeParameters +
                 ", optionalFactory=" + this.optionalFactory +
+                ", repetition=" + this.repetition +
                 "}";
     }
-
 }

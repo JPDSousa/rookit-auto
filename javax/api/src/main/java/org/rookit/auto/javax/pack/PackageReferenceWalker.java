@@ -23,6 +23,6 @@ package org.rookit.auto.javax.pack;
 
 public interface PackageReferenceWalker extends RootPackageReferenceWalker {
 
-    PackageReference materialize();
+    ExtendedPackageElement materialize();
 
 }

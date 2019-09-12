@@ -24,35 +24,46 @@ package org.rookit.auto.javax.repetition.map;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import org.rookit.auto.javax.repetition.KeyedRepetitiveTypeMirror;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirrorFactory;
-import org.rookit.utils.reflect.ExtendedClass;
-import org.rookit.utils.reflect.ExtendedClassFactory;
+import org.rookit.auto.javax.repetition.ImmutableTypeMirrorKeyedRepetitionTypeConfig;
+import org.rookit.auto.javax.repetition.TypeMirrorKeyedRepetitionConfig;
+import org.rookit.auto.javax.ElementUtils;
+import org.rookit.utils.guice.Keyed;
+import org.rookit.utils.repetition.Repetition;
 
-final class FastUtilInt2ObjectMapProvider implements Provider<KeyedRepetitiveTypeMirror> {
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.util.Types;
 
-    private final RepetitiveTypeMirrorFactory factory;
-    private final ExtendedClassFactory classFactory;
+final class FastUtilInt2ObjectMapProvider implements Provider<TypeMirrorKeyedRepetitionConfig> {
+
+    private final ElementUtils elementUtils;
+    private final Types types;
+    private final Repetition repetition;
 
     @Inject
-    private FastUtilInt2ObjectMapProvider(final RepetitiveTypeMirrorFactory factory,
-                                          final ExtendedClassFactory classFactory) {
-        this.factory = factory;
-        this.classFactory = classFactory;
+    private FastUtilInt2ObjectMapProvider(final ElementUtils elementUtils,
+                                          final Types types,
+                                          @Keyed final Repetition repetition) {
+        this.elementUtils = elementUtils;
+        this.types = types;
+        this.repetition = repetition;
     }
 
     @Override
-    public KeyedRepetitiveTypeMirror get() {
-        final ExtendedClass<?> extendedClass = this.classFactory.create(Int2ObjectMap.class);
-        final ExtendedClass<?> keyClass = this.classFactory.create(int.class);
-        return this.factory.createKeyed(extendedClass, keyClass, 0);
+    public TypeMirrorKeyedRepetitionConfig get() {
+        return ImmutableTypeMirrorKeyedRepetitionTypeConfig.builder()
+                .repetition(this.repetition)
+                .key(this.types.getPrimitiveType(TypeKind.INT))
+                .valueIndex(1)
+                .typeMirror(this.elementUtils.fromClassErasured(Int2ObjectMap.class))
+                .build();
     }
 
     @Override
     public String toString() {
         return "FastUtilInt2ObjectMapProvider{" +
-                "factory=" + this.factory +
-                ", classFactory=" + this.classFactory +
+                "elementUtils=" + this.elementUtils +
+                ", types=" + this.types +
+                ", repetition=" + this.repetition +
                 "}";
     }
 }

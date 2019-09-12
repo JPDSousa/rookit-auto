@@ -23,77 +23,36 @@ package org.rookit.auto.javax.repetition;
 
 import com.google.inject.Inject;
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
-import org.rookit.auto.javax.type.ExtendedTypeMirrorFactory;
-import org.rookit.auto.javax.type.TypeParameterExtractor;
-import org.rookit.utils.reflect.ExtendedClass;
-
-import javax.lang.model.type.TypeMirror;
-import java.util.function.Function;
 
 public final class BaseRepetitiveTypeMirrorFactory implements RepetitiveTypeMirrorFactory {
 
-    public static RepetitiveTypeMirrorFactory create(final TypeParameterExtractor extractor,
-                                                     final ExtendedTypeMirrorFactory delegateFactory) {
-        return new BaseRepetitiveTypeMirrorFactory(extractor, delegateFactory);
+    public static RepetitiveTypeMirrorFactory create() {
+        return new BaseRepetitiveTypeMirrorFactory();
     }
-
-    private final TypeParameterExtractor extractor;
-    private final ExtendedTypeMirrorFactory delegateFactory;
 
     @Inject
-    private BaseRepetitiveTypeMirrorFactory(final TypeParameterExtractor extractor,
-                                            final ExtendedTypeMirrorFactory delegateFactory) {
-        this.extractor = extractor;
-        this.delegateFactory = delegateFactory;
-    }
+    private BaseRepetitiveTypeMirrorFactory() {}
 
-    private Function<TypeMirror, ExtendedTypeMirror> extractParam(final int parameterIndex) {
-        return typeMirror -> this.extractor.extract(typeMirror).get(parameterIndex);
+    @Override
+    public RepetitiveTypeMirror create(final ExtendedTypeMirror delegate, final int parameterIndex) {
+        final ExtendedTypeMirror value = delegate.typeParameters().get(parameterIndex);
+        return new RepetitiveTypeMirrorImpl(delegate, value);
     }
 
     @Override
-    public RepetitiveTypeMirror create(final TypeMirror delegate, final int parameterIndex) {
-        return new RepetitiveTypeMirrorImpl(this.delegateFactory.create(delegate), extractParam(parameterIndex));
-    }
-
-    @Override
-    public RepetitiveTypeMirror create(final ExtendedClass<?> delegate, final int parameterIndex) {
-        return create(this.delegateFactory.create(delegate), parameterIndex);
-    }
-
-    @Override
-    public KeyedRepetitiveTypeMirror createKeyed(final TypeMirror delegate, final int keyIndex, final int valueIndex) {
-        return new KeyedRepetitiveTypeMirrorImpl(create(delegate, valueIndex), extractParam(keyIndex));
-    }
-
-    @Override
-    public KeyedRepetitiveTypeMirror createKeyed(final ExtendedClass<?> delegate,
+    public KeyedRepetitiveTypeMirror createKeyed(final ExtendedTypeMirror delegate,
                                                  final int keyIndex,
                                                  final int valueIndex) {
-        return new KeyedRepetitiveTypeMirrorImpl(create(delegate, valueIndex), extractParam(keyIndex));
+        final RepetitiveTypeMirror delegateWithValue = create(delegate, valueIndex);
+        final ExtendedTypeMirror key = delegateWithValue.typeParameters().get(keyIndex);
+        return new KeyedRepetitiveTypeMirrorImpl(delegateWithValue, key);
     }
 
     @Override
-    public KeyedRepetitiveTypeMirror createKeyed(final TypeMirror delegate,
-                                                 final ExtendedClass<?> constantKey,
+    public KeyedRepetitiveTypeMirror createKeyed(final ExtendedTypeMirror delegate,
+                                                 final ExtendedTypeMirror constantKey,
                                                  final int valueIndex) {
-        final ExtendedTypeMirror typeKey = this.delegateFactory.create(constantKey);
-        return new KeyedRepetitiveTypeMirrorImpl(create(delegate, valueIndex), typeMirror -> typeKey);
+        return new KeyedRepetitiveTypeMirrorImpl(create(delegate, valueIndex), constantKey);
     }
 
-    @Override
-    public KeyedRepetitiveTypeMirror createKeyed(final ExtendedClass<?> delegate,
-                                                 final ExtendedClass<?> constantKey,
-                                                 final int valueIndex) {
-        final ExtendedTypeMirror typeKey = this.delegateFactory.create(constantKey);
-        return new KeyedRepetitiveTypeMirrorImpl(create(delegate, valueIndex), typeMirror -> typeKey);
-    }
-
-    @Override
-    public String toString() {
-        return "BaseRepetitiveTypeMirrorFactory{" +
-                "extractor=" + this.extractor +
-                ", delegateFactory=" + this.delegateFactory +
-                "}";
-    }
 }

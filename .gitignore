@@ -18,17 +18,3 @@ hs_err_pid*
 \.settings/
 
 **/target/
-
-rookit-auto-lib/target/
-
-rookit-auto-test/target/
-
-test/target/
-
-lib/target/
-
-api/target/
-
-guice/target/
-
-javax/api/target/

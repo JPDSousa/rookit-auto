@@ -26,32 +26,32 @@ import org.rookit.utils.optional.Optional;
 final class PackageReferenceWalkerImpl implements PackageReferenceWalker {
 
     private final PackageReferenceWalkerFactory factory;
-    private final PackageReference packageReference;
+    private final ExtendedPackageElement extendedPackageElement;
 
     PackageReferenceWalkerImpl(final PackageReferenceWalkerFactory factory,
-                               final PackageReference packageReference) {
+                               final ExtendedPackageElement extendedPackageElement) {
         this.factory = factory;
-        this.packageReference = packageReference;
+        this.extendedPackageElement = extendedPackageElement;
     }
 
     @Override
-    public Optional<PackageReferenceWalker> nextStepFrom(final PackageReference packageReference) {
-        return this.packageReference.relativize(packageReference)
-                .map(PackageReference::root)
-                .map(this.packageReference::resolve)
+    public Optional<PackageReferenceWalker> nextStepFrom(final ExtendedPackageElement extendedPackageElement) {
+        return this.extendedPackageElement.relativize(extendedPackageElement)
+                .map(ExtendedPackageElement::root)
+                .map(this.extendedPackageElement::resolve)
                 .map(this.factory::create);
     }
 
     @Override
-    public PackageReference materialize() {
-        return this.packageReference;
+    public ExtendedPackageElement materialize() {
+        return this.extendedPackageElement;
     }
 
     @Override
     public String toString() {
         return "PackageReferenceWalkerImpl{" +
                 "factory=" + this.factory +
-                ", packageReference=" + this.packageReference +
+                ", extendedPackageElement=" + this.extendedPackageElement +
                 "}";
     }
 }

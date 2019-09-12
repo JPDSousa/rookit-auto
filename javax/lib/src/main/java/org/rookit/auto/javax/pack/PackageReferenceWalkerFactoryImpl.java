@@ -39,8 +39,8 @@ final class PackageReferenceWalkerFactoryImpl implements PackageReferenceWalkerF
     }
 
     @Override
-    public PackageReferenceWalker create(final PackageReference packageReference) {
-        return new PackageReferenceWalkerImpl(this, packageReference);
+    public PackageReferenceWalker create(final ExtendedPackageElement extendedPackageElement) {
+        return new PackageReferenceWalkerImpl(this, extendedPackageElement);
     }
 
     @Override

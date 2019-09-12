@@ -21,9 +21,10 @@
  ******************************************************************************/
 package org.rookit.auto.javax.repetition;
 
-import org.rookit.auto.javax.type.ExtendedTypeMirror;
+import javax.lang.model.type.TypeMirror;
 
+@FunctionalInterface
 public interface JavaxRepetitionFactory {
 
-    JavaxRepetition fromTypeMirror(ExtendedTypeMirror typeMirror);
+    GenericTypeMirrorConfig fromTypeMirror(TypeMirror typeMirror);
 }

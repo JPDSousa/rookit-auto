@@ -21,10 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.javax.pack;
 
-import org.rookit.auto.javax.pack.PackageReference;
-import org.rookit.auto.javax.pack.PackageReferenceWalker;
-import org.rookit.auto.javax.pack.PackageReferenceWalkerFactory;
-import org.rookit.auto.javax.pack.RootPackageReferenceWalker;
 import org.rookit.utils.optional.Optional;
 import org.rookit.utils.optional.OptionalFactory;
 
@@ -39,8 +35,8 @@ final class EmptyPackageReferenceWalker implements RootPackageReferenceWalker {
     }
 
     @Override
-    public Optional<PackageReferenceWalker> nextStepFrom(final PackageReference packageReference) {
-        return this.optionalFactory.of(this.factory.create(packageReference.root()));
+    public Optional<PackageReferenceWalker> nextStepFrom(final ExtendedPackageElement packageElement) {
+        return this.optionalFactory.of(this.factory.create(packageElement.root()));
     }
 
     @Override

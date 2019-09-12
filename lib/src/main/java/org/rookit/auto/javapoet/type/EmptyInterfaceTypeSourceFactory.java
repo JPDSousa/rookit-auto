@@ -23,12 +23,12 @@ package org.rookit.auto.javapoet.type;
 
 import com.google.inject.Inject;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
 import org.rookit.auto.javapoet.naming.JavaPoetParameterResolver;
+import org.rookit.auto.javax.naming.Identifier;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
-import org.rookit.auto.source.SingleTypeSourceFactory;
-import org.rookit.auto.source.TypeSource;
+import org.rookit.auto.source.type.SingleTypeSourceFactory;
+import org.rookit.auto.source.type.TypeSource;
 
 import javax.lang.model.element.Modifier;
 import java.util.concurrent.Executor;

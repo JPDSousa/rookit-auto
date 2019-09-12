@@ -10,9 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>source</artifactId>
+    <name>Rookit Auto Source</name>
+
     <packaging>pom</packaging>
     <modules>
         <module>api</module>
+        <module>javapoet</module>
+        <module>lib</module>
     </modules>
 
 

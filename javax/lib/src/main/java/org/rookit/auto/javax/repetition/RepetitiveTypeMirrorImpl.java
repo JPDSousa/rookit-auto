@@ -21,29 +21,33 @@
  ******************************************************************************/
 package org.rookit.auto.javax.repetition;
 
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
 import org.rookit.utils.optional.Optional;
+import org.rookit.utils.repetition.Repetition;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.function.Function;
+import java.util.List;
 
 final class RepetitiveTypeMirrorImpl implements RepetitiveTypeMirror {
 
     private final ExtendedTypeMirror delegate;
-    private final Function<TypeMirror, ExtendedTypeMirror> unwrapper;
+    private final ExtendedTypeMirror value;
 
     RepetitiveTypeMirrorImpl(final ExtendedTypeMirror delegate,
-                             final Function<TypeMirror, ExtendedTypeMirror> unwrapper) {
+                             final ExtendedTypeMirror value) {
         this.delegate = delegate;
-        this.unwrapper = unwrapper;
+        this.value = value;
     }
 
     @Override
-    public ExtendedTypeMirror unwrap(final ExtendedTypeMirror type) {
-        return this.unwrapper.apply(type);
+    public ExtendedTypeMirror unwrapValue() {
+        return this.value;
+    }
+
+    @Override
+    public Repetition repetition() {
+        return this.delegate.repetition();
     }
 
     @Override
@@ -67,7 +71,7 @@ final class RepetitiveTypeMirrorImpl implements RepetitiveTypeMirror {
     }
 
     @Override
-    public Collection<? extends ExtendedTypeMirror> typeParameters() {
+    public List<? extends ExtendedTypeMirror> typeParameters() {
         return this.delegate.typeParameters();
     }
 
@@ -78,14 +82,14 @@ final class RepetitiveTypeMirrorImpl implements RepetitiveTypeMirror {
 
     @Override
     public ExtendedTypeMirror boxIfPrimitive() {
-        return this.delegate.boxIfPrimitive();
+        return new RepetitiveTypeMirrorImpl(this.delegate.boxIfPrimitive(), this.value);
     }
 
     @Override
     public String toString() {
         return "RepetitiveTypeMirrorImpl{" +
                 "delegate=" + this.delegate +
-                ", unwrapper=" + this.unwrapper +
+                ", value=" + this.value +
                 "}";
     }
 }

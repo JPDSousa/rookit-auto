@@ -25,8 +25,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
-import org.rookit.utils.guice.Collection;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
+import org.rookit.auto.javax.repetition.TypeMirrorRepetitionConfig;
+import org.rookit.utils.guice.Multi;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
@@ -42,8 +42,8 @@ public final class RepetitionCollectionModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<RepetitiveTypeMirror> collection = newSetBinder(binder(),
-                RepetitiveTypeMirror.class, Collection.class);
+        final Multibinder<TypeMirrorRepetitionConfig> collection = newSetBinder(binder(),
+                TypeMirrorRepetitionConfig.class, Multi.class);
         collection.addBinding().toProvider(JavaCollectionProvider.class).in(Singleton.class);
         collection.addBinding().toProvider(JavaListProvider.class).in(Singleton.class);
         collection.addBinding().toProvider(JavaSetProvider.class).in(Singleton.class);

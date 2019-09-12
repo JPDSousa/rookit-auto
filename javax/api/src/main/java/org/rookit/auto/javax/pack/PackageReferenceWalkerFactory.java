@@ -25,6 +25,6 @@ public interface PackageReferenceWalkerFactory {
 
     RootPackageReferenceWalker create();
 
-    PackageReferenceWalker create(PackageReference packageReference);
+    PackageReferenceWalker create(ExtendedPackageElement extendedPackageElement);
 
 }

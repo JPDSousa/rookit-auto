@@ -25,16 +25,20 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.rookit.config.ConfigurationFactory;
-import org.rookit.config.exception.UnsupportedConfigurationException;
 import org.rookit.config.guice.Config;
+import org.rookit.io.data.DataBucketFactory;
+import org.rookit.io.data.DataSource;
+import org.rookit.io.object.DataBucketDynamicObjectFactory;
 import org.rookit.io.path.PathConfig;
-import org.rookit.io.path.PathConfigFactory;
+import org.rookit.utils.object.DynamicObject;
+import org.rookit.utils.optional.OptionalFactory;
 
 import javax.annotation.processing.Filer;
+import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 
 @SuppressWarnings("MethodMayBeStatic")
 public final class ConfigurationModule extends AbstractModule {
@@ -49,25 +53,41 @@ public final class ConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
+        bind(AutoConfigFactory.class).to(AutoConfigFactoryImpl.class).in(Singleton.class);
+        bind(Charset.class).annotatedWith(Config.class).to(Charset.class);
     }
 
     @Provides
     @Singleton
     @Config
-    URI pathLocation(final Filer filer) throws IOException {
-        return filer.getResource(StandardLocation.CLASS_OUTPUT, "", "generation.json").toUri();
+    URI pathLocation(final Filer filer,
+                     final OptionalFactory optionalFactory) throws IOException {
+        final String fileName = "gen.json";
+        return optionalFactory.ofNullable(filer.getResource(StandardLocation.CLASS_OUTPUT, "", fileName))
+                .map(FileObject::toUri)
+                .orElseThrow(() -> new IOException(String.format("Cannot find resource %s", fileName)));
     }
 
     @Provides
     @Singleton
-    AutoConfig topConfig(
-            @Config final URI configLocation,
-            final ConfigurationFactory factory,
-            final PathConfigFactory pathConfigFactory)
-            throws UnsupportedConfigurationException, IOException {
-        return new AutoConfigImpl(factory.fromURI(configLocation), pathConfigFactory
-        );
+    @Config
+    DataSource configDataSource(@Config final URI configLocation,
+                                final DataBucketFactory<URI> factory) {
+        return factory.create(configLocation);
+    }
+
+    @Provides
+    @Singleton
+    @Config
+    DynamicObject configDynamicObject(@Config final DataSource configLocation,
+                                      final DataBucketDynamicObjectFactory dynamicObjectFactory) {
+        return dynamicObjectFactory.fromDataSource(configLocation).blockingGet();
+    }
+
+    @Provides
+    @Singleton
+    AutoConfig topConfig(@Config final DynamicObject config, final AutoConfigFactory factory) {
+        return factory.create(config);
     }
 
     @Provides

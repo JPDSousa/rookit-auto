@@ -25,10 +25,10 @@ import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.binder.LinkedBindingBuilder;
-import org.rookit.auto.identifier.IdentifierFactory;
+import org.rookit.auto.javax.naming.IdentifierFactory;
 import org.rookit.auto.javapoet.identifier.JavaPoetIdentifierFactory;
 import org.rookit.auto.javapoet.naming.JavaPoetNamingFactory;
-import org.rookit.auto.naming.NamingFactory;
+import org.rookit.auto.javax.naming.NamingFactory;
 
 import java.lang.annotation.Annotation;
 

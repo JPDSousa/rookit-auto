@@ -21,11 +21,24 @@
  ******************************************************************************/
 package org.rookit.auto.javax.pack;
 
+import com.google.common.base.Joiner;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import org.rookit.utils.registry.Registry;
+import org.rookit.utils.string.join.JointString;
+import org.rookit.utils.string.join.JointStringFactories;
+import org.rookit.utils.string.join.JointStringFactory;
 
+import javax.lang.model.element.PackageElement;
+import java.util.regex.Pattern;
+
+@SuppressWarnings("MethodMayBeStatic")
 public final class PackageModule extends AbstractModule {
+
+    private static final String SEPARATOR = ".";
 
     private static final Module MODULE = new PackageModule();
 
@@ -35,10 +48,25 @@ public final class PackageModule extends AbstractModule {
 
     private PackageModule() {}
 
+    @SuppressWarnings({"AnonymousInnerClassMayBeStatic", "AnonymousInnerClass", "EmptyClass"})
     @Override
     protected void configure() {
         bind(PackageReferenceWalkerFactory.class).to(PackageReferenceWalkerFactoryImpl.class).in(Singleton.class);
-        bind(PackageReferenceFactory.class).to(BasePackageReferenceFactory.class).in(Singleton.class);
+        bind(ExtendedPackageElementFactory.class).to(BaseExtendedPackageElementFactory.class).in(Singleton.class);
+        bind(Joiner.class).annotatedWith(Package.class).toInstance(Joiner.on(SEPARATOR));
+        //noinspection HardcodedFileSeparator regex
+        bind(Pattern.class).annotatedWith(Package.class).toInstance(Pattern.compile("\\" + SEPARATOR));
+        bind(new TypeLiteral<Registry<JointString, PackageElement>>() {}).to(PackageElementRegistry.class)
+                .in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    @Package
+    JointStringFactory jointFactory(final JointStringFactories factories,
+                                    @Package final Joiner joiner,
+                                    @Package final Pattern splitter) {
+        return factories.usingJoiner(joiner, splitter);
     }
 
 }

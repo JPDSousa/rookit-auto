@@ -23,10 +23,8 @@ package org.rookit.auto.javax.repetition;
 
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
 
-import javax.lang.model.type.TypeMirror;
-
 public interface KeyedRepetitiveTypeMirror extends RepetitiveTypeMirror {
 
-    ExtendedTypeMirror unwrapKey(TypeMirror typeMirror);
+    ExtendedTypeMirror unwrapKey();
 
 }

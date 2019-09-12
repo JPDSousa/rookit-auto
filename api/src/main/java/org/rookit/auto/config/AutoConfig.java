@@ -21,12 +21,12 @@
  ******************************************************************************/
 package org.rookit.auto.config;
 
-import org.rookit.config.Configuration;
+import org.rookit.utils.object.DynamicObject;
 import org.rookit.io.path.PathConfig;
 
 public interface AutoConfig {
 
     PathConfig fileConfig();
 
-    Configuration getProcessorConfig(String name);
+    DynamicObject getProcessorConfig(String name);
 }

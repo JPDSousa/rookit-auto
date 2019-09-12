@@ -21,35 +21,38 @@
  ******************************************************************************/
 package org.rookit.auto.javax.repetition;
 
-import org.rookit.auto.javax.repetition.KeyedRepetitiveTypeMirror;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
 import org.rookit.utils.optional.Optional;
+import org.rookit.utils.repetition.Repetition;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
-import java.util.Collection;
-import java.util.function.Function;
+import java.util.List;
 
 final class KeyedRepetitiveTypeMirrorImpl implements KeyedRepetitiveTypeMirror {
 
     private final RepetitiveTypeMirror delegate;
-    private final Function<TypeMirror, ExtendedTypeMirror> keyUnwrapper;
+    private final ExtendedTypeMirror key;
 
     KeyedRepetitiveTypeMirrorImpl(final RepetitiveTypeMirror delegate,
-                                  final Function<TypeMirror, ExtendedTypeMirror> keyUnwrapper) {
+                                  final ExtendedTypeMirror key) {
         this.delegate = delegate;
-        this.keyUnwrapper = keyUnwrapper;
+        this.key = key;
     }
 
     @Override
-    public ExtendedTypeMirror unwrapKey(final TypeMirror typeMirror) {
-        return this.keyUnwrapper.apply(typeMirror);
+    public ExtendedTypeMirror unwrapKey() {
+        return this.key;
     }
 
     @Override
-    public ExtendedTypeMirror unwrap(final ExtendedTypeMirror type) {
-        return this.delegate.unwrap(type);
+    public ExtendedTypeMirror unwrapValue() {
+        return this.delegate.unwrapValue();
+    }
+
+    @Override
+    public Repetition repetition() {
+        return this.delegate.repetition();
     }
 
     @Override
@@ -73,7 +76,7 @@ final class KeyedRepetitiveTypeMirrorImpl implements KeyedRepetitiveTypeMirror {
     }
 
     @Override
-    public Collection<? extends ExtendedTypeMirror> typeParameters() {
+    public List<? extends ExtendedTypeMirror> typeParameters() {
         return this.delegate.typeParameters();
     }
 
@@ -84,15 +87,15 @@ final class KeyedRepetitiveTypeMirrorImpl implements KeyedRepetitiveTypeMirror {
 
     @Override
     public ExtendedTypeMirror boxIfPrimitive() {
-        return this.delegate.boxIfPrimitive();
+        // TODO this cast is dangerous, we have to rethink this.
+        return new KeyedRepetitiveTypeMirrorImpl((RepetitiveTypeMirror) this.delegate.boxIfPrimitive(), this.key);
     }
 
     @Override
     public String toString() {
         return "KeyedRepetitiveTypeMirrorImpl{" +
                 "delegate=" + this.delegate +
-                ", keyUnwrapper=" + this.keyUnwrapper +
+                ", key=" + this.key +
                 "}";
     }
-
 }

@@ -25,8 +25,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
+import org.rookit.auto.javax.repetition.TypeMirrorRepetitionConfig;
 import org.rookit.utils.guice.Optional;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
@@ -42,8 +42,8 @@ public final class RepetitiveOptionalModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<RepetitiveTypeMirror> optional = newSetBinder(binder(),
-                RepetitiveTypeMirror.class, Optional.class);
+        final Multibinder<TypeMirrorRepetitionConfig> optional = newSetBinder(binder(),
+                TypeMirrorRepetitionConfig.class, Optional.class);
         optional.addBinding().toProvider(JavaOptionalProvider.class).in(Singleton.class);
         optional.addBinding().toProvider(GuavaOptionalProvider.class).in(Singleton.class);
         optional.addBinding().toProvider(RookitOptionalProvider.class).in(Singleton.class);

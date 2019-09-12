@@ -23,36 +23,40 @@ package org.rookit.auto.javax.repetition.collection;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirror;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirrorFactory;
-import org.rookit.utils.reflect.ExtendedClass;
-import org.rookit.utils.reflect.ExtendedClassFactory;
+import org.rookit.auto.javax.repetition.ImmutableTypeMirrorRepetitionConfig;
+import org.rookit.auto.javax.repetition.TypeMirrorRepetitionConfig;
+import org.rookit.auto.javax.ElementUtils;
+import org.rookit.utils.guice.Multi;
+import org.rookit.utils.repetition.Repetition;
 
 import java.util.Collection;
 
-final class JavaCollectionProvider implements Provider<RepetitiveTypeMirror> {
+final class JavaCollectionProvider implements Provider<TypeMirrorRepetitionConfig> {
 
-    private final RepetitiveTypeMirrorFactory factory;
-    private final ExtendedClassFactory classFactory;
+    private final ElementUtils elementUtils;
+    private final Repetition repetition;
 
     @Inject
-    private JavaCollectionProvider(final RepetitiveTypeMirrorFactory factory,
-                                   final ExtendedClassFactory classFactory) {
-        this.factory = factory;
-        this.classFactory = classFactory;
+    private JavaCollectionProvider(final ElementUtils elementUtils,
+                                   @Multi final Repetition repetition) {
+        this.elementUtils = elementUtils;
+        this.repetition = repetition;
     }
 
     @Override
-    public RepetitiveTypeMirror get() {
-        final ExtendedClass<?> extendedClass = this.classFactory.create(Collection.class);
-        return this.factory.create(extendedClass, 0);
+    public TypeMirrorRepetitionConfig get() {
+        return ImmutableTypeMirrorRepetitionConfig.builder()
+                .valueIndex(0)
+                .repetition(this.repetition)
+                .typeMirror(this.elementUtils.fromClassErasured(Collection.class))
+                .build();
     }
 
     @Override
     public String toString() {
         return "JavaCollectionProvider{" +
-                "factory=" + this.factory +
-                ", classFactory=" + this.classFactory +
+                "elementUtils=" + this.elementUtils +
+                ", repetition=" + this.repetition +
                 "}";
     }
 }

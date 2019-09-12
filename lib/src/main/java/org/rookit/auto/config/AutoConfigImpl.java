@@ -21,16 +21,16 @@
  ******************************************************************************/
 package org.rookit.auto.config;
 
-import org.rookit.config.Configuration;
+import org.rookit.utils.object.DynamicObject;
 import org.rookit.io.path.PathConfig;
 import org.rookit.io.path.PathConfigFactory;
 
 final class AutoConfigImpl implements AutoConfig {
 
-    private final Configuration configuration;
+    private final DynamicObject configuration;
     private final PathConfigFactory pathConfigFactory;
 
-    AutoConfigImpl(final Configuration configuration,
+    AutoConfigImpl(final DynamicObject configuration,
                    final PathConfigFactory pathConfigFactory) {
         this.configuration = configuration;
         this.pathConfigFactory = pathConfigFactory;
@@ -38,12 +38,12 @@ final class AutoConfigImpl implements AutoConfig {
 
     @Override
     public PathConfig fileConfig() {
-        return this.pathConfigFactory.create(this.configuration.getConfig("path"));
+        return this.pathConfigFactory.create(this.configuration.getDynamicObject("path"));
     }
 
     @Override
-    public Configuration getProcessorConfig(final String name) {
-        return this.configuration.getConfig(name);
+    public DynamicObject getProcessorConfig(final String name) {
+        return this.configuration.getDynamicObject(name);
     }
 
     @Override

@@ -25,8 +25,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
-import org.rookit.utils.guice.Map;
-import org.rookit.auto.javax.repetition.KeyedRepetitiveTypeMirror;
+import org.rookit.auto.javax.repetition.TypeMirrorKeyedRepetitionConfig;
+import org.rookit.utils.guice.Keyed;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
@@ -42,8 +42,8 @@ public final class RepetitionMapModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<KeyedRepetitiveTypeMirror> map = newSetBinder(binder(),
-                KeyedRepetitiveTypeMirror.class, Map.class);
+        final Multibinder<TypeMirrorKeyedRepetitionConfig> map = newSetBinder(binder(),
+                TypeMirrorKeyedRepetitionConfig.class, Keyed.class);
         map.addBinding().toProvider(JavaMapProvider.class).in(Singleton.class);
         map.addBinding().toProvider(FastUtilInt2ObjectMapProvider.class).in(Singleton.class);
         // TODO missing other types of maps

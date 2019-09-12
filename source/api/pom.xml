@@ -10,22 +10,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>source-api</artifactId>
+    <name>Rookit Auto Source API</name>
 
     <dependencies>
         <dependency>
             <groupId>${rookit.group}.rookit-utils</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${rookit.group}.rookit-auto</groupId>
+            <artifactId>javax-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${rookit.group}.rookit-utils</groupId>
-                <artifactId>api</artifactId>
-                <version>${rookit.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

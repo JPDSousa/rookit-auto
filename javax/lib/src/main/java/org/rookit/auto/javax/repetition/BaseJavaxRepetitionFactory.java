@@ -22,12 +22,15 @@
 package org.rookit.auto.javax.repetition;
 
 import com.google.inject.Inject;
-import org.rookit.utils.guice.Map;
+import org.rookit.auto.javax.ElementUtils;
+import org.rookit.utils.guice.Keyed;
+import org.rookit.utils.guice.Multi;
 import org.rookit.utils.guice.Optional;
-import org.rookit.auto.javax.type.ElementUtils;
-import org.rookit.auto.javax.type.ExtendedTypeMirror;
+import org.rookit.utils.guice.Single;
 
 import javax.annotation.processing.Messager;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.util.Collection;
 import java.util.Set;
@@ -36,31 +39,37 @@ import static java.lang.String.format;
 
 public final class BaseJavaxRepetitionFactory implements JavaxRepetitionFactory {
 
-    public static JavaxRepetitionFactory create(final Messager messager,
-                                                final ElementUtils utils,
-                                                final Set<RepetitiveTypeMirror> optionalTypes,
-                                                final Set<RepetitiveTypeMirror> collectionTypes,
-                                                final Set<KeyedRepetitiveTypeMirror> mapTypes) {
-        return new BaseJavaxRepetitionFactory(messager, utils, optionalTypes, collectionTypes, mapTypes);
+    public static JavaxRepetitionFactory create(
+            final Messager messager,
+            final Types types,
+            final ElementUtils elementUtils,
+            final Set<TypeMirrorRepetitionConfig> optionalTypes,
+            final Set<TypeMirrorRepetitionConfig> collectionTypes,
+            final Set<TypeMirrorKeyedRepetitionConfig> mapTypes,
+            final TypeMirrorConfig single) {
+        return new BaseJavaxRepetitionFactory(messager, types, elementUtils, optionalTypes, collectionTypes,
+                mapTypes, single);
     }
 
     private final Messager messager;
-    private final JavaxRepetition single;
+    private final Types types;
 
-    private final Collection<RepetitiveTypeMirror> optionalTypes;
-    private final Collection<RepetitiveTypeMirror> collectionTypes;
-    private final Collection<KeyedRepetitiveTypeMirror> mapTypes;
+    private final Collection<TypeMirrorRepetitionConfig> optionalTypes;
+    private final Collection<TypeMirrorRepetitionConfig> collectionTypes;
+    private final Collection<TypeMirrorKeyedRepetitionConfig> mapTypes;
+    private final TypeMirrorConfig single;
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Inject
     private BaseJavaxRepetitionFactory(
             final Messager messager,
-            final ElementUtils utils,
-            @Optional final Set<RepetitiveTypeMirror> optionalTypes,
-            @org.rookit.utils.guice.Collection final Set<RepetitiveTypeMirror> collectionTypes,
-            @Map final Set<KeyedRepetitiveTypeMirror> mapTypes) {
-        this.mapTypes = mapTypes;
-        final Collection<RepetitiveTypeMirror> commonTypes = utils.intersection(optionalTypes, collectionTypes);
+            final Types types,
+            final ElementUtils elementUtils,
+            @Optional final Set<TypeMirrorRepetitionConfig> optionalTypes,
+            @Multi final Set<TypeMirrorRepetitionConfig> collectionTypes,
+            @Keyed final Set<TypeMirrorKeyedRepetitionConfig> mapTypes,
+            @Single final TypeMirrorConfig single) {
+        final Collection<TypeMirror> commonTypes = elementUtils.intersectionConfigs(optionalTypes, collectionTypes);
         if (!commonTypes.isEmpty()) {
             final String errorMessage = format("Types %s are both registered as optional as " +
                     "well as collection types. They can only be registered as either optional (0..1) " +
@@ -68,38 +77,41 @@ public final class BaseJavaxRepetitionFactory implements JavaxRepetitionFactory 
             throw new IllegalArgumentException(errorMessage);
         }
 
-        this.messager = messager;
+        this.types = types;
+        this.mapTypes = mapTypes;
         this.optionalTypes = optionalTypes;
         this.collectionTypes = collectionTypes;
-        this.single = new SingleRepetition();
+        this.messager = messager;
+        this.single = single;
     }
 
     // TODO break me down into pieces
     @Override
-    public JavaxRepetition fromTypeMirror(final ExtendedTypeMirror typeMirror) {
+    public GenericTypeMirrorConfig fromTypeMirror(final TypeMirror typeMirror) {
         final String inferMessage = "Infering %s as %s";
+        final TypeMirror typeErasured = this.types.erasure(typeMirror);
 
         // for optionals
-        for (final RepetitiveTypeMirror optionalType : this.optionalTypes) {
-            if (optionalType.isSameTypeErasure(typeMirror)) {
+        for (final TypeMirrorRepetitionConfig optionalType : this.optionalTypes) {
+            if (this.types.isSameType(optionalType.typeMirror(), typeErasured)) {
                 this.messager.printMessage(Diagnostic.Kind.NOTE, format(inferMessage, typeMirror, "Optional"));
-                return new BaseRepetition("Optional", this.messager, false, true, optionalType);
+                return optionalType;
             }
         }
 
         // for collections
-        for (final RepetitiveTypeMirror collectionType : this.collectionTypes) {
-            if (collectionType.isSameTypeErasure(typeMirror)) {
+        for (final TypeMirrorRepetitionConfig collectionType : this.collectionTypes) {
+            if (this.types.isSameType(collectionType.typeMirror(), typeErasured)) {
                 this.messager.printMessage(Diagnostic.Kind.NOTE, format(inferMessage, typeMirror, "Multi"));
-                return new BaseRepetition("Multi", this.messager, true, true, collectionType);
+                return collectionType;
             }
         }
 
         // for maps
-        for (final KeyedRepetitiveTypeMirror mapType : this.mapTypes) {
-            if (mapType.isSameTypeErasure(typeMirror)) {
-                this.messager.printMessage(Diagnostic.Kind.NOTE, format(inferMessage, typeMirror, "Map"));
-                return new KeyedRepetitionImpl("Map", this.messager, true, true, mapType);
+        for (final TypeMirrorKeyedRepetitionConfig mapType : this.mapTypes) {
+            if (this.types.isSameType(mapType.typeMirror(), typeErasured)) {
+                this.messager.printMessage(Diagnostic.Kind.NOTE, format(inferMessage, typeMirror, "Keyed"));
+                return mapType;
             }
         }
         this.messager.printMessage(Diagnostic.Kind.NOTE, format(inferMessage, typeMirror, this.single));
@@ -110,10 +122,11 @@ public final class BaseJavaxRepetitionFactory implements JavaxRepetitionFactory 
     public String toString() {
         return "BaseJavaxRepetitionFactory{" +
                 "messager=" + this.messager +
-                ", single=" + this.single +
+                ", types=" + this.types +
                 ", optionalTypes=" + this.optionalTypes +
                 ", collectionTypes=" + this.collectionTypes +
                 ", mapTypes=" + this.mapTypes +
+                ", single=" + this.single +
                 "}";
     }
 }

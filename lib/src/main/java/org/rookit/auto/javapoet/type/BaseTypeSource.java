@@ -25,7 +25,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.identifier.Identifier;
+import org.rookit.auto.javax.naming.Identifier;
 
 import javax.lang.model.element.Modifier;
 import java.util.concurrent.Executor;

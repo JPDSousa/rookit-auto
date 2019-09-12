@@ -23,53 +23,65 @@ package org.rookit.auto.javax.type;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import org.rookit.auto.javax.ElementUtils;
+import org.rookit.auto.javax.repetition.GenericTypeMirrorConfig;
+import org.rookit.auto.javax.repetition.GenericTypeMirrorRepetitionConfig;
+import org.rookit.auto.javax.repetition.JavaxRepetitionFactory;
+import org.rookit.auto.javax.repetition.RepetitiveTypeMirrorFactory;
+import org.rookit.auto.javax.repetition.TypeMirrorKeyedRepetitionConfig;
 import org.rookit.utils.optional.OptionalFactory;
-import org.rookit.utils.reflect.ClassVisitor;
-import org.rookit.utils.reflect.ExtendedClass;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+import java.util.List;
 
 import static java.lang.String.format;
 
-public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory,
-        ClassVisitor<ExtendedTypeMirror> {
+public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFactory {
 
     public static ExtendedTypeMirrorFactory create(final Types types,
                                                    final Messager messager,
-                                                   final Elements elements,
+                                                   final ElementUtils elementUtils,
                                                    final Provider<TypeParameterExtractor> extractor,
-                                                   final OptionalFactory optionalFactory) {
-        return new BaseExtendedTypeMirrorFactory(types, elements, messager, extractor, optionalFactory);
+                                                   final OptionalFactory optionalFactory,
+                                                   final RepetitiveTypeMirrorFactory repetitiveFactory,
+                                                   final JavaxRepetitionFactory repetitionFactory) {
+        return new BaseExtendedTypeMirrorFactory(types, elementUtils, messager, extractor,
+                optionalFactory, repetitiveFactory, repetitionFactory);
     }
 
     private final Types types;
-    private final Elements elements;
+    private final ElementUtils elementUtils;
     private final Messager messager;
     private final Provider<TypeParameterExtractor> extractor;
     private final OptionalFactory optionalFactory;
+    private final RepetitiveTypeMirrorFactory repetitiveFactory;
+    private final JavaxRepetitionFactory repetitionFactory;
 
     @Inject
     private BaseExtendedTypeMirrorFactory(final Types types,
-                                          final Elements elements,
+                                          final ElementUtils elementUtils,
                                           final Messager messager,
                                           final Provider<TypeParameterExtractor> extractor,
-                                          final OptionalFactory optionalFactory) {
+                                          final OptionalFactory optionalFactory,
+                                          final RepetitiveTypeMirrorFactory repetitiveFactory,
+                                          final JavaxRepetitionFactory repetitionFactory) {
         this.types = types;
-        this.elements = elements;
+        this.elementUtils = elementUtils;
         this.messager = messager;
         this.extractor = extractor;
         this.optionalFactory = optionalFactory;
+        this.repetitiveFactory = repetitiveFactory;
+        this.repetitionFactory = repetitionFactory;
     }
 
 
     @Override
     public ExtendedTypeMirror createWithErasure(final Class<?> clazz) {
-        return createWithErasure(this.elements.getTypeElement(clazz.getCanonicalName()).asType());
+        return createWithErasure(this.elementUtils.fromClassErasured(clazz));
     }
 
     @Override
@@ -90,67 +102,41 @@ public final class BaseExtendedTypeMirrorFactory implements ExtendedTypeMirrorFa
             this.messager.printMessage(Diagnostic.Kind.NOTE, errMsg);
             return (ExtendedTypeMirror) typeMirror;
         }
-        return new ExtendedTypeMirrorImpl(typeMirror, this.types, this, this.extractor.get(), this.optionalFactory);
+
+        final GenericTypeMirrorConfig typeConfig = this.repetitionFactory.fromTypeMirror(typeMirror);
+        final ExtendedTypeMirror extendedTypeMirror = new ExtendedTypeMirrorImpl(typeMirror, this.types,
+                this, this.extractor.get(),
+                this.optionalFactory, typeConfig.repetition());
+
+        // TODO indeed, there's a problem here!!!
+        if (typeConfig instanceof TypeMirrorKeyedRepetitionConfig) {
+            final TypeMirrorKeyedRepetitionConfig keyedConfig = (TypeMirrorKeyedRepetitionConfig) typeConfig;
+            final List<? extends ExtendedTypeMirror> params = extendedTypeMirror.typeParameters();
+            final ExtendedTypeMirror key = create(keyedConfig.extractKey(params));
+            return this.repetitiveFactory.createKeyed(extendedTypeMirror, key, keyedConfig.valueIndex());
+        }
+        if (typeConfig instanceof GenericTypeMirrorRepetitionConfig) {
+            final GenericTypeMirrorRepetitionConfig repetitionConfig = (GenericTypeMirrorRepetitionConfig) typeConfig;
+            return this.repetitiveFactory.create(extendedTypeMirror, repetitionConfig.valueIndex());
+        }
+        return extendedTypeMirror;
     }
 
     @Override
-    public ExtendedTypeMirror create(final TypeKind typeKind) {
+    public ExtendedTypeMirror createPrimitive(final TypeKind typeKind) {
         return create(this.types.getPrimitiveType(typeKind));
-    }
-
-    @Override
-    public ExtendedTypeMirror create(final ExtendedClass<?> clazz) {
-        return clazz.accept(this);
-    }
-
-    @Override
-    public ExtendedTypeMirror booleanClass() {
-        return create(TypeKind.BOOLEAN);
-    }
-
-    @Override
-    public ExtendedTypeMirror byteClass() {
-        return create(TypeKind.BYTE);
-    }
-
-    @Override
-    public ExtendedTypeMirror shortClass() {
-        return create(TypeKind.SHORT);
-    }
-
-    @Override
-    public ExtendedTypeMirror intClass() {
-        return create(TypeKind.INT);
-    }
-
-    @Override
-    public ExtendedTypeMirror floatClass() {
-        return create(TypeKind.FLOAT);
-    }
-
-    @Override
-    public ExtendedTypeMirror doubleClass() {
-        return create(TypeKind.DOUBLE);
-    }
-
-    @Override
-    public ExtendedTypeMirror longClass() {
-        return create(TypeKind.LONG);
-    }
-
-    @Override
-    public ExtendedTypeMirror regularClass(final Class<?> clazz) {
-        return createWithErasure(clazz);
     }
 
     @Override
     public String toString() {
         return "BaseExtendedTypeMirrorFactory{" +
                 "types=" + this.types +
-                ", elements=" + this.elements +
+                ", elementUtils=" + this.elementUtils +
                 ", messager=" + this.messager +
                 ", extractor=" + this.extractor +
                 ", optionalFactory=" + this.optionalFactory +
+                ", repetitiveFactory=" + this.repetitiveFactory +
+                ", repetitionFactory=" + this.repetitionFactory +
                 "}";
     }
 }

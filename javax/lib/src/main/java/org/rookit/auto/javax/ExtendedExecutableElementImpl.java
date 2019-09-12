@@ -21,12 +21,13 @@
  ******************************************************************************/
 package org.rookit.auto.javax;
 
+import org.rookit.auto.javax.executable.ExtendedExecutableElement;
+import org.rookit.auto.javax.pack.ExtendedPackageElement;
 import org.rookit.auto.javax.type.ExtendedTypeMirror;
 import org.rookit.auto.javax.type.ExtendedTypeMirrorFactory;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ElementVisitor;
 import javax.lang.model.element.ExecutableElement;
@@ -41,11 +42,14 @@ import java.util.Set;
 
 final class ExtendedExecutableElementImpl implements ExtendedExecutableElement {
 
+    private final ExtendedElement extendedElement;
     private final ExecutableElement delegate;
     private final ExtendedTypeMirror returnType;
 
-    ExtendedExecutableElementImpl(final ExecutableElement delegate,
+    ExtendedExecutableElementImpl(final ExtendedElement extendedElement,
+                                  final ExecutableElement delegate,
                                   final ExtendedTypeMirrorFactory typeMirrorFactory) {
+        this.extendedElement = extendedElement;
         this.delegate = delegate;
         this.returnType = typeMirrorFactory.create(delegate.getReturnType());
     }
@@ -91,59 +95,65 @@ final class ExtendedExecutableElementImpl implements ExtendedExecutableElement {
     }
 
     @Override
-    public TypeMirror asType() {
-        return this.delegate.asType();
+    public ExtendedPackageElement packageInfo() {
+        return this.extendedElement.packageInfo();
+    }
+
+    @Override
+    public ExtendedTypeMirror asType() {
+        return this.extendedElement.asType();
     }
 
     @Override
     public ElementKind getKind() {
-        return this.delegate.getKind();
+        return this.extendedElement.getKind();
     }
 
     @Override
     public Set<Modifier> getModifiers() {
-        return this.delegate.getModifiers();
+        return this.extendedElement.getModifiers();
     }
 
     @Override
     public Name getSimpleName() {
-        return this.delegate.getSimpleName();
+        return this.extendedElement.getSimpleName();
     }
 
     @Override
-    public Element getEnclosingElement() {
-        return this.delegate.getEnclosingElement();
+    public ExtendedElement getEnclosingElement() {
+        return this.extendedElement.getEnclosingElement();
     }
 
     @Override
-    public List<? extends Element> getEnclosedElements() {
-        return this.delegate.getEnclosedElements();
+    public List<? extends ExtendedElement> getEnclosedElements() {
+        return this.extendedElement.getEnclosedElements();
     }
 
     @Override
     public List<? extends AnnotationMirror> getAnnotationMirrors() {
-        return this.delegate.getAnnotationMirrors();
+        return this.extendedElement.getAnnotationMirrors();
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(final Class<A> annotationType) {
-        return this.delegate.getAnnotation(annotationType);
+        return this.extendedElement.getAnnotation(annotationType);
     }
 
     @Override
     public <A extends Annotation> A[] getAnnotationsByType(final Class<A> annotationType) {
-        return this.delegate.getAnnotationsByType(annotationType);
+        return this.extendedElement.getAnnotationsByType(annotationType);
     }
 
     @Override
     public <R, P> R accept(final ElementVisitor<R, P> v, final P p) {
-        return this.delegate.accept(v, p);
+        return this.extendedElement.accept(v, p);
     }
 
     @Override
     public String toString() {
         return "ExtendedExecutableElementImpl{" +
-                "delegate=" + this.delegate +
+                "extendedElement=" + this.extendedElement +
+                ", delegate=" + this.delegate +
                 ", returnType=" + this.returnType +
                 "}";
     }

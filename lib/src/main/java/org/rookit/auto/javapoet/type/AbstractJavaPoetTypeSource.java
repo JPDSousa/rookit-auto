@@ -23,7 +23,6 @@ package org.rookit.auto.javapoet.type;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.source.TypeSource;
 
 import javax.annotation.processing.Filer;
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 
-public abstract class AbstractJavaPoetTypeSource implements TypeSource {
+public abstract class AbstractJavaPoetTypeSource implements MutableJavaPoetTypeSource {
 
     private final Executor executor;
 
@@ -48,7 +47,7 @@ public abstract class AbstractJavaPoetTypeSource implements TypeSource {
 
     private void writeTypeTo(final Filer filer) {
         try {
-            JavaFile.builder(identifier().packageName().fullName(), typeSpec())
+            JavaFile.builder(identifier().packageElement().getQualifiedName().toString(), typeSpec())
                     .build()
                     .writeTo(filer);
         } catch (final IOException e) {

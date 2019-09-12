@@ -26,6 +26,6 @@ import org.rookit.utils.optional.Optional;
 // TODO might not be the best name for this type
 public interface RootPackageReferenceWalker {
 
-    Optional<PackageReferenceWalker> nextStepFrom(PackageReference packageReference);
+    Optional<PackageReferenceWalker> nextStepFrom(ExtendedPackageElement extendedPackageElement);
 
 }

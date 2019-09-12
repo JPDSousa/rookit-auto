@@ -24,25 +24,25 @@ package org.rookit.auto.javapoet.type;
 import com.google.common.base.MoreObjects;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
-import org.rookit.auto.identifier.Identifier;
 import org.rookit.auto.javapoet.naming.JavaPoetParameterResolver;
+import org.rookit.auto.javax.naming.Identifier;
 import org.rookit.auto.javax.type.ExtendedTypeElement;
-import org.rookit.auto.source.SingleTypeSourceFactory;
-import org.rookit.auto.source.TypeSource;
+import org.rookit.auto.source.type.SingleTypeSourceFactory;
+import org.rookit.auto.source.type.TypeSource;
 
 import javax.lang.model.element.Modifier;
 
 public final class EmptyLeafTypeSourceFactory implements SingleTypeSourceFactory {
 
-    public static SingleTypeSourceFactory create(final TypeSourceFactory adapter,
+    public static SingleTypeSourceFactory create(final JavaPoetTypeSourceFactory adapter,
                                                  final JavaPoetParameterResolver parameterResolver) {
         return new EmptyLeafTypeSourceFactory(adapter, parameterResolver);
     }
 
-    private final TypeSourceFactory adapter;
+    private final JavaPoetTypeSourceFactory adapter;
     private final JavaPoetParameterResolver parameterResolver;
 
-    private EmptyLeafTypeSourceFactory(final TypeSourceFactory adapter,
+    private EmptyLeafTypeSourceFactory(final JavaPoetTypeSourceFactory adapter,
                                        final JavaPoetParameterResolver parameterResolver) {
         this.adapter = adapter;
         this.parameterResolver = parameterResolver;
@@ -50,12 +50,15 @@ public final class EmptyLeafTypeSourceFactory implements SingleTypeSourceFactory
 
     @Override
     public TypeSource create(final Identifier identifier, final ExtendedTypeElement element) {
-        final ClassName className = ClassName.get(identifier.packageName().fullName(), identifier.name());
+        final ClassName className = ClassName.get(
+                identifier.packageElement().getQualifiedName().toString(),
+                identifier.name()
+        );
 
         final TypeSpec.Builder spec = TypeSpec.interfaceBuilder(className)
                 .addSuperinterface(this.parameterResolver.resolveParameters(element))
                 .addModifiers(Modifier.PUBLIC);
-        return this.adapter.fromTypeSpec(identifier, spec);
+        return this.adapter.fromTypeSpec(identifier, spec.build());
     }
 
     @Override

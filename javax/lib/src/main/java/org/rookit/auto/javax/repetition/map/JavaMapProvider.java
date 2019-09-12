@@ -23,35 +23,41 @@ package org.rookit.auto.javax.repetition.map;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import org.rookit.auto.javax.repetition.KeyedRepetitiveTypeMirror;
-import org.rookit.auto.javax.repetition.RepetitiveTypeMirrorFactory;
-import org.rookit.utils.reflect.ExtendedClass;
-import org.rookit.utils.reflect.ExtendedClassFactory;
+import org.rookit.auto.javax.repetition.ImmutableTypeMirrorKeyedRepetitionIndexConfig;
+import org.rookit.auto.javax.repetition.TypeMirrorKeyedRepetitionConfig;
+import org.rookit.auto.javax.ElementUtils;
+import org.rookit.utils.guice.Keyed;
+import org.rookit.utils.repetition.Repetition;
 
 import java.util.Map;
 
-final class JavaMapProvider implements Provider<KeyedRepetitiveTypeMirror> {
+final class JavaMapProvider implements Provider<TypeMirrorKeyedRepetitionConfig> {
 
-    private final RepetitiveTypeMirrorFactory factory;
-    private final ExtendedClassFactory classFactory;
+    private final ElementUtils elementUtils;
+    private final Repetition repetition;
 
     @Inject
-    private JavaMapProvider(final RepetitiveTypeMirrorFactory factory, final ExtendedClassFactory classFactory) {
-        this.factory = factory;
-        this.classFactory = classFactory;
+    private JavaMapProvider(final ElementUtils elementUtils,
+                            @Keyed final Repetition repetition) {
+        this.elementUtils = elementUtils;
+        this.repetition = repetition;
     }
 
     @Override
-    public KeyedRepetitiveTypeMirror get() {
-        final ExtendedClass<?> extendedClass = this.classFactory.create(Map.class);
-        return this.factory.createKeyed(extendedClass, 0, 1);
+    public TypeMirrorKeyedRepetitionConfig get() {
+        return ImmutableTypeMirrorKeyedRepetitionIndexConfig.builder()
+                .keyIndex(0)
+                .valueIndex(1)
+                .repetition(this.repetition)
+                .typeMirror(this.elementUtils.fromClassErasured(Map.class))
+                .build();
     }
 
     @Override
     public String toString() {
         return "JavaMapProvider{" +
-                "factory=" + this.factory +
-                ", classFactory=" + this.classFactory +
+                "elementUtils=" + this.elementUtils +
+                ", repetition=" + this.repetition +
                 "}";
     }
 }

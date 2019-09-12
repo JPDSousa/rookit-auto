@@ -23,12 +23,16 @@ package org.rookit.auto.javax.repetition;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Modules;
 import org.rookit.auto.javax.repetition.collection.RepetitionCollectionModule;
 import org.rookit.auto.javax.repetition.map.RepetitionMapModule;
 import org.rookit.auto.javax.repetition.optional.RepetitiveOptionalModule;
+import org.rookit.utils.guice.Single;
+import org.rookit.utils.repetition.Repetition;
 
+@SuppressWarnings("MethodMayBeStatic")
 public final class RepetitionModule extends AbstractModule {
 
     private static final Module MODULE = Modules.combine(
@@ -48,5 +52,14 @@ public final class RepetitionModule extends AbstractModule {
     protected void configure() {
         bind(JavaxRepetitionFactory.class).to(BaseJavaxRepetitionFactory.class).in(Singleton.class);
         bind(RepetitiveTypeMirrorFactory.class).to(BaseRepetitiveTypeMirrorFactory.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    @Single
+    TypeMirrorConfig singleTypeMirrorConfig(@Single final Repetition single) {
+        return ImmutableTypeMirrorConfig.builder()
+                .repetition(single)
+                .build();
     }
 }

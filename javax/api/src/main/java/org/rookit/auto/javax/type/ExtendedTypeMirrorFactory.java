@@ -21,8 +21,6 @@
  ******************************************************************************/
 package org.rookit.auto.javax.type;
 
-import org.rookit.utils.reflect.ExtendedClass;
-
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -34,8 +32,6 @@ public interface ExtendedTypeMirrorFactory {
 
     ExtendedTypeMirror create(TypeMirror typeMirror);
 
-    ExtendedTypeMirror create(TypeKind typeKind);
-
-    ExtendedTypeMirror create(ExtendedClass<?> clazz);
+    ExtendedTypeMirror createPrimitive(TypeKind typeKind);
 
 }

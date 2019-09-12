@@ -22,6 +22,7 @@
 package org.rookit.auto.javax.type;
 
 import org.rookit.utils.optional.Optional;
+import org.rookit.utils.repetition.Repetition;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -29,10 +30,11 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVisitor;
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.List;
 
 public interface ExtendedTypeMirror extends TypeMirror {
+
+    Repetition repetition();
 
     Optional<Element> toElement();
 
@@ -42,7 +44,7 @@ public interface ExtendedTypeMirror extends TypeMirror {
 
     ExtendedTypeMirror erasure();
 
-    Collection<? extends ExtendedTypeMirror> typeParameters();
+    List<? extends ExtendedTypeMirror> typeParameters();
 
     TypeMirror original();
 

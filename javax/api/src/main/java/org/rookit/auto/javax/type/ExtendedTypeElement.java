@@ -21,45 +21,30 @@
  ******************************************************************************/
 package org.rookit.auto.javax.type;
 
-import one.util.streamex.StreamEx;
-import org.rookit.auto.javax.pack.PackageReference;
-import org.rookit.auto.javax.property.Property;
+import org.rookit.auto.javax.ExtendedElement;
+import org.rookit.auto.javax.executable.ExtendedExecutableElement;
+import org.rookit.auto.javax.parameter.ExtendedTypeParameterElement;
+import org.rookit.auto.javax.visitor.ExtendedElementVisitor;
 import org.rookit.utils.optional.Optional;
 
 import javax.lang.model.element.TypeElement;
-import java.util.Collection;
 import java.util.List;
 
-public interface ExtendedTypeElement extends TypeElement {
-
-    Optional<ExtendedTypeElement> child();
-
-    boolean isTopLevel();
-
-    boolean isEntity();
-
-    boolean isPartialEntity();
-
-    boolean isEntityExtension();
-
-    boolean isPropertyContainer();
-
-    boolean isConvention();
-
-    Optional<ExtendedTypeElement> upstreamEntity();
-
-    StreamEx<ExtendedTypeElement> conventionInterfaces();
-
-    PackageReference packageInfo();
-
-    Collection<Property> properties();
+public interface ExtendedTypeElement extends ExtendedElement, TypeElement {
 
     @Override
     List<? extends ExtendedTypeMirror> getInterfaces();
 
     @Override
-    ExtendedTypeMirror getSuperclass();
+    List<? extends ExtendedTypeParameterElement> getTypeParameters();
 
     @Override
-    ExtendedTypeMirror asType();
+    ExtendedTypeMirror getSuperclass();
+
+    Optional<ExtendedExecutableElement> getMethod(String name);
+
+    @Override
+    default <R, P> R accept(final ExtendedElementVisitor<R, P> visitor, final P parameter) {
+        return visitor.visitType(this, parameter);
+    }
 }
